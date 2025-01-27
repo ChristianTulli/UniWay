@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: linear-gradient(to bottom, #FF00DD, #00BBFF );" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniway.viewcontroller.AccessoController">
+   <children>
+      <Separator layoutX="-4.0" layoutY="119.0" prefHeight="17.0" prefWidth="1920.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="119.0" />
+      <ImageView fitHeight="108.0" fitWidth="248.0" layoutX="676.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/titolo.png" />
+         </image>
+      </ImageView>
+      <AnchorPane layoutX="616.0" layoutY="136.0" prefHeight="341.0" prefWidth="378.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black; -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #FFFFFF33, #FFFFFF00), /* Gradiente da bianco 20% a 0% */    #FFFFFF4D;">
+         <children>
+            <Text layoutX="46.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password:">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Text>
+            <Button layoutX="195.0" layoutY="262.0" mnemonicParsing="false" onAction="#logIn" prefHeight="65.0" prefWidth="166.0" text="Accedi">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Button>
+            <Button layoutX="18.0" layoutY="262.0" mnemonicParsing="false" onAction="#onRegisratiButtonClick" prefWidth="166.0" text="Registrati">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Button>
+            <TextField fx:id="usernameField" layoutX="46.0" layoutY="96.0" prefHeight="36.0" prefWidth="275.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </TextField>
+            <Text layoutX="46.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username:">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Text>
+            <PasswordField fx:id="passwordField" layoutX="46.0" layoutY="192.0" prefHeight="44.0" prefWidth="275.0" promptText="almeno 6 caratteri">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </PasswordField>
+            <Label fx:id="errorLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" prefHeight="65.0" prefWidth="370.0" textAlignment="CENTER" textFill="RED" underline="true">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
