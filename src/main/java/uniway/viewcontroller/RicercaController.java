@@ -76,6 +76,7 @@ public class RicercaController implements Initializable {
         }
     }
 
+//controllare l'attivazione del tasto cerca
 
     @FXML
     public void handleProvinciaSelection(ActionEvent event) {
