@@ -130,8 +130,6 @@ public class RicercaController implements Initializable {
 
     public void handleCorsoSelection(ActionEvent event) {
         String selezione = corso.getValue();
-        if (selezione!=null){
-            cerca.setDisable(false);
-        }else cerca.setDisable(true);
+        cerca.setDisable(selezione == null);
     }
 }
