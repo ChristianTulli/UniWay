@@ -23,7 +23,7 @@ public class RicercaController implements Initializable {
 
     public void logOut(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/accesso-registrazione.fxml")));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
@@ -48,7 +48,7 @@ public class RicercaController implements Initializable {
     private final String[] provinciaLazio = {"Roma", "Latina"};
     //private final String[] provinciaLombardia = {"Milano", "Como"};
     private final String[] ateneiRoma = {"TorVergata", "LaSapienza"};
-   //private final String[] AteneiMilano = {"Politecnico", "Bocconi"};
+    //private final String[] AteneiMilano = {"Politecnico", "Bocconi"};
     private final String[] facoltaAteneo = {"Ingegneria", "Economia"};
     private final String[] corsiIngegneria = {"Ingegneria informatica", "Ingegneria gestionale", "Ingegneria civile", "Ingegneria medica"};
     //private final String[] ProvinciaEconomia = {"Finanza e Marketing"};
@@ -60,9 +60,9 @@ public class RicercaController implements Initializable {
     }
 
     @FXML
-    public void handleRegioneSelection(ActionEvent event){
-        String selectedService = regione.getValue();
-        if ("Lazio".equals(selectedService)) {
+    public void handleRegioneSelection(ActionEvent event) {
+        String selezione = regione.getValue();
+        if ("Lazio".equals(selezione)) {
             provincia.getItems().clear();
             provincia.getItems().addAll(provinciaLazio);
             provincia.setDisable(false);
@@ -80,9 +80,9 @@ public class RicercaController implements Initializable {
 
     @FXML
     public void handleProvinciaSelection(ActionEvent event) {
-        String selectedProduct = provincia.getValue();
+        String selezione = provincia.getValue();
 
-        if ("Roma".equals(selectedProduct)) {
+        if ("Roma".equals(selezione)) {
             ateneo.getItems().clear();
             ateneo.getItems().addAll(ateneiRoma);
             ateneo.setDisable(false);
@@ -97,9 +97,9 @@ public class RicercaController implements Initializable {
 
     @FXML
     public void handleAteneoSelection(ActionEvent event) {
-        String selectedProduct = ateneo.getValue();
+        String selezione = ateneo.getValue();
 
-        if ("TorVergata".equals(selectedProduct)) {
+        if ("TorVergata".equals(selezione)) {
             facolta.getItems().clear();
             facolta.getItems().addAll(facoltaAteneo);
             facolta.setDisable(false);
@@ -113,12 +113,13 @@ public class RicercaController implements Initializable {
 
     @FXML
     public void handleFacoltaSelection(ActionEvent event) {
-        String selectedProduct = facolta.getValue();
-        if ("Ingegneria".equals(selectedProduct)) {
+        String selezione = facolta.getValue();
+        if ("Ingegneria".equals(selezione)) {
             corso.getItems().clear();
             corso.getItems().addAll(corsiIngegneria);
             corso.setDisable(false);
-            
+            corso.setOnAction(this::handleCorsoSelection);
+
         } else {
             corso.setDisable(true);
             cerca.setDisable(true);
@@ -127,7 +128,10 @@ public class RicercaController implements Initializable {
 
     }
 
-
-
-
+    public void handleCorsoSelection(ActionEvent event) {
+        String selezione = corso.getValue();
+        if (selezione!=null){
+            cerca.setDisable(false);
+        }else cerca.setDisable(true);
+    }
 }
