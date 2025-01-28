@@ -46,12 +46,12 @@ public class RicercaController implements Initializable {
     private final String[] regioni = {"Lazio", "Lombardia"};
 
     private final String[] provinciaLazio = {"Roma", "Latina"};
-    //private final String[] provinciaLombardia = {"Milano", "Como"};
+
     private final String[] ateneiRoma = {"TorVergata", "LaSapienza"};
-    //private final String[] AteneiMilano = {"Politecnico", "Bocconi"};
+
     private final String[] facoltaAteneo = {"Ingegneria", "Economia"};
     private final String[] corsiIngegneria = {"Ingegneria informatica", "Ingegneria gestionale", "Ingegneria civile", "Ingegneria medica"};
-    //private final String[] ProvinciaEconomia = {"Finanza e Marketing"};
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -76,7 +76,6 @@ public class RicercaController implements Initializable {
         }
     }
 
-//controllare l'attivazione del tasto cerca
 
     @FXML
     public void handleProvinciaSelection(ActionEvent event) {
