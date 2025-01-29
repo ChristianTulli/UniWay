@@ -26,7 +26,7 @@ public class UtenteFS implements UtenteDAO {
 
     @Override
     public List<Utente> ottieniUtenti() throws Exception {
-        List<Utente> utenti = new ArrayList<Utente>();
+        List<Utente> utenti = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = reader.readLine()) != null) {

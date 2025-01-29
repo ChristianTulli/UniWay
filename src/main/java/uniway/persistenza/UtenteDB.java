@@ -23,7 +23,7 @@ public class UtenteDB implements UtenteDAO {
 
     @Override
     public List<Utente> ottieniUtenti() throws Exception {
-        List<Utente> utenti = new ArrayList<Utente>();
+        List<Utente> utenti = new ArrayList<>();
         return utenti;
     }
 }

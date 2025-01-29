@@ -11,6 +11,7 @@ import java.util.Properties;
 public class Utente {
     private String username;
     private String password;
+
     UtenteDAO utenteDAO;
     Properties properties=new Properties();
 
