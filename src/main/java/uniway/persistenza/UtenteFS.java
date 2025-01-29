@@ -2,8 +2,12 @@ package uniway.persistenza;
 
 import uniway.model.Utente;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UtenteFS implements UtenteDAO {
     private final String path;
@@ -21,7 +25,15 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public void autenticazioneUtente(Utente utente) throws Exception {
-
+    public List<Utente> ottieniUtenti() throws Exception {
+        List<Utente> utenti = new ArrayList<Utente>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] split = line.split(",");
+                utenti.add(new Utente(split[0], split[1]));
+            }
+        }
+        return utenti;
     }
 }
