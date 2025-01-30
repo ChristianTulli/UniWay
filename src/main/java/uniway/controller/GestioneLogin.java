@@ -24,6 +24,7 @@ public class GestioneLogin {
     private UtenteDAO utenteDAO;
     private boolean isFullMode;
     private static final Logger LOGGER = Logger.getLogger(GestioneLogin.class.getName());
+    private String errore="errore";
 
 
     private GestioneLogin() throws IllegalArgumentException {
@@ -49,7 +50,7 @@ public class GestioneLogin {
         }catch (FileNotFoundException e){
             throw new IllegalArgumentException("File config.properties non trovato", e);
         }catch (Exception e){
-            LOGGER.log(Level.SEVERE, "Errore", e);
+            LOGGER.log(Level.SEVERE, errore, e);
         }
     }
 
@@ -58,7 +59,7 @@ public class GestioneLogin {
             try {
                 instance = new GestioneLogin();
             }catch (IllegalArgumentException e){
-                LOGGER.log(Level.SEVERE, "Errore", e);
+                LOGGER.log(Level.SEVERE, "errore", e);
             }
         }
         return instance;
@@ -88,7 +89,7 @@ public class GestioneLogin {
                 try{
                     utenteDAO.salvaUtente(utente);
                 } catch (Exception e){
-                    LOGGER.log(Level.SEVERE, "Errore", e);
+                    LOGGER.log(Level.SEVERE, errore, e);
                 }
             }
 

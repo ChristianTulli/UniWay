@@ -24,7 +24,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public List<Utente> ottieniUtenti() throws IOException {
+    public List<Utente> ottieniUtenti() throws Exception {
         List<Utente> utenti = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
@@ -33,9 +33,9 @@ public class UtenteFS implements UtenteDAO {
                 utenti.add(new Utente(split[0], split[1]));
             }
         }catch (IOException e) {
-            throw new IOException("File non trovato o errore di lettura: " + e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IOException("File non trovato: " + e);
+        }catch (Exception e) {
+            throw new Exception("Errore di lettura: " + e);
         }
         return utenti;
     }
