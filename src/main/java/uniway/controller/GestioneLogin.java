@@ -8,22 +8,25 @@ import uniway.persistenza.UtenteDB;
 import uniway.persistenza.UtenteFS;
 
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GestioneLogin {
 
     //pattern singleton
-    private  static GestioneLogin instance;
+    private static GestioneLogin instance;
     private final List<Utente> utenti= new ArrayList<>();
-    private static UtenteDAO utenteDAO;
-    private static boolean isFullMode;
+    private UtenteDAO utenteDAO;
+    private boolean isFullMode;
+    private static final Logger LOGGER = Logger.getLogger(GestioneLogin.class.getName());
 
 
-    private GestioneLogin() {
+    private GestioneLogin() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input=new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
@@ -37,22 +40,26 @@ public class GestioneLogin {
                 } else if ("db".equalsIgnoreCase(mode)) {
                     utenteDAO = new UtenteDB(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
                 } else {
-                    throw new IllegalArgumentException("Invalid persistence mode: " + mode);
+                    throw new IllegalArgumentException("modalita' di persistenza non valida: " + mode);
                 }
 
                 //carica gli utenti salvati sulla lista
                 utenti.addAll(utenteDAO.ottieniUtenti());
             }
-        }catch (IOException e){
-            throw new RuntimeException("Errore nel caricamenteo della configurazione", e);
+        }catch (FileNotFoundException e){
+            throw new IllegalArgumentException("File config.properties non trovato", e);
         }catch (Exception e){
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Errore", e);
         }
     }
 
     public static GestioneLogin getInstance() {
         if(instance == null) {
-            instance = new GestioneLogin();
+            try {
+                instance = new GestioneLogin();
+            }catch (IllegalArgumentException e){
+                LOGGER.log(Level.SEVERE, "Errore", e);
+            }
         }
         return instance;
     }
@@ -61,9 +68,7 @@ public class GestioneLogin {
     //per la registrazione controlliamo se i dati inseriti momentaneamente nella classe bean sono accettabili e istanziamo un oggetto user in caso positivo, confermando la registrazione
 
     public boolean registrazione(UtenteBean utenteBean) {
-        if(utenteBean.getUsername().isEmpty() || utenteBean.getPassword().isEmpty()) {
-            return false;
-        }else if (utenteBean.getPassword().length() < 6) {
+        if(utenteBean.getUsername().isEmpty() || utenteBean.getPassword().isEmpty() || utenteBean.getPassword().length() < 6) {
             return false;
         }
             Optional<Utente> existingUser = utenti.stream()
@@ -83,7 +88,7 @@ public class GestioneLogin {
                 try{
                     utenteDAO.salvaUtente(utente);
                 } catch (Exception e){
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, "Errore", e);
                 }
             }
 

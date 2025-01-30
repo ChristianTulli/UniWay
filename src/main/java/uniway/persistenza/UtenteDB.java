@@ -2,6 +2,7 @@ package uniway.persistenza;
 
 import uniway.model.Utente;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +18,13 @@ public class UtenteDB implements UtenteDAO {
     }
 
     @Override
-    public void salvaUtente(Utente utente) throws Exception {
+    public void salvaUtente(Utente utente) throws IOException {
         //vuoto perche' devo implementare il db
     }
 
     @Override
-    public List<Utente> ottieniUtenti() throws Exception {
+    public List<Utente> ottieniUtenti() throws IOException {
+        //vuoto perche' devo implementare il db
         return new ArrayList<>();
     }
 }
