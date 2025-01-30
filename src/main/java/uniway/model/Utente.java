@@ -2,8 +2,8 @@
 package uniway.model;
 
 public class Utente {
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
 
     public Utente(String username, String password) {
         this.username = username;
