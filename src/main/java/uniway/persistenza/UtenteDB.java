@@ -20,11 +20,14 @@ public class UtenteDB implements UtenteDAO {
     @Override
     public void salvaUtente(Utente utente) throws IOException {
         //vuoto perche' devo implementare il db
+        throw new IOException("Not supported yet.");
     }
 
     @Override
-    public List<Utente> ottieniUtenti() throws IOException {
+    public List<Utente> ottieniUtenti() throws IOException, RuntimeException {
         //vuoto perche' devo implementare il db
         return new ArrayList<>();
+
+
     }
 }
