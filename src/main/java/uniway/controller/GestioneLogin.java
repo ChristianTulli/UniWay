@@ -31,7 +31,7 @@ public class GestioneLogin {
             isFullMode="full".equals(properties.getProperty("running.mode"));
 
             if(isFullMode) {
-                String mode = properties.getProperty("running.mode");
+                String mode = properties.getProperty("persistence.mode");
                 if ("file".equals(mode)) {
                     utenteDAO = new UtenteFS(properties.getProperty("file.path"));
                 } else if ("db".equalsIgnoreCase(mode)) {
