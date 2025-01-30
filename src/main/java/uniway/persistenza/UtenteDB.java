@@ -18,12 +18,11 @@ public class UtenteDB implements UtenteDAO {
 
     @Override
     public void salvaUtente(Utente utente) throws Exception {
-
+        //vuoto perche' devo implementare il db
     }
 
     @Override
     public List<Utente> ottieniUtenti() throws Exception {
-        List<Utente> utenti = new ArrayList<>();
-        return utenti;
+        return new ArrayList<>();
     }
 }
