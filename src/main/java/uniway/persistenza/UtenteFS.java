@@ -34,6 +34,8 @@ public class UtenteFS implements UtenteDAO {
             }
         }catch (IOException e) {
             throw new IOException("File non trovato o errore di lettura: " + e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return utenti;
     }
