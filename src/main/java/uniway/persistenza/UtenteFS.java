@@ -24,7 +24,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public List<Utente> ottieniUtenti() throws IOException, RuntimeException {
+    public List<Utente> ottieniUtenti() throws IOException, IllegalArgumentException {
         List<Utente> utenti = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
@@ -35,7 +35,7 @@ public class UtenteFS implements UtenteDAO {
         }catch (IOException e) {
             throw new IOException("File non trovato: " + e);
         } catch (RuntimeException e) {
-            throw new RuntimeException("Errore di lettura: " + e);
+            throw new IllegalArgumentException("Errore di lettura: " + e);
         }
         return utenti;
     }

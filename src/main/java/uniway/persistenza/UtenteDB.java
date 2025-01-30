@@ -24,7 +24,7 @@ public class UtenteDB implements UtenteDAO {
     }
 
     @Override
-    public List<Utente> ottieniUtenti() throws IOException, RuntimeException {
+    public List<Utente> ottieniUtenti() throws IOException, IllegalArgumentException {
         //vuoto perche' devo implementare il db
         return new ArrayList<>();
 
