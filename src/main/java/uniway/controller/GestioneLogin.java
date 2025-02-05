@@ -2,6 +2,7 @@
 package uniway.controller;
 
 import uniway.beans.UtenteBean;
+import uniway.model.UtenteIscritto;
 import uniway.model.Utente;
 import uniway.persistenza.UtenteDAO;
 import uniway.persistenza.UtenteDB;
@@ -68,7 +69,7 @@ public class GestioneLogin {
 
     //per la registrazione controlliamo se i dati inseriti momentaneamente nella classe bean sono accettabili e istanziamo un oggetto user in caso positivo, confermando la registrazione
 
-    public boolean registrazione(UtenteBean utenteBean) {
+    public boolean registrazioneIscritto(UtenteBean utenteBean) {
         if(utenteBean.getUsername().isEmpty() || utenteBean.getPassword().isEmpty() || utenteBean.getPassword().length() < 6) {
             return false;
         }
@@ -80,7 +81,7 @@ public class GestioneLogin {
                 return false; // Username già esistente
             }
 
-                Utente utente = new Utente(utenteBean.getUsername(), utenteBean.getPassword());
+                Utente utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword());
                 utenti.add(utente);
 
 
@@ -95,6 +96,36 @@ public class GestioneLogin {
 
             return true;
             }
+
+
+    public boolean registrazioneInCerca(UtenteBean utenteBean) {
+        if(utenteBean.getUsername().isEmpty() || utenteBean.getPassword().isEmpty() || utenteBean.getPassword().length() < 6) {
+            return false;
+        }
+        Optional<Utente> existingUser = utenti.stream()
+                .filter(u -> u.getUsername().equals(utenteBean.getUsername()))
+                .findFirst();
+
+        if (existingUser.isPresent()) {
+            return false; // Username già esistente
+        }
+
+        Utente utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword());
+        utenti.add(utente);
+
+
+        //se siamo in modalita' full salviamo nel file/db
+        if(isFullMode) {
+            try{
+                utenteDAO.salvaUtente(utente);
+            } catch (Exception e){
+                LOGGER.log(Level.SEVERE, errore, e);
+            }
+        }
+
+        return true;
+    }
+
 
     public boolean autenticazione(UtenteBean utenteBean) {
         return utenti.stream()

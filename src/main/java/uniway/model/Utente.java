@@ -1,6 +1,7 @@
 
 package uniway.model;
 
+
 public class Utente {
     private String username;
     private String password;
@@ -8,6 +9,7 @@ public class Utente {
     public Utente(String username, String password) {
         this.username = username;
         this.password = password;
+
     }
 
     public String getUsername() {

@@ -1,6 +1,7 @@
 
 package uniway.viewcontroller;
 
+import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
 import uniway.controller.GestioneLogin;
 
@@ -11,9 +12,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -35,16 +33,66 @@ public class AccessoController {
     @FXML
     private PasswordField passwordField;
 
+    @FXML
+    private Button registratiButton;
+
+    @FXML
+    private Button loginButton;
+
+    @FXML
+    private Button iscrittoButton;
+
+    @FXML
+    private Button ricercaButton;
+
     private final GestioneLogin gestioneLogin= GestioneLogin.getInstance(); //non creare una nuova istanza ma usare la stessa, altrimenti creo una nuova lista
 
     public void onRegisratiButtonClick() {
+        registratiButton.setDisable(true);
+        iscrittoButton.setVisible(true);
+        ricercaButton.setVisible(true);
+        iscrittoButton.setDisable(false);
+        ricercaButton.setDisable(false);
+    }
+
+    public void onIscrittoButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText());
-        if(gestioneLogin.registrazione(utenteBean)){
+        if(gestioneLogin.registrazioneIscritto(utenteBean)){
             errorLabel.setText("Utente registrato con successo");
         }else {
             errorLabel.setText("username o password non valide");
         }
+        if(gestioneLogin.autenticazione(utenteBean)) {
+            root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/ricerca.fxml")));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }else {
+            errorLabel.setText("Credenziali non valide");
+        }
+
     }
+
+    public void onRicercaButtonClick(ActionEvent event) throws IOException {
+        UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText());
+        if(gestioneLogin.registrazioneInCerca(utenteBean)){
+            errorLabel.setText("Utente registrato con successo");
+        }else {
+            errorLabel.setText("username o password non valide");
+        }
+        if(gestioneLogin.autenticazione(utenteBean)) {
+            root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/ricerca.fxml")));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }else {
+            errorLabel.setText("Credenziali non valide");
+        }
+
+    }
+
 
     public void logIn(ActionEvent event) throws IOException {
         UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText());
