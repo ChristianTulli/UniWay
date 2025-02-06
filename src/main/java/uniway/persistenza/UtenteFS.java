@@ -30,11 +30,7 @@ public class UtenteFS implements UtenteDAO {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] split = line.split(",");
-                Boolean iscritto;
-                if(split[2].equals("true")){
-                    iscritto = true;
-                }else iscritto = false;
-                utenti.add(new Utente(split[0], split[1], iscritto));
+                utenti.add(new Utente(split[0], split[1], split[2].equals("true")));
             }
         }catch (IOException e) {
             throw new IOException("File non trovato: " + e);
