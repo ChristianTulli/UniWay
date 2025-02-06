@@ -16,7 +16,7 @@ public class UtenteFS implements UtenteDAO {
     @Override
     public void salvaUtente(Utente utente) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, true))) {
-            writer.write(utente.getUsername() + "," + utente.getPassword());
+            writer.write(utente.getUsername() + "," + utente.getPassword() + "," + utente.getIscritto());
             writer.newLine();
         } catch (IOException e) {
             throw new IOException(e);
@@ -30,7 +30,7 @@ public class UtenteFS implements UtenteDAO {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] split = line.split(",");
-                utenti.add(new Utente(split[0], split[1]));
+                utenti.add(new Utente(split[0], split[1], split[2].equals("true")));
             }
         }catch (IOException e) {
             throw new IOException("File non trovato: " + e);

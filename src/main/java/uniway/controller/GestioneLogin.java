@@ -2,6 +2,8 @@
 package uniway.controller;
 
 import uniway.beans.UtenteBean;
+import uniway.model.UtenteInCerca;
+import uniway.model.UtenteIscritto;
 import uniway.model.Utente;
 import uniway.persistenza.UtenteDAO;
 import uniway.persistenza.UtenteDB;
@@ -79,10 +81,14 @@ public class GestioneLogin {
             if (existingUser.isPresent()) {
                 return false; // Username già esistente
             }
-
-                Utente utente = new Utente(utenteBean.getUsername(), utenteBean.getPassword());
+            Utente utente;
+            if(utenteBean.getIscritto()) {
+                utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword(),utenteBean.getIscritto());
                 utenti.add(utente);
-
+            }else{
+                utente = new UtenteInCerca(utenteBean.getUsername(), utenteBean.getPassword(), utenteBean.getIscritto());
+                utenti.add(utente);
+            }
 
             //se siamo in modalita' full salviamo nel file/db
             if(isFullMode) {

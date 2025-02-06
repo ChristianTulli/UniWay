@@ -1,5 +1,1 @@
-Marco,Algebra314
-Nico,FrancescoTotti10
-Christian,123456
-Leonardo,Nothingphone3
-Daniele,12223467
+christian,123456,true
