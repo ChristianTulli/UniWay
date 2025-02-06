@@ -37,9 +37,6 @@ public class AccessoController {
     private Button registratiButton;
 
     @FXML
-    private Button loginButton;
-
-    @FXML
     private Button iscrittoButton;
 
     @FXML
@@ -56,8 +53,8 @@ public class AccessoController {
     }
 
     public void onIscrittoButtonClick(ActionEvent event) throws IOException {
-        UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText());
-        if(gestioneLogin.registrazioneIscritto(utenteBean)){
+        UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText(), true);
+        if(gestioneLogin.registrazione(utenteBean)){
             errorLabel.setText("Utente registrato con successo");
         }else {
             errorLabel.setText("username o password non valide");
@@ -75,8 +72,8 @@ public class AccessoController {
     }
 
     public void onRicercaButtonClick(ActionEvent event) throws IOException {
-        UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText());
-        if(gestioneLogin.registrazioneInCerca(utenteBean)){
+        UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText(), false);
+        if(gestioneLogin.registrazione(utenteBean)){
             errorLabel.setText("Utente registrato con successo");
         }else {
             errorLabel.setText("username o password non valide");

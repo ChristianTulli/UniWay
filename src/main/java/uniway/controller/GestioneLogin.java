@@ -2,6 +2,7 @@
 package uniway.controller;
 
 import uniway.beans.UtenteBean;
+import uniway.model.UtenteInCerca;
 import uniway.model.UtenteIscritto;
 import uniway.model.Utente;
 import uniway.persistenza.UtenteDAO;
@@ -69,7 +70,7 @@ public class GestioneLogin {
 
     //per la registrazione controlliamo se i dati inseriti momentaneamente nella classe bean sono accettabili e istanziamo un oggetto user in caso positivo, confermando la registrazione
 
-    public boolean registrazioneIscritto(UtenteBean utenteBean) {
+    public boolean registrazione(UtenteBean utenteBean) {
         if(utenteBean.getUsername().isEmpty() || utenteBean.getPassword().isEmpty() || utenteBean.getPassword().length() < 6) {
             return false;
         }
@@ -80,10 +81,14 @@ public class GestioneLogin {
             if (existingUser.isPresent()) {
                 return false; // Username già esistente
             }
-
-                Utente utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword());
+            Utente utente;
+            if(utenteBean.getIscritto()) {
+                utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword(),utenteBean.getIscritto());
                 utenti.add(utente);
-
+            }else{
+                utente = new UtenteInCerca(utenteBean.getUsername(), utenteBean.getPassword(), utenteBean.getIscritto());
+                utenti.add(utente);
+            }
 
             //se siamo in modalita' full salviamo nel file/db
             if(isFullMode) {
@@ -96,36 +101,6 @@ public class GestioneLogin {
 
             return true;
             }
-
-
-    public boolean registrazioneInCerca(UtenteBean utenteBean) {
-        if(utenteBean.getUsername().isEmpty() || utenteBean.getPassword().isEmpty() || utenteBean.getPassword().length() < 6) {
-            return false;
-        }
-        Optional<Utente> existingUser = utenti.stream()
-                .filter(u -> u.getUsername().equals(utenteBean.getUsername()))
-                .findFirst();
-
-        if (existingUser.isPresent()) {
-            return false; // Username già esistente
-        }
-
-        Utente utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword());
-        utenti.add(utente);
-
-
-        //se siamo in modalita' full salviamo nel file/db
-        if(isFullMode) {
-            try{
-                utenteDAO.salvaUtente(utente);
-            } catch (Exception e){
-                LOGGER.log(Level.SEVERE, errore, e);
-            }
-        }
-
-        return true;
-    }
-
 
     public boolean autenticazione(UtenteBean utenteBean) {
         return utenti.stream()

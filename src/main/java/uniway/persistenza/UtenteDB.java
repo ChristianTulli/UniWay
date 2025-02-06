@@ -22,28 +22,38 @@ public class UtenteDB implements UtenteDAO {
 
     @Override
     public void salvaUtente(Utente utente) throws IOException {
+        String query;
+        query = "INSERT INTO Utenti (username, password, iscritto) VALUES (?, ?, ?)";
 
-        throw new IOException("Not supported yet.");
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)){
+
+            stmt.setString(1, utente.getUsername());
+            stmt.setString(2, utente.getPassword());
+            stmt.setBoolean(3, utente.getIscritto());
+        } catch (SQLException e) {
+            throw new IOException("Errore durante il la registrazione dell'utente", e);
+        }
     }
 
     @Override
     public List<Utente> ottieniUtenti() throws IOException {
-        String query = "SELECT id, username, password, is_iscritto, id_corso, preferenze FROM Utente";
+        String query = "SELECT id, username, password, iscritto, id_corso, preferenze FROM utenti";
 
         List<Utente> utenti = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, username, password);
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String username = rs.getString("username");
                 String password = rs.getString("password");
-                boolean isIscritto = rs.getBoolean("is_iscritto");
+                boolean iscritto = rs.getBoolean("iscritto");
                 Integer idCorso = rs.getObject("id_corso", Integer.class); // può essere NULL
                 List<String> preferenze = new ArrayList<>();
 
-                if (!isIscritto) {
+                if (!iscritto) {
                     String prefStr = rs.getString("preferenze");
                     if (prefStr != null && !prefStr.isEmpty()) {
                         preferenze = List.of(prefStr.split(",")); // Converte la stringa in lista
@@ -51,10 +61,10 @@ public class UtenteDB implements UtenteDAO {
                 }
 
                 // Creazione dell'oggetto corretto
-                if (isIscritto) {
-                    utenti.add(new UtenteIscritto(id, username, password, idCorso));
+                if (iscritto) {
+                    utenti.add(new UtenteIscritto(id, username, password, iscritto, idCorso));
                 } else {
-                    utenti.add(new UtenteInCerca(id, username, password, preferenze));
+                    utenti.add(new UtenteInCerca(id, username, password, iscritto, preferenze));
                 }
             }
         } catch (SQLException e) {

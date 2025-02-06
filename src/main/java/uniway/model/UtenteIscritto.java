@@ -2,14 +2,14 @@ package uniway.model;
 
 public class UtenteIscritto extends Utente{
     int id;
-    private int idCorso;
+    private Integer idCorso;
 
-    public UtenteIscritto(String username, String password) {
-        super(username, password);
+    public UtenteIscritto(String username, String password, Boolean iscritto) {
+        super(username, password, iscritto);
     }
 
-    public UtenteIscritto(int id, String username, String password, int idCorso) {
-        super(username, password);
+    public UtenteIscritto(int id, String username, String password,Boolean iscritto, Integer idCorso) {
+        super(username, password, iscritto);
         this.id = id;
         this.idCorso = idCorso;
     }
