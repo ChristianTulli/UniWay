@@ -56,19 +56,12 @@ public class GestioneLogin {
         }
     }
 
-    static {
-        try {
-            instance = new GestioneLogin();
-        }catch (IllegalArgumentException e){
-            LOGGER.log(Level.SEVERE, "errore", e);
-        }
-    }
-
     public static GestioneLogin getInstance() {
         try {
             if (instance == null) {
-                synchronized (GestioneLogin.class) {  // Blocco sincronizzat
-                    instance = new GestioneLogin();
+                synchronized (GestioneLogin.class) {  // Blocco sincronizzato
+                      // Controllo doppio per evitare più istanze
+                        instance = new GestioneLogin();
                 }
             }
         }catch (IllegalArgumentException e){
