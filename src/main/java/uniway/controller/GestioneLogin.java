@@ -83,7 +83,7 @@ public class GestioneLogin {
                 return false; // Username già esistente
             }
             Utente utente;
-            if(utenteBean.getIscritto()==true) {
+            if(utenteBean.getIscritto()) {
                 utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword(),utenteBean.getIscritto());
             }else{
                 utente = new UtenteInCerca(utenteBean.getUsername(), utenteBean.getPassword(), utenteBean.getIscritto());
