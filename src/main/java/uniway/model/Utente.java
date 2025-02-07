@@ -5,9 +5,9 @@ package uniway.model;
 public class Utente {
     private String username;
     private String password;
-    private Boolean iscritto;
+    private boolean iscritto;
 
-    public Utente(String username, String password, Boolean iscritto) {
+    public Utente(String username, String password, boolean iscritto) {
         this.username = username;
         this.password = password;
         this.iscritto = iscritto;
@@ -24,7 +24,8 @@ public class Utente {
         return password;
     }
 
-    public Boolean getIscritto() {
+    public boolean getIscritto() {
+
         return iscritto;
     }
 }

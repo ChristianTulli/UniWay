@@ -47,8 +47,8 @@ public class UtenteDB implements UtenteDAO {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String username = rs.getString("username");
-                String password = rs.getString("password");
+                String utenteUsername = rs.getString("username");
+                String utentePassword = rs.getString("password");
                 boolean iscritto = rs.getBoolean("iscritto");
                 Integer idCorso = rs.getObject("id_corso", Integer.class); // può essere NULL
                 List<String> preferenze = new ArrayList<>();
@@ -62,9 +62,9 @@ public class UtenteDB implements UtenteDAO {
 
                 // Creazione dell'oggetto corretto
                 if (iscritto) {
-                    utenti.add(new UtenteIscritto(id, username, password, iscritto, idCorso));
+                    utenti.add(new UtenteIscritto(id, utenteUsername, utentePassword, iscritto, idCorso));
                 } else {
-                    utenti.add(new UtenteInCerca(id, username, password, iscritto, preferenze));
+                    utenti.add(new UtenteInCerca(id, utenteUsername, utentePassword, iscritto, preferenze));
                 }
             }
         } catch (SQLException e) {

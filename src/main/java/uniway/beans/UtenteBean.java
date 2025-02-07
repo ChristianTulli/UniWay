@@ -5,12 +5,12 @@ package uniway.beans;
 public class UtenteBean {
     private String username;
     private String password;
-    private Boolean iscritto;
+    private boolean iscritto;
 
-    public UtenteBean(String username, String password, Boolean tipo) {
+    public UtenteBean(String username, String password, boolean iscritto) {
         this.username = username;
         this.password = password;
-        this.iscritto = tipo;
+        this.iscritto = iscritto;
     }
 
     public UtenteBean(String username, String password) {
@@ -27,7 +27,7 @@ public class UtenteBean {
 
         return password;
     }
-    public Boolean getIscritto() {
+    public boolean getIscritto() {
         return iscritto;
     }
 
