@@ -56,14 +56,15 @@ public class GestioneLogin {
         }
     }
 
-    public static GestioneLogin getInstance() {
-        if(instance == null) {
-            try {
-                instance = new GestioneLogin();
-            }catch (IllegalArgumentException e){
-                LOGGER.log(Level.SEVERE, "errore", e);
-            }
+    static {
+        try {
+            instance = new GestioneLogin();
+        }catch (IllegalArgumentException e){
+            LOGGER.log(Level.SEVERE, "errore", e);
         }
+    }
+
+    public static GestioneLogin getInstance() {
         return instance;
     }
 
@@ -84,13 +85,12 @@ public class GestioneLogin {
             Utente utente;
             if(utenteBean.getIscritto()) {
                 utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword(),utenteBean.getIscritto());
-                utenti.add(utente);
             }else{
                 utente = new UtenteInCerca(utenteBean.getUsername(), utenteBean.getPassword(), utenteBean.getIscritto());
-                utenti.add(utente);
             }
+        utenti.add(utente);
 
-            //se siamo in modalita' full salviamo nel file/db
+        //se siamo in modalita' full salviamo nel file/db
             if(isFullMode) {
                 try{
                     utenteDAO.salvaUtente(utente);
