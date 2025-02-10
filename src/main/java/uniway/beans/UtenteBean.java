@@ -28,7 +28,11 @@ public class UtenteBean {
         return password;
     }
     public boolean getIscritto() {
+
         return iscritto;
+    }
+    public void setIscritto(boolean iscritto) {
+        this.iscritto = iscritto;
     }
 
 }

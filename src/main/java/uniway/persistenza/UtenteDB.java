@@ -31,8 +31,15 @@ public class UtenteDB implements UtenteDAO {
             stmt.setString(1, utente.getUsername());
             stmt.setString(2, utente.getPassword());
             stmt.setBoolean(3, utente.getIscritto());
+
+            int rowsAffected = stmt.executeUpdate(); // <--- Esegui la query!
+
+            if (rowsAffected == 0) {
+                throw new IOException("Nessun utente è stato inserito nel database.");
+            }
+
         } catch (SQLException e) {
-            throw new IOException("Errore durante il la registrazione dell'utente", e);
+            throw new IOException("Errore durante la registrazione dell'utente", e);
         }
     }
 

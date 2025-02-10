@@ -1,4 +1,3 @@
-
 package uniway.controller;
 
 import uniway.beans.UtenteBean;
@@ -60,8 +59,8 @@ public class GestioneLogin {
         try {
             if (instance == null) {
                 synchronized (GestioneLogin.class) {  // Blocco sincronizzato
-                      // Controllo doppio per evitare più istanze
-                        instance = new GestioneLogin();
+                    // Controllo doppio per evitare più istanze
+                    instance = new GestioneLogin();
                 }
             }
         }catch (IllegalArgumentException e){
@@ -77,36 +76,35 @@ public class GestioneLogin {
         if(utenteBean.getUsername().isEmpty() || utenteBean.getPassword().isEmpty() || utenteBean.getPassword().length() < 6) {
             return false;
         }
-            Optional<Utente> existingUser = utenti.stream()
-                    .filter(u -> u.getUsername().equals(utenteBean.getUsername()))
-                    .findFirst();
+        Optional<Utente> existingUser = utenti.stream()
+                .filter(u -> u.getUsername().equals(utenteBean.getUsername()))
+                .findFirst();
 
-            if (existingUser.isPresent()) {
-                return false; // Username già esistente
-            }
-            Utente utente;
-            if(utenteBean.getIscritto()) {
-                utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword(),utenteBean.getIscritto());
-            }else{
-                utente = new UtenteInCerca(utenteBean.getUsername(), utenteBean.getPassword(), utenteBean.getIscritto());
-            }
+        if (existingUser.isPresent()) {
+            return false; // Username già esistente
+        }
+        Utente utente;
+        if(utenteBean.getIscritto()) {
+            utente = new UtenteIscritto(utenteBean.getUsername(), utenteBean.getPassword(),utenteBean.getIscritto());
+        }else{
+            utente = new UtenteInCerca(utenteBean.getUsername(), utenteBean.getPassword(), utenteBean.getIscritto());
+        }
         utenti.add(utente);
 
         //se siamo in modalita' full salviamo nel file/db
-            if(isFullMode) {
-                try{
-                    utenteDAO.salvaUtente(utente);
-                } catch (Exception e){
-                    LOGGER.log(Level.SEVERE, errore, e);
-                }
+        if(isFullMode) {
+            try{
+                utenteDAO.salvaUtente(utente);
+            } catch (Exception e){
+                LOGGER.log(Level.SEVERE, errore, e);
             }
+        }
 
-            return true;
-            }
+        return true;
+    }
 
     public boolean autenticazione(UtenteBean utenteBean) {
         return utenti.stream()
                 .anyMatch(utente -> utente.getUsername().equals(utenteBean.getUsername()) && utente.getPassword().equals(utenteBean.getPassword()));
-
     }
 }

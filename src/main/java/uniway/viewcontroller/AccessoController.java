@@ -1,4 +1,3 @@
-
 package uniway.viewcontroller;
 
 import javafx.scene.control.*;
@@ -22,7 +21,8 @@ public class AccessoController {
     private Scene scene;
     private Stage stage;
     private Parent root;
-    private String interfacciaAccesso = "/view/ricerca.fxml";
+    private String interfacciaIscritto = "/view/iscritto-selezione.fxml";
+    private String interfacciaRicerca = "/view/ricerca-home.fxml";
     private String errore= "Credenziali non valide";
 
 
@@ -54,45 +54,46 @@ public class AccessoController {
         ricercaButton.setDisable(false);
     }
 
-    public Boolean autentica(UtenteBean utenteBean, ActionEvent event)throws IOException{
-        if(gestioneLogin.autenticazione(utenteBean)) {
-            root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(interfacciaAccesso)));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-            return true;
-        }else return false;
-    }
-
-    public void registra(UtenteBean utenteBean, ActionEvent event) throws IOException {
+    boolean registra(UtenteBean utenteBean) {
         if(gestioneLogin.registrazione(utenteBean)){
             errorLabel.setText("Utente registrato con successo");
+            return true;
         }else {
             errorLabel.setText("username o password non valide");
+            return false;
         }
-        if(!autentica(utenteBean, event)) {
-            errorLabel.setText(errore);
-        }
+    }
+
+    private void caricaInterfaccia(ActionEvent event, String percorsoFXML) throws IOException {
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(percorsoFXML)));
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
 
     public void onIscrittoButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText(), true);
-        registra(utenteBean, event);
-
+        if(registra(utenteBean)) {
+            caricaInterfaccia(event, interfacciaIscritto);
+        }
     }
 
     public void onRicercaButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText(), false);
-        registra(utenteBean, event);
+        if(registra(utenteBean)) {
+            caricaInterfaccia(event, interfacciaRicerca);
+        }
     }
 
 
     public void logIn(ActionEvent event) throws IOException {
         UtenteBean utenteBean=new UtenteBean(usernameField.getText(), passwordField.getText());
-        if(!autentica(utenteBean, event)) {
+        if(gestioneLogin.autenticazione(utenteBean)) {
+            caricaInterfaccia(event, interfacciaRicerca);
+        }else {
             errorLabel.setText("nessun utente o password corrispondente");
         }
     }
-}
+} 
