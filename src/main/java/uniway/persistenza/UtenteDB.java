@@ -32,7 +32,7 @@ public class UtenteDB implements UtenteDAO {
             stmt.setString(2, utente.getPassword());
             stmt.setBoolean(3, utente.getIscritto());
 
-            int rowsAffected = stmt.executeUpdate(); // <--- Esegui la query!
+            int rowsAffected = stmt.executeUpdate(); // Eseguiamo la query
 
             if (rowsAffected == 0) {
                 throw new IOException("Nessun utente è stato inserito nel database.");

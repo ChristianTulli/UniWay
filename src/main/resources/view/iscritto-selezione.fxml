@@ -3,12 +3,15 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: linear-gradient(to bottom, #FF00DD, #00BBFF );" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniway.viewcontroller.RicercaController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: linear-gradient(to bottom, #FF00DD, #00BBFF );" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniway.viewcontroller.IscrittoController">
    <children>
       <Separator layoutX="-4.0" layoutY="119.0" prefHeight="17.0" prefWidth="1920.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="119.0" />
       <ImageView fitHeight="108.0" fitWidth="248.0" layoutX="676.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
@@ -17,15 +20,33 @@
          </image>
       </ImageView>
       <Button alignment="CENTER" layoutX="1477.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
-      <Button fx:id="cerca" disable="true" layoutX="698.0" layoutY="272.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="225.0" text="Cerca Facolta'" />
-      <ButtonBar layoutX="439.0" layoutY="142.0" prefHeight="78.0" prefWidth="703.0">
+      <Button fx:id="cerca" disable="true" layoutX="688.0" layoutY="332.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="225.0" text="Cerca Facolta'" />
+      <ButtonBar layoutX="435.0" layoutY="203.0" prefHeight="78.0" prefWidth="731.0">
          <buttons>
             <ComboBox fx:id="regione" prefWidth="150.0" promptText="Regione" />
             <ComboBox fx:id="provincia" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Provincia" />
+            <ComboBox fx:id="comune" disable="true" layoutX="145.0" layoutY="37.0" prefWidth="150.0" promptText="Comune" />
             <ComboBox fx:id="ateneo" disable="true" layoutX="83.0" layoutY="37.0" prefWidth="150.0" promptText="Ateneo" />
-            <ComboBox fx:id="facolta" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Facolta'" />
-            <ComboBox fx:id="corso" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Corso" />
+            <ComboBox fx:id="disciplina" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Disciplina" />
+            <ComboBox fx:id="tipologia" disable="true" prefWidth="150.0" promptText="Tipologia" />
+            <ComboBox fx:id="classe" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Corso" />
          </buttons>
       </ButtonBar>
+      <Label layoutX="751.0" layoutY="136.0" text="ISCRITTO">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <ListView fx:id="listView" layoutX="435.0" layoutY="456.0" prefHeight="361.0" prefWidth="731.0" />
+      <Label layoutX="637.0" layoutY="429.0" text="Seleziona il Corso di Laurea che frequenti">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="label" alignment="CENTER" contentDisplay="CENTER" layoutX="438.0" layoutY="619.0" prefHeight="35.0" prefWidth="725.0" textAlignment="CENTER" textFill="RED" underline="true">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
