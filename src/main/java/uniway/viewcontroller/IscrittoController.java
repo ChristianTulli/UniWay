@@ -119,7 +119,7 @@ public class IscrittoController implements Initializable {
             listView.getItems().addAll(gestioneIscritto.getRisultati(corso));
             cerca.setDisable(false);
         }else {
-            label.setText("Nessun risultato con i filtri impostati");
+            label.setText("Nessun risultato , controlla i filtri");
         }
     }
 }

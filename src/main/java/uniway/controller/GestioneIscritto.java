@@ -59,8 +59,8 @@ public class GestioneIscritto {
         return corsoDAO.getCorsiByTipologia(tipologia);
     }
 
-    public List<String> getRisultati(String Corsi) {
-        return corsoDAO.getRisultatiByCorsi(tipologia);
+    public List<String> getRisultati(String corsi) {
+        return corsoDAO.getRisultatiByCorsi(corsi);
     }
 }
 

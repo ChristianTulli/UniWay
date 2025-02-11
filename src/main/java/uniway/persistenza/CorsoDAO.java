@@ -1,5 +1,9 @@
 package uniway.persistenza;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class CorsoDAO {
     private final String url;
     private final String username;
@@ -10,4 +14,5 @@ public class CorsoDAO {
         this.username = username;
         this.password = password;
     }
+
 }
