@@ -16,6 +16,7 @@ import uniway.controller.GestioneIscritto;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -68,6 +69,20 @@ public class IscrittoController implements Initializable {
         provincia.getItems().addAll(gestioneIscritto.getProvince(regione.getValue()));
         provincia.setDisable(false);
         provincia.setOnAction(this::handleProvinciaSelection);
+        comune.getItems().clear();
+        comune.setDisable(true);
+        ateneo.getItems().clear();
+        ateneo.setDisable(true);
+        disciplina.getItems().clear();
+        disciplina.setDisable(true);
+        tipologia.getItems().clear();
+        tipologia.setDisable(true);
+        classe.getItems().clear();
+        classe.setDisable(true);
+        cerca.setDisable(true);
+        listView.getItems().clear();
+        label.setText("");
+
 
     }
 
@@ -77,6 +92,17 @@ public class IscrittoController implements Initializable {
         comune.getItems().addAll(gestioneIscritto.getComuni(provincia.getValue()));
         comune.setDisable(false);
         comune.setOnAction(this::handleComuneSelection);
+        ateneo.getItems().clear();
+        ateneo.setDisable(true);
+        disciplina.getItems().clear();
+        disciplina.setDisable(true);
+        tipologia.getItems().clear();
+        tipologia.setDisable(true);
+        classe.getItems().clear();
+        classe.setDisable(true);
+        cerca.setDisable(true);
+        listView.getItems().clear();
+        label.setText("");
     }
 
 
@@ -86,6 +112,15 @@ public class IscrittoController implements Initializable {
         ateneo.getItems().addAll(gestioneIscritto.getAtenei(comune.getValue()));
         ateneo.setDisable(false);
         ateneo.setOnAction(this::handleAteneoSelection);
+        disciplina.getItems().clear();
+        disciplina.setDisable(true);
+        tipologia.getItems().clear();
+        tipologia.setDisable(true);
+        classe.getItems().clear();
+        classe.setDisable(true);
+        cerca.setDisable(true);
+        listView.getItems().clear();
+        label.setText("");
 
     }
 
@@ -95,6 +130,14 @@ public class IscrittoController implements Initializable {
         disciplina.getItems().addAll(gestioneIscritto.getDiscipline(ateneo.getValue()));
         disciplina.setDisable(false);
         disciplina.setOnAction(this::handleDisciplinaSelection);
+        tipologia.getItems().clear();
+        tipologia.setDisable(true);
+        classe.getItems().clear();
+        classe.setDisable(true);
+        cerca.setDisable(true);
+        listView.getItems().clear();
+        label.setText("");
+
     }
 
     @FXML
@@ -103,6 +146,11 @@ public class IscrittoController implements Initializable {
         tipologia.getItems().addAll(gestioneIscritto.getTipologie(disciplina.getValue()));
         tipologia.setDisable(false);
         tipologia.setOnAction(this::handleTipologiaSelection);
+        classe.getItems().clear();
+        classe.setDisable(true);
+        cerca.setDisable(true);
+        listView.getItems().clear();
+        label.setText("");
     }
 
     @FXML
@@ -111,15 +159,21 @@ public class IscrittoController implements Initializable {
         classe.getItems().addAll(gestioneIscritto.getCorsi(tipologia.getValue()));
         classe.setDisable(false);
         classe.setOnAction(this::handleCorsoSelection);
+        cerca.setDisable(true);
+        listView.getItems().clear();
+        label.setText("");
     }
 
     public void handleCorsoSelection(ActionEvent event) {
-        String corso = classe.getValue();
-        if (corso != null) {
-            listView.getItems().addAll(gestioneIscritto.getRisultati(corso));
             cerca.setDisable(false);
-        }else {
-            label.setText("Nessun risultato , controlla i filtri");
-        }
+            cerca.setOnAction(this::handleCercaSelection);
+    }
+
+    public void handleCercaSelection(ActionEvent event) {
+        List<String> risultato =  gestioneIscritto.getRisultati(classe.getValue());
+        if (risultato != null) {
+            listView.getItems().addAll(risultato);
+        }else label.setText("Nessun risultato , controlla i filtri");
+
     }
 }

@@ -1,11 +1,5 @@
 package uniway.persistenza;
 
-import uniway.model.Ateneo;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 public class AteneoDAO {
     private final String url;
     private final String username;
