@@ -5,14 +5,18 @@ public class Corso {
     private String nomeCorso;
     private String disciplina;
     private String durata;
-    private String sedeCorso;
+    private String sedeProvincia;
+    private String sedeComune;
+    private String sedeRegione;
 
-    public Corso(String nomeClasse, String nomeCorso, String disciplina, String durata, String sedeCorso) {
+    public Corso(String nomeClasse, String nomeCorso, String disciplina, String durata, String sedeCorso, String sedeRegione, String sedeProvincia, String sedeComune) {
         this.nomeClasse = nomeClasse;
         this.nomeCorso = nomeCorso;
         this.disciplina = disciplina;
         this.durata = durata;
-        this.sedeCorso = sedeCorso;
+        this.sedeProvincia = sedeCorso;
+        this.sedeComune = sedeComune;
+        this.sedeRegione = sedeRegione;
     }
 
 }

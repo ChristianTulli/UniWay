@@ -23,7 +23,7 @@ public class UtenteDB implements UtenteDAO {
     @Override
     public void salvaUtente(Utente utente) throws IOException {
         String query;
-        query = "INSERT INTO Utenti (username, password, iscritto) VALUES (?, ?, ?)";
+        query = "INSERT INTO utenti (username, password, iscritto) VALUES (?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query)){

@@ -17,6 +17,15 @@ public class GestioneIscritto {
     private CorsoDAO corsoDAO;
     private String errore="errore";
 
+    private String regione;
+    private String provincia;
+    private String comune;
+    private String ateneo;
+    private String disciplina;
+    private String tipologia;
+    private String classe;
+
+
     public GestioneIscritto() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input=new FileInputStream("src/main/resources/config.properties")) {
@@ -32,35 +41,41 @@ public class GestioneIscritto {
     }
 
     public List<String> getRegioni() {
-        return ateneoDAO.getAllRegioni();
+        return corsoDAO.getAllRegioni();
     }
 
-    public List<String> getProvince(String regione) {
+    public List<String> getProvince(String regioneselezionata) {
+        this.regione = regioneselezionata;
         return corsoDAO.getProvinceByRegione(regione);
     }
 
-    public List<String> getComuni(String provincia) {
+    public List<String> getComuni(String provinciaselezionata) {
+        this.provincia = provinciaselezionata;
         return corsoDAO.getComuniByProvincia(provincia);
     }
 
-    public List<String> getAtenei(String comune) {
-        return ateneoDAO.getAteneiByComune(comune);
+    public List<String> getAtenei(String comuneselezionata) {
+        this.comune = comuneselezionata;
+        return corsoDAO.getAteneiByComune(comune);
     }
 
-    public List<String> getDiscipline(String ateneo) {
-        return corsoDAO.getDisciplineByAteneo(ateneo);
+    public List<String> getDiscipline(String ateneoselezionata) {
+        this.ateneo = ateneoselezionata;
+        return corsoDAO.getDisciplineByAteneo(comune, ateneo);
     }
 
-    public List<String> getTipologie(String disciplina) {
+    public List<String> getTipologie(String disciplinaselezionata) {
+        this.disciplina = disciplinaselezionata;
         return corsoDAO.getTipologieByDisciplina(disciplina);
     }
 
-    public List<String> getCorsi(String tipologia) {
-        return corsoDAO.getCorsiByTipologia(tipologia);
+    public List<String> getCorsi(String tipologiaselezionata) {
+        this.tipologia = tipologiaselezionata;
+        return corsoDAO.getCorsiByTipologia(comune, ateneo, disciplina, tipologia);
     }
 
-    public List<String> getRisultati(String corsi) {
-        return corsoDAO.getRisultatiByCorsi(corsi);
+    public List<String> getRisultati(String classeselezionata) {
+        this.classe = classeselezionata;
+        return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, tipologia, classe);
     }
 }
-
