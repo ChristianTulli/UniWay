@@ -23,7 +23,7 @@ public class UtenteDB implements UtenteDAO {
     @Override
     public void salvaUtente(Utente utente) throws IOException {
         String query;
-        query = "INSERT INTO Utenti (username, password, iscritto) VALUES (?, ?, ?)";
+        query = "INSERT INTO utenti (username, password, iscritto) VALUES (?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query)){
@@ -31,8 +31,15 @@ public class UtenteDB implements UtenteDAO {
             stmt.setString(1, utente.getUsername());
             stmt.setString(2, utente.getPassword());
             stmt.setBoolean(3, utente.getIscritto());
+
+            int rowsAffected = stmt.executeUpdate(); // Eseguiamo la query
+
+            if (rowsAffected == 0) {
+                throw new IOException("Nessun utente è stato inserito nel database.");
+            }
+
         } catch (SQLException e) {
-            throw new IOException("Errore durante il la registrazione dell'utente", e);
+            throw new IOException("Errore durante la registrazione dell'utente", e);
         }
     }
 
