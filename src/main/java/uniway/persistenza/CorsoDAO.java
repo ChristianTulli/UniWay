@@ -1,8 +1,6 @@
 package uniway.persistenza;
 
-import uniway.controller.GestioneIscritto;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -205,6 +203,34 @@ public class CorsoDAO {
 
         return risultati;
     }
+
+    public Integer getIdCorsoByNome(String comune, String ateneo, String tipologia, String nomecorso) {
+        String query = "SELECT c.id " +
+                "FROM corsi c " +
+                "JOIN atenei a ON c.idateneo = a.id " +
+                "WHERE c.sedecomune = ? " +
+                "AND a.nome = ?" +
+                "AND c.durata = ?" +
+                "AND c.nomecorso = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, comune);
+            stmt.setString(2, ateneo);
+            stmt.setString(3, tipologia);
+            stmt.setString(4, nomecorso);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Restituisce null se il corso non è trovato
+    }
+
 
 }
 

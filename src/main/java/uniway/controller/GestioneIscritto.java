@@ -1,11 +1,14 @@
 package uniway.controller;
 
+import uniway.beans.UtenteBean;
+import uniway.model.UtenteIscritto;
 import uniway.persistenza.AteneoDAO;
 import uniway.persistenza.CorsoDAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +27,9 @@ public class GestioneIscritto {
     private String disciplina;
     private String tipologia;
     private String classe;
+    private String corso;
+
+    private final GestioneLogin gestioneLogin = GestioneLogin.getInstance(); // Otteniamo il Singleton
 
 
     public GestioneIscritto() throws IllegalArgumentException {
@@ -39,6 +45,29 @@ public class GestioneIscritto {
             LOGGER.log(Level.SEVERE, errore, e);
         }
     }
+
+    public void setCorsoUtente(UtenteBean utenteBean, String corsoSelezionato) {
+        this.corso=corsoSelezionato;
+        Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, tipologia, corso);
+        utenteBean.setIdCorso(idCorso);
+
+        if (gestioneLogin.isFullMode()) { // Ora possiamo accedere a isFullMode
+            try {
+                gestioneLogin.getUtenteDAO().aggiungiCorsoUtente(utenteBean.getUsername(), idCorso);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del corso", e);
+            }
+        } else {
+            gestioneLogin.getUtenti().stream()
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
+                    .map(u -> (UtenteIscritto) u)
+                    .findFirst()
+                    .ifPresent(u -> u.setIdCorso(idCorso));
+        }
+    }
+
+
+
 
     public List<String> getRegioni() {
         return corsoDAO.getAllRegioni();

@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
+import uniway.beans.UtenteBean;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -20,6 +22,11 @@ public class RicercaController implements Initializable {
     private Scene scene;
     private Stage stage;
     private Parent root;
+    private UtenteBean utenteBean; // Aggiunto per tenere traccia dell'utente loggato
+
+    public void setUtenteBean(UtenteBean utenteBean) {
+        this.utenteBean = utenteBean;
+    }
 
     public void logOut(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/accesso-registrazione.fxml")));

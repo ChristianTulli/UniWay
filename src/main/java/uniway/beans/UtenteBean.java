@@ -6,6 +6,7 @@ public class UtenteBean {
     private String username;
     private String password;
     private boolean iscritto;
+    private int idCorso;
 
     public UtenteBean(String username, String password, boolean iscritto) {
         this.username = username;
@@ -13,9 +14,11 @@ public class UtenteBean {
         this.iscritto = iscritto;
     }
 
-    public UtenteBean(String username, String password) {
+    public UtenteBean(String username, String password, boolean iscritto, int idCorso) {
         this.username = username;
         this.password = password;
+        this.iscritto = iscritto;
+        this.idCorso = idCorso;
     }
 
     public String getUsername() {
@@ -31,8 +34,12 @@ public class UtenteBean {
 
         return iscritto;
     }
-    public void setIscritto(boolean iscritto) {
-        this.iscritto = iscritto;
+    public int getIdCorso() {
+        return idCorso;
+    }
+
+    public void setIdCorso(int idCorso) {
+        this.idCorso = idCorso;
     }
 
 }

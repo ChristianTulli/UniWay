@@ -17,4 +17,8 @@ public class UtenteIscritto extends Utente{
     public int getIdCorso() {
         return idCorso;
     }
+
+    public void setIdCorso(int idCorso) {
+        this.idCorso = idCorso;
+    }
 }

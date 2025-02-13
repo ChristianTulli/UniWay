@@ -3,6 +3,7 @@ package uniway.persistenza;
 import uniway.model.Utente;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +39,10 @@ public class UtenteFS implements UtenteDAO {
             throw new IllegalArgumentException("Errore di lettura: " + e);
         }
         return utenti;
+    }
+
+    @Override
+    public void aggiungiCorsoUtente(String username, int idCorso) throws SQLException {
+        //impementare scrittura id corso
     }
 }

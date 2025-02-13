@@ -79,4 +79,19 @@ public class UtenteDB implements UtenteDAO {
         }
         return utenti;
     }
+
+    @Override
+    public void aggiungiCorsoUtente(String usernameUtente, int idCorso) throws SQLException {
+        String query = "UPDATE utenti SET id_corso = ? WHERE username = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setObject(1, idCorso, Types.INTEGER);
+            stmt.setString(2, usernameUtente);
+            stmt.executeUpdate();
+        }
+    }
+
+
 }

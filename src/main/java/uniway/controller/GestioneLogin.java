@@ -109,4 +109,17 @@ public class GestioneLogin {
                 .findFirst()
                 .map(utente -> new UtenteBean(utente.getUsername(), utente.getPassword(), utente instanceof UtenteIscritto));
     }
+
+    public boolean isFullMode() {
+        return isFullMode;
+    }
+
+    public UtenteDAO getUtenteDAO() {
+        return utenteDAO;
+    }
+
+    public List<Utente> getUtenti() {
+        return utenti;
+    }
+
 }

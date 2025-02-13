@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import uniway.beans.UtenteBean;
 import uniway.controller.GestioneIscritto;
 
 import java.io.IOException;
@@ -24,11 +25,21 @@ public class IscrittoController implements Initializable {
     private Stage stage;
     private Parent root;
     private final GestioneIscritto gestioneIscritto = new GestioneIscritto();
+    private UtenteBean utenteBean; // Aggiunto per tenere traccia dell'utente loggato
 
-    @FXML private ComboBox<String> regione, provincia, comune, ateneo, disciplina, tipologia, classe;
-    @FXML private Button cerca;
-    @FXML private ListView<String> listView;
-    @FXML private Label label;
+    public void setUtenteBean(UtenteBean utenteBean) {
+        this.utenteBean = utenteBean;
+    }
+
+
+    @FXML
+    private ComboBox<String> regione, provincia, comune, ateneo, disciplina, tipologia, classe;
+    @FXML
+    private Button cerca;
+    @FXML
+    private ListView<String> listView;
+    @FXML
+    private Label label;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -53,56 +64,72 @@ public class IscrittoController implements Initializable {
 
     @FXML
     public void handleRegioneSelection(ActionEvent event) {
+        resetComboBoxes(provincia, comune, ateneo, disciplina, tipologia, classe);
         setupComboBox(provincia, gestioneIscritto.getProvince(regione.getValue()), this::handleProvinciaSelection);
-        resetComboBoxes(comune, ateneo, disciplina, tipologia, classe);
+
     }
 
     @FXML
     public void handleProvinciaSelection(ActionEvent event) {
+        resetComboBoxes(comune, ateneo, disciplina, tipologia, classe);
         setupComboBox(comune, gestioneIscritto.getComuni(provincia.getValue()), this::handleComuneSelection);
-        resetComboBoxes(ateneo, disciplina, tipologia, classe);
+
     }
 
     @FXML
     public void handleComuneSelection(ActionEvent event) {
+        resetComboBoxes(ateneo, disciplina, tipologia, classe);
         setupComboBox(ateneo, gestioneIscritto.getAtenei(comune.getValue()), this::handleAteneoSelection);
-        resetComboBoxes(disciplina, tipologia, classe);
+
     }
 
     @FXML
     public void handleAteneoSelection(ActionEvent event) {
+        resetComboBoxes(disciplina, tipologia, classe);
         setupComboBox(disciplina, gestioneIscritto.getDiscipline(ateneo.getValue()), this::handleDisciplinaSelection);
-        resetComboBoxes(tipologia, classe);
+
     }
 
     @FXML
     public void handleDisciplinaSelection(ActionEvent event) {
+        resetComboBoxes(tipologia, classe);
         setupComboBox(tipologia, gestioneIscritto.getTipologie(disciplina.getValue()), this::handleTipologiaSelection);
-        resetComboBoxes(classe);
+
     }
 
     @FXML
     public void handleTipologiaSelection(ActionEvent event) {
-        setupComboBox(classe, gestioneIscritto.getCorsi(tipologia.getValue()), this::handleCorsoSelection);
+        resetComboBoxes(classe);
+        setupComboBox(classe, gestioneIscritto.getCorsi(tipologia.getValue()), this::handleClasseSelection);
     }
 
     @FXML
-    public void handleCorsoSelection(ActionEvent event) {
+    public void handleClasseSelection(ActionEvent event) {
+        resetComboBoxes();
         cerca.setDisable(false);
         cerca.setOnAction(this::handleCercaSelection);
     }
 
     @FXML
     public void handleCercaSelection(ActionEvent event) {
+        listView.getItems().clear();
+        label.setText("");
         List<String> risultato = gestioneIscritto.getRisultati(classe.getValue());
         if (risultato != null && !risultato.isEmpty()) {
-            listView.getItems().setAll(risultato);
-        } else {
-            label.setText("Nessun risultato, controlla i filtri.");
+            listView.getItems().addAll(risultato);
+        }else {
+            label.setText("Nessun risultato, controlla i filtri");
         }
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                gestioneIscritto.setCorsoUtente(utenteBean, newValue); // Aggiorna idCorso di utenteBean
+                label.setText("Corso selezionato: " + newValue);
+            }
+        });
     }
 
-    public void logOut(ActionEvent event) throws IOException {
+
+    public void logOut (ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/accesso-registrazione.fxml")));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
