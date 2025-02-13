@@ -65,16 +65,15 @@ public class AccessoController {
 
     private void caricaInterfaccia(ActionEvent event, String percorsoFXML, UtenteBean utenteBean) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(percorsoFXML));
-        Parent root = loader.load();
 
         // Ottieni il controller della nuova interfaccia
         Object controller = loader.getController();
 
         // Passa l'utente al nuovo controller, verificando il tipo
-        if (controller instanceof IscrittoController) {
-            ((IscrittoController) controller).setUtenteBean(utenteBean);
-        } else if (controller instanceof RicercaController) {
-            ((RicercaController) controller).setUtenteBean(utenteBean);
+        if (controller instanceof IscrittoController iscrittoController) {
+            iscrittoController.setUtenteBean(utenteBean);
+        } else if (controller instanceof RicercaController ricercaController) {
+            ricercaController.setUtenteBean(utenteBean);
         }
 
         // Mostra la nuova schermata
