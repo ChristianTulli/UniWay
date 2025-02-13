@@ -76,7 +76,6 @@ public class RicercaController implements Initializable {
         }
     }
 
-
     @FXML
     public void handleProvinciaSelection(ActionEvent event) {
         String selezione = provincia.getValue();
