@@ -14,10 +14,6 @@ public class UtenteInCerca extends Utente{
         this.preferiti = preferiti;
     }
 
-    public List<String> getPreferiti() {
-        return preferiti;
-    }
-
     public List<String> getPreferenze() {
         return preferiti;
     }

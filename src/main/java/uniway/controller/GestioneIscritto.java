@@ -2,7 +2,6 @@ package uniway.controller;
 
 import uniway.beans.UtenteBean;
 import uniway.model.UtenteIscritto;
-import uniway.persistenza.AteneoDAO;
 import uniway.persistenza.CorsoDAO;
 
 import java.io.FileInputStream;

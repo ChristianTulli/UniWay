@@ -33,7 +33,19 @@ public class IscrittoController implements Initializable {
 
 
     @FXML
-    private ComboBox<String> regione, provincia, comune, ateneo, disciplina, tipologia, classe;
+    private ComboBox<String> regione;
+    @FXML
+    private ComboBox<String> provincia;
+    @FXML
+    private ComboBox<String> comune;
+    @FXML
+    private ComboBox<String> ateneo;
+    @FXML
+    private ComboBox<String>disciplina;
+    @FXML
+    private ComboBox<String> tipologia;
+    @FXML
+    private ComboBox<String> classe;
     @FXML
     private Button cerca;
     @FXML

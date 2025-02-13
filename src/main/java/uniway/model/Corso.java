@@ -9,7 +9,7 @@ public class Corso {
     private String sedeComune;
     private String sedeRegione;
 
-    public Corso(String nomeClasse, String nomeCorso, String disciplina, String durata, String sedeCorso, String sedeRegione, String sedeProvincia, String sedeComune) {
+    public Corso(String nomeClasse, String nomeCorso, String disciplina, String durata, String sedeProvincia, String sedeComune, String sedeRegione) {
         this.nomeClasse = nomeClasse;
         this.nomeCorso = nomeCorso;
         this.disciplina = disciplina;

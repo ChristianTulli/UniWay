@@ -27,10 +27,10 @@ public class UtenteFS implements UtenteDAO {
                     .append(utente.getPassword()).append(",")
                     .append(utente.getIscritto()).append(",");
 
-            if (utente instanceof UtenteIscritto) {
-                sb.append(((UtenteIscritto) utente).getIdCorso() != null ? ((UtenteIscritto) utente).getIdCorso() : "");
-            } else if (utente instanceof UtenteInCerca) {
-                sb.append(",").append(String.join(";", ((UtenteInCerca) utente).getPreferenze()));
+            if (utente instanceof UtenteIscritto iscritto) {
+                sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
+            } else if (utente instanceof UtenteInCerca inCerca) {
+                sb.append(",").append(String.join(";", inCerca.getPreferenze()));
             }
 
             writer.write(sb.toString());
@@ -82,14 +82,21 @@ public class UtenteFS implements UtenteDAO {
 
                     // Se l'utente è iscritto, aggiorno o aggiungo l'idCorso
                     if (split[3].equals("true")) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(split[0]).append(",")  // ID
+                                .append(split[1]).append(",")  // Username
+                                .append(split[2]).append(",")  // Password
+                                .append(split[3]).append(","); // Iscritto
+
                         if (split.length == 4) {
                             // L'utente non ha ancora un idCorso, lo aggiungo
-                            line += idCorso;
+                            sb.append(idCorso);
                         } else {
                             // L'utente ha già una colonna idCorso, la aggiorno
-                            split[4] = String.valueOf(idCorso);
-                            line = String.join(",", split);
+                            sb.append(idCorso);
                         }
+
+                        line = sb.toString(); // Converte il contenuto aggiornato in stringa
                     }
                 }
 
@@ -109,4 +116,5 @@ public class UtenteFS implements UtenteDAO {
             }
         }
     }
+
 }
