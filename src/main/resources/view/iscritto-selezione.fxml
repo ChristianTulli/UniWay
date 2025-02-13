@@ -20,7 +20,7 @@
          </image>
       </ImageView>
       <Button alignment="CENTER" layoutX="1477.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
-      <Button fx:id="cerca" disable="true" layoutX="688.0" layoutY="332.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="225.0" text="Cerca Facolta'" />
+      <Button fx:id="cerca" disable="true" layoutX="688.0" layoutY="332.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="225.0" text="Cerca Corso di Laurea" />
       <ButtonBar layoutX="435.0" layoutY="203.0" prefHeight="78.0" prefWidth="731.0">
          <buttons>
             <ComboBox fx:id="regione" prefWidth="150.0" promptText="Regione" />

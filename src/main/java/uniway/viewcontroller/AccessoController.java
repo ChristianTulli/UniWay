@@ -14,7 +14,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -64,8 +63,21 @@ public class AccessoController {
         }
     }
 
-    private void caricaInterfaccia(ActionEvent event, String percorsoFXML) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(percorsoFXML)));
+    private void caricaInterfaccia(ActionEvent event, String percorsoFXML, UtenteBean utenteBean) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(percorsoFXML));
+        Parent root = loader.load();
+
+        // Ottieni il controller della nuova interfaccia
+        Object controller = loader.getController();
+
+        // Passa l'utente al nuovo controller, verificando il tipo
+        if (controller instanceof IscrittoController) {
+            ((IscrittoController) controller).setUtenteBean(utenteBean);
+        } else if (controller instanceof RicercaController) {
+            ((RicercaController) controller).setUtenteBean(utenteBean);
+        }
+
+        // Mostra la nuova schermata
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -76,14 +88,14 @@ public class AccessoController {
     public void onIscrittoButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), true);
         if (registra(utenteBean)) {
-            caricaInterfaccia(event, interfacciaIscritto);
+            caricaInterfaccia(event, interfacciaIscritto, utenteBean);
         }
     }
 
     public void onRicercaButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), false);
         if (registra(utenteBean)) {
-            caricaInterfaccia(event, interfacciaRicerca);
+            caricaInterfaccia(event, interfacciaRicerca, utenteBean);
         }
     }
 
@@ -94,12 +106,13 @@ public class AccessoController {
             UtenteBean utenteBean = utenteOpt.get();
 
             if (utenteBean.getIscritto()) {
-                caricaInterfaccia(event, interfacciaIscritto);
+                caricaInterfaccia(event, interfacciaIscritto, utenteBean);
             } else {
-                caricaInterfaccia(event, interfacciaRicerca);
+                caricaInterfaccia(event, interfacciaRicerca, utenteBean);
             }
         } else {
             errorLabel.setText("Nessun utente o password corrispondente");
         }
     }
+
 } 

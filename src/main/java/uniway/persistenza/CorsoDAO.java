@@ -1,13 +1,18 @@
 package uniway.persistenza;
 
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CorsoDAO {
     private final String url;
     private final String username;
     private final String password;
+    private static final Logger LOGGER = Logger.getLogger(CorsoDAO.class.getName());
+    private String eccezione = "problema nella comunicazione col databse";
 
     public CorsoDAO(String url, String username, String password) {
         this.url = url;
@@ -27,7 +32,7 @@ public class CorsoDAO {
                 regioni.add(rs.getString("regionecorso"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
 
         return regioni;
@@ -47,7 +52,7 @@ public class CorsoDAO {
                 province.add(rs.getString("sedeprovincia"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
 
         return province;
@@ -67,7 +72,7 @@ public class CorsoDAO {
                 comuni.add(rs.getString("sedecomune"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
 
         return comuni;
@@ -89,7 +94,7 @@ public class CorsoDAO {
                 atenei.add(rs.getString("nome"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
 
         return atenei;
@@ -113,7 +118,7 @@ public class CorsoDAO {
                 discipline.add(rs.getString("gruppodisciplinare"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
 
         return discipline;
@@ -133,7 +138,7 @@ public class CorsoDAO {
                 tipologie.add(rs.getString("durata"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
 
         return tipologie;
@@ -162,7 +167,7 @@ public class CorsoDAO {
                 corsi.add(rs.getString("nomeclasse"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
 
         return corsi;
@@ -193,11 +198,39 @@ public class CorsoDAO {
                 risultati.add(rs.getString("nomecorso"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
 
         return risultati;
     }
+
+    public Integer getIdCorsoByNome(String comune, String ateneo, String tipologia, String nomecorso) {
+        String query = "SELECT c.id " +
+                "FROM corsi c " +
+                "JOIN atenei a ON c.idateneo = a.id " +
+                "WHERE c.sedecomune = ? " +
+                "AND a.nome = ?" +
+                "AND c.durata = ?" +
+                "AND c.nomecorso = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, comune);
+            stmt.setString(2, ateneo);
+            stmt.setString(3, tipologia);
+            stmt.setString(4, nomecorso);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, eccezione, e);
+        }
+        return null; // Restituisce null se il corso non è trovato
+    }
+
 
 }
 

@@ -1,7 +1,6 @@
 package uniway.model;
 
 public class UtenteIscritto extends Utente{
-    int id;
     private Integer idCorso;
 
     public UtenteIscritto(String username, String password, boolean iscritto) {
@@ -9,12 +8,15 @@ public class UtenteIscritto extends Utente{
     }
 
     public UtenteIscritto(int id, String username, String password,boolean iscritto, Integer idCorso) {
-        super(username, password, iscritto);
-        this.id = id;
+        super(id, username, password, iscritto);
         this.idCorso = idCorso;
     }
 
-    public int getIdCorso() {
+    public Integer getIdCorso() {
         return idCorso;
+    }
+
+    public void setIdCorso(int idCorso) {
+        this.idCorso = idCorso;
     }
 }

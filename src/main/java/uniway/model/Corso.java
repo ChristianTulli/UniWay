@@ -14,7 +14,7 @@ public class Corso {
         this.nomeCorso = nomeCorso;
         this.disciplina = disciplina;
         this.durata = durata;
-        this.sedeProvincia = sedeCorso;
+        this.sedeProvincia = sedeProvincia;
         this.sedeComune = sedeComune;
         this.sedeRegione = sedeRegione;
     }

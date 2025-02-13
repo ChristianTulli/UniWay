@@ -1,5 +1,7 @@
 package uniway.controller;
 
+import uniway.beans.UtenteBean;
+import uniway.model.UtenteIscritto;
 import uniway.persistenza.AteneoDAO;
 import uniway.persistenza.CorsoDAO;
 
@@ -13,9 +15,8 @@ import java.util.logging.Logger;
 public class GestioneIscritto {
 
     private static final Logger LOGGER = Logger.getLogger(GestioneIscritto.class.getName());
-    private  AteneoDAO ateneoDAO;
     private CorsoDAO corsoDAO;
-    private String errore="errore";
+    private String errore = "errore";
 
     private String regione;
     private String provincia;
@@ -24,21 +25,44 @@ public class GestioneIscritto {
     private String disciplina;
     private String tipologia;
     private String classe;
+    private String corso;
+
+    private final GestioneLogin gestioneLogin = GestioneLogin.getInstance(); // Otteniamo il Singleton
 
 
     public GestioneIscritto() throws IllegalArgumentException {
         Properties properties = new Properties();
-        try (FileInputStream input=new FileInputStream("src/main/resources/config.properties")) {
+        try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
-            ateneoDAO = new AteneoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
             corsoDAO = new CorsoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
 
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("File config.properties non trovato", e);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, errore, e);
         }
     }
+
+    public void setCorsoUtente(UtenteBean utenteBean, String corsoSelezionato) {
+        this.corso = corsoSelezionato;
+        Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, tipologia, corso);
+        utenteBean.setIdCorso(idCorso);
+
+        if (gestioneLogin.isFullMode()) { // Ora possiamo accedere a isFullMode
+            try {
+                gestioneLogin.getUtenteDAO().aggiungiCorsoUtente(utenteBean.getUsername(), idCorso);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del corso", e);
+            }
+        } else {
+            gestioneLogin.getUtenti().stream()
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
+                    .map(u -> (UtenteIscritto) u)
+                    .findFirst()
+                    .ifPresent(u -> u.setIdCorso(idCorso));
+        }
+    }
+
 
     public List<String> getRegioni() {
         return corsoDAO.getAllRegioni();
