@@ -3,7 +3,7 @@ package uniway.persistenza;
 import uniway.model.Utente;
 
 import java.io.IOException;
-import java.sql.SQLException;
+
 import java.util.List;
 
 public interface UtenteDAO {

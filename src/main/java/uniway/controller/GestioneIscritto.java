@@ -8,7 +8,6 @@ import uniway.persistenza.CorsoDAO;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,9 +15,8 @@ import java.util.logging.Logger;
 public class GestioneIscritto {
 
     private static final Logger LOGGER = Logger.getLogger(GestioneIscritto.class.getName());
-    private  AteneoDAO ateneoDAO;
     private CorsoDAO corsoDAO;
-    private String errore="errore";
+    private String errore = "errore";
 
     private String regione;
     private String provincia;
@@ -34,20 +32,19 @@ public class GestioneIscritto {
 
     public GestioneIscritto() throws IllegalArgumentException {
         Properties properties = new Properties();
-        try (FileInputStream input=new FileInputStream("src/main/resources/config.properties")) {
+        try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
-            ateneoDAO = new AteneoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
             corsoDAO = new CorsoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
 
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("File config.properties non trovato", e);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, errore, e);
         }
     }
 
     public void setCorsoUtente(UtenteBean utenteBean, String corsoSelezionato) {
-        this.corso=corsoSelezionato;
+        this.corso = corsoSelezionato;
         Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, tipologia, corso);
         utenteBean.setIdCorso(idCorso);
 
@@ -65,8 +62,6 @@ public class GestioneIscritto {
                     .ifPresent(u -> u.setIdCorso(idCorso));
         }
     }
-
-
 
 
     public List<String> getRegioni() {
