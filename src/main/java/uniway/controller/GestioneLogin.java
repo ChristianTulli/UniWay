@@ -59,9 +59,8 @@ public class GestioneLogin {
         try {
             if (instance == null) {
                 synchronized (GestioneLogin.class) {  // Blocco sincronizzato
-                    if (instance == null) { // Secondo controllo per evitare più istanze
-                        instance = new GestioneLogin();
-                    }
+                    // Controllo doppio per evitare più istanze
+                    instance = new GestioneLogin();
                 }
             }
         } catch (IllegalArgumentException e) {
