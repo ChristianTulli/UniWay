@@ -87,14 +87,7 @@ public class UtenteFS implements UtenteDAO {
                                 .append(split[1]).append(",")  // Username
                                 .append(split[2]).append(",")  // Password
                                 .append(split[3]).append(","); // Iscritto
-
-                        if (split.length == 4) {
-                            // L'utente non ha ancora un idCorso, lo aggiungo
-                            sb.append(idCorso);
-                        } else {
-                            // L'utente ha già una colonna idCorso, la aggiorno
-                            sb.append(idCorso);
-                        }
+                                sb.append(idCorso); // Assegno direttamente idCorso
 
                         line = sb.toString(); // Converte il contenuto aggiornato in stringa
                     }
