@@ -226,7 +226,7 @@ public class CorsoDAO {
                 return rs.getInt("id");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, eccezione, e);
         }
         return null; // Restituisce null se il corso non è trovato
     }

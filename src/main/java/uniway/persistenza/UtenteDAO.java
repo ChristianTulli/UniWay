@@ -11,6 +11,6 @@ public interface UtenteDAO {
 
      List<Utente> ottieniUtenti() throws IOException, IllegalArgumentException;
 
-     void aggiungiCorsoUtente(String username, int idCorso) throws SQLException;
+     void aggiungiCorsoUtente(String username, int idCorso) throws IOException;
 
 }

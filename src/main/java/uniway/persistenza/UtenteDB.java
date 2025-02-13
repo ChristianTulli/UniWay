@@ -81,7 +81,7 @@ public class UtenteDB implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiCorsoUtente(String usernameUtente, int idCorso) throws SQLException {
+    public void aggiungiCorsoUtente(String usernameUtente, int idCorso) throws IOException {
         String query = "UPDATE utenti SET id_corso = ? WHERE username = ?";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
@@ -90,7 +90,10 @@ public class UtenteDB implements UtenteDAO {
             stmt.setObject(1, idCorso, Types.INTEGER);
             stmt.setString(2, usernameUtente);
             stmt.executeUpdate();
+        }catch (SQLException e) {
+            throw new IOException("Errore durante il recupero degli utenti", e);
         }
+
     }
 
 
