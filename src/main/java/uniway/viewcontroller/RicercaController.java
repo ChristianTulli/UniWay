@@ -54,22 +54,23 @@ public class RicercaController implements Initializable {
         setupComboBox(statale, gestioneRicerca.getTipiAteneo(), this::handleStataleSelection);
         setupComboBox(regione, gestioneRicerca.getRegioni(), this::handleRegioneSelection);
         setupComboBox(durata, gestioneRicerca.getDurate(), this::handleDurataSelection);
-        cerca.setDisable(true); // Disattiva il tasto "Cerca" all'inizio
+        cerca.setDisable(true);
 
-        // Selezione di un corso dalla ListView
-        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                label.setText("Corso selezionato: " + newValue);
+        // 🔥 Aggiungere listener per il click su un elemento della ListView
+        listView.setOnMouseClicked(event -> {
+            String selectedItem = listView.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                apriDettaglioCorso(selectedItem);
             }
         });
     }
+
 
     private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> eventHandler) {
         comboBox.getItems().setAll(items);
         comboBox.setDisable(items.isEmpty());
         comboBox.setOnAction(event -> {
             if (eventHandler != null) eventHandler.handle(event);
-            checkCercaEnabled();
         });
     }
 
@@ -83,18 +84,23 @@ public class RicercaController implements Initializable {
     }
 
     private void checkCercaEnabled() {
-        // Il tasto "Cerca" si attiva se almeno un filtro principale è selezionato
-        boolean enabled = (statale.getValue() != null && !statale.getValue().isEmpty()) ||
-                (regione.getValue() != null && !regione.getValue().isEmpty()) ||
-                (durata.getValue() != null && !durata.getValue().isEmpty());
-        cerca.setDisable(!enabled);
+        boolean stataleSelezionato = statale.getValue() != null && !statale.getValue().isEmpty();
+        boolean regioneSelezionata = regione.getValue() != null && !regione.getValue().isEmpty();
+        boolean durataSelezionata = durata.getValue() != null && !durata.getValue().isEmpty();
+
+        // Il tasto cerca si attiva solo quando tutti e tre i filtri principali sono stati selezionati
+        boolean tuttiPrincipaliSelezionati = stataleSelezionato && regioneSelezionata && durataSelezionata;
+
+        cerca.setDisable(!tuttiPrincipaliSelezionati);
     }
+
 
     // 🔵 COLONNA 1: TIPOLOGIA ATENEO
     @FXML
     public void handleStataleSelection(ActionEvent event) {
         resetComboBoxes(tipologia);
         setupComboBox(tipologia, gestioneRicerca.getTipologie(statale.getValue()), this::handleTipologiaSelection);
+        checkCercaEnabled();
     }
 
     @FXML
@@ -108,6 +114,7 @@ public class RicercaController implements Initializable {
     public void handleRegioneSelection(ActionEvent event) {
         resetComboBoxes(provincia, comune);
         setupComboBox(provincia, gestioneRicerca.getProvince(regione.getValue()), this::handleProvinciaSelection);
+        checkCercaEnabled();
     }
 
     @FXML
@@ -127,6 +134,7 @@ public class RicercaController implements Initializable {
     public void handleDurataSelection(ActionEvent event) {
         resetComboBoxes(gruppoDisciplina, classeCorso);
         setupComboBox(gruppoDisciplina, gestioneRicerca.getDiscipline(durata.getValue()), this::handleGruppoSelection);
+        checkCercaEnabled();
     }
 
     @FXML
@@ -152,6 +160,29 @@ public class RicercaController implements Initializable {
             label.setText("Nessun risultato, prova a cambiare i filtri.");
         }
     }
+
+    private void apriDettaglioCorso(String corsoSelezionato) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dettaglio-corso.fxml"));
+            Parent newRoot = loader.load();
+
+            // Ottieni il controller corretto
+            DettaglioCorsoController dettaglioController = loader.getController();
+
+            // Passa il corso selezionato al controller
+            dettaglioController.setCorsoSelezionato(corsoSelezionato);
+
+            // Crea una nuova finestra per i dettagli del corso
+            Stage stage = new Stage();
+            stage.setScene(new Scene(newRoot));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     public void logOut(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/accesso-registrazione.fxml")));

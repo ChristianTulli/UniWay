@@ -294,13 +294,13 @@ public class CorsoDAO {
                                             String comune, String durata, String gruppoDisciplina, String classeCorso) {
         List<String> risultati = new ArrayList<>();
         StringBuilder query = new StringBuilder(
-                "SELECT DISTINCT c.nomecorso FROM corsi c " +
-                        "JOIN atenei a ON c.idateneo = a.id"); // Aggiunta JOIN con atenei
-
+                "SELECT c.nomecorso, a.nome AS nome_ateneo FROM corsi c " +
+                        "JOIN atenei a ON c.idateneo = a.id "
+        );
         List<String> condizioni = new ArrayList<>();
         List<Object> parametri = new ArrayList<>();
 
-        // Filtri dinamici
+        // Aggiunta condizioni dinamiche solo se i filtri sono impostati
         if (statale != null && !statale.isEmpty()) {
             condizioni.add("a.statale = ?");
             parametri.add(statale);
@@ -334,7 +334,7 @@ public class CorsoDAO {
             parametri.add(classeCorso);
         }
 
-        // Aggiunta WHERE dinamico
+        // Costruzione della query con WHERE dinamico
         if (!condizioni.isEmpty()) {
             query.append(" WHERE ").append(String.join(" AND ", condizioni));
         }
@@ -342,14 +342,16 @@ public class CorsoDAO {
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query.toString())) {
 
-            // Impostazione parametri
+            // Assegnazione dei parametri
             for (int i = 0; i < parametri.size(); i++) {
                 stmt.setObject(i + 1, parametri.get(i));
             }
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                risultati.add(rs.getString("nomecorso"));
+                String nomeCorso = rs.getString("nomecorso");
+                String nomeAteneo = rs.getString("nome_ateneo");
+                risultati.add(nomeCorso + " - " + nomeAteneo);
             }
 
         } catch (SQLException e) {
@@ -358,6 +360,7 @@ public class CorsoDAO {
 
         return risultati;
     }
+
 
 
 
