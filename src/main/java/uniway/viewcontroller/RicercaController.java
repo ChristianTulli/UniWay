@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import uniway.beans.UtenteBean;
 import uniway.controller.GestioneRicerca;
@@ -18,6 +19,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RicercaController implements Initializable {
 
@@ -26,6 +29,8 @@ public class RicercaController implements Initializable {
     private Parent root;
     private final GestioneRicerca gestioneRicerca = new GestioneRicerca();
     private UtenteBean utenteBean;
+    private String interfacciaCorso = "/view/dettaglio-corso.fxml";
+    private static final Logger LOGGER = Logger.getLogger(RicercaController.class.getName());
 
     public void setUtenteBean(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
@@ -54,16 +59,17 @@ public class RicercaController implements Initializable {
         setupComboBox(statale, gestioneRicerca.getTipiAteneo(), this::handleStataleSelection);
         setupComboBox(regione, gestioneRicerca.getRegioni(), this::handleRegioneSelection);
         setupComboBox(durata, gestioneRicerca.getDurate(), this::handleDurataSelection);
-        cerca.setDisable(true);
+        cerca.setDisable(true); // Disattiva il tasto "Cerca" all'inizio
 
-        // 🔥 Aggiungere listener per il click su un elemento della ListView
-        listView.setOnMouseClicked(event -> {
-            String selectedItem = listView.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                apriDettaglioCorso(selectedItem);
+        // Listener per il doppio click su un elemento della ListView
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                label.setText("Corso selezionato: " + newValue);
+                apriDettaglioCorso(newValue);
             }
         });
     }
+
 
 
     private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> eventHandler) {
@@ -161,27 +167,26 @@ public class RicercaController implements Initializable {
         }
     }
 
+    // 🔹 Metodo per aprire la schermata del dettaglio del corso
     private void apriDettaglioCorso(String corsoSelezionato) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dettaglio-corso.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(interfacciaCorso));
             Parent newRoot = loader.load();
 
-            // Ottieni il controller corretto
-            DettaglioCorsoController dettaglioController = loader.getController();
+            // Ottieni il controller della nuova interfaccia
+            DettaglioCorsoController controller = loader.getController();
+            controller.setCorsoSelezionato(corsoSelezionato);
 
-            // Passa il corso selezionato al controller
-            dettaglioController.setCorsoSelezionato(corsoSelezionato);
-
-            // Crea una nuova finestra per i dettagli del corso
-            Stage stage = new Stage();
-            stage.setScene(new Scene(newRoot));
+            // Cambia la schermata attuale
+            stage = (Stage) listView.getScene().getWindow();
+            scene = new Scene(newRoot);
+            stage.setScene(scene);
             stage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-        }
+                LOGGER.log(Level.SEVERE, "errore nell'apertura nella visualizzazione del corso", e);
+            }
     }
-
 
 
     public void logOut(ActionEvent event) throws IOException {
