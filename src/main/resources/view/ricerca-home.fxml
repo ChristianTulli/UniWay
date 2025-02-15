@@ -21,25 +21,30 @@
          </image>
       </ImageView>
       <Button alignment="CENTER" layoutX="1477.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
-      <Button fx:id="cerca" disable="true" layoutX="688.0" layoutY="389.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="225.0" text="Cerca Corso di Laurea" />
+      <Button fx:id="cerca" disable="true" layoutX="688.0" layoutY="389.0" mnemonicParsing="false" onAction="#handleCercaSelection" prefHeight="45.0" prefWidth="225.0" text="Cerca Corso di Laurea" />
       <ButtonBar layoutX="439.0" layoutY="194.0" prefHeight="78.0" prefWidth="703.0" />
       <Pane layoutX="426.0" layoutY="194.0" prefHeight="176.0" prefWidth="749.0">
          <children>
             <ComboBox fx:id="regione" layoutX="300.0" layoutY="14.0" prefWidth="150.0" promptText="Regione" />
             <ComboBox fx:id="provincia" disable="true" layoutX="300.0" layoutY="76.0" prefWidth="150.0" promptText="Provincia" />
-            <ComboBox fx:id="provincia1" disable="true" layoutX="300.0" layoutY="137.0" prefWidth="150.0" promptText="Comune" />
-            <ComboBox fx:id="ateneo1" layoutX="14.0" layoutY="14.0" prefWidth="150.0" promptText="Statale" />
-            <ComboBox fx:id="ateneo11" disable="true" layoutX="14.0" layoutY="76.0" prefWidth="150.0" promptText="Tipologia" />
-            <ComboBox fx:id="facolta" layoutX="585.0" layoutY="14.0" prefWidth="150.0" promptText="Durata" />
-            <ComboBox fx:id="ateneo" disable="true" layoutX="585.0" layoutY="76.0" prefWidth="150.0" promptText="Gruppo Disciplinare" />
-            <ComboBox fx:id="corso" disable="true" layoutX="585.0" layoutY="137.0" prefWidth="150.0" promptText="Classe del corso" />
+            <ComboBox fx:id="comune" disable="true" layoutX="300.0" layoutY="137.0" prefWidth="150.0" promptText="Comune" />
+            <ComboBox fx:id="statale" layoutX="14.0" layoutY="14.0" prefWidth="150.0" promptText="Statale" />
+            <ComboBox fx:id="tipologia" disable="true" layoutX="14.0" layoutY="76.0" prefWidth="150.0" promptText="Tipologia" />
+            <ComboBox fx:id="durata" layoutX="585.0" layoutY="14.0" prefWidth="150.0" promptText="Durata" />
+            <ComboBox fx:id="gruppoDisciplina" disable="true" layoutX="585.0" layoutY="76.0" prefWidth="150.0" promptText="Gruppo Disciplina" />
+            <ComboBox fx:id="classeCorso" disable="true" layoutX="585.0" layoutY="137.0" prefWidth="150.0" promptText="Classe del corso" />
          </children>
       </Pane>
-      <ListView layoutX="405.0" layoutY="450.0" prefHeight="418.0" prefWidth="791.0" />
+      <ListView fx:id="listView" layoutX="405.0" layoutY="450.0" prefHeight="418.0" prefWidth="791.0" />
       <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
       <Label layoutX="749.0" layoutY="148.0" text="IN CERCA">
          <font>
             <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="label" alignment="CENTER" contentDisplay="CENTER" layoutX="408.0" layoutY="646.0" prefHeight="27.0" prefWidth="785.0" textFill="RED" underline="true">
+         <font>
+            <Font size="18.0" />
          </font>
       </Label>
    </children>

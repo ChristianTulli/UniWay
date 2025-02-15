@@ -1,19 +1,21 @@
 package uniway.viewcontroller;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import uniway.beans.UtenteBean;
+import uniway.controller.GestioneRicerca;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -22,10 +24,133 @@ public class RicercaController implements Initializable {
     private Scene scene;
     private Stage stage;
     private Parent root;
-    private UtenteBean utenteBean; // Aggiunto per tenere traccia dell'utente loggato
+    private final GestioneRicerca gestioneRicerca = new GestioneRicerca();
+    private UtenteBean utenteBean;
 
     public void setUtenteBean(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
+    }
+
+    // 🔵 COLONNA 1: Tipologia di Ateneo
+    @FXML private ComboBox<String> statale;
+    @FXML private ComboBox<String> tipologia;
+
+    // 🔵 COLONNA 2: Ubicazione
+    @FXML private ComboBox<String> regione;
+    @FXML private ComboBox<String> provincia;
+    @FXML private ComboBox<String> comune;
+
+    // 🔵 COLONNA 3: Caratteristiche del Corso
+    @FXML private ComboBox<String> durata;
+    @FXML private ComboBox<String> gruppoDisciplina;
+    @FXML private ComboBox<String> classeCorso;
+
+    @FXML private Button cerca;
+    @FXML private ListView<String> listView;
+    @FXML private Label label;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setupComboBox(statale, gestioneRicerca.getTipiAteneo(), this::handleStataleSelection);
+        setupComboBox(regione, gestioneRicerca.getRegioni(), this::handleRegioneSelection);
+        setupComboBox(durata, gestioneRicerca.getDurate(), this::handleDurataSelection);
+        cerca.setDisable(true); // Disattiva il tasto "Cerca" all'inizio
+
+        // Selezione di un corso dalla ListView
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                label.setText("Corso selezionato: " + newValue);
+            }
+        });
+    }
+
+    private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> eventHandler) {
+        comboBox.getItems().setAll(items);
+        comboBox.setDisable(items.isEmpty());
+        comboBox.setOnAction(event -> {
+            if (eventHandler != null) eventHandler.handle(event);
+            checkCercaEnabled();
+        });
+    }
+
+    private void resetComboBoxes(ComboBox<?>... comboBoxes) {
+        for (ComboBox<?> comboBox : comboBoxes) {
+            comboBox.getItems().clear();
+            comboBox.setDisable(true);
+        }
+        listView.getItems().clear();
+        label.setText("");
+    }
+
+    private void checkCercaEnabled() {
+        // Il tasto "Cerca" si attiva se almeno un filtro principale è selezionato
+        boolean enabled = (statale.getValue() != null && !statale.getValue().isEmpty()) ||
+                (regione.getValue() != null && !regione.getValue().isEmpty()) ||
+                (durata.getValue() != null && !durata.getValue().isEmpty());
+        cerca.setDisable(!enabled);
+    }
+
+    // 🔵 COLONNA 1: TIPOLOGIA ATENEO
+    @FXML
+    public void handleStataleSelection(ActionEvent event) {
+        resetComboBoxes(tipologia);
+        setupComboBox(tipologia, gestioneRicerca.getTipologie(statale.getValue()), this::handleTipologiaSelection);
+    }
+
+    @FXML
+    public void handleTipologiaSelection(ActionEvent event) {
+        resetComboBoxes();
+        gestioneRicerca.setTipologia(tipologia.getValue());
+    }
+
+    // 🔵 COLONNA 2: UBICAZIONE
+    @FXML
+    public void handleRegioneSelection(ActionEvent event) {
+        resetComboBoxes(provincia, comune);
+        setupComboBox(provincia, gestioneRicerca.getProvince(regione.getValue()), this::handleProvinciaSelection);
+    }
+
+    @FXML
+    public void handleProvinciaSelection(ActionEvent event) {
+        resetComboBoxes(comune);
+        setupComboBox(comune, gestioneRicerca.getComuni(provincia.getValue()), this::handleComuneSelection);
+    }
+
+    @FXML
+    public void handleComuneSelection(ActionEvent event) {
+        resetComboBoxes();
+        gestioneRicerca.setComune(comune.getValue());
+    }
+
+    // 🔵 COLONNA 3: CARATTERISTICHE CORSO
+    @FXML
+    public void handleDurataSelection(ActionEvent event) {
+        resetComboBoxes(gruppoDisciplina, classeCorso);
+        setupComboBox(gruppoDisciplina, gestioneRicerca.getDiscipline(durata.getValue()), this::handleGruppoSelection);
+    }
+
+    @FXML
+    public void handleGruppoSelection(ActionEvent event) {
+        resetComboBoxes(classeCorso);
+        setupComboBox(classeCorso, gestioneRicerca.getClassi(gruppoDisciplina.getValue()), this::handleClasseSelection);
+    }
+
+    @FXML
+    public void handleClasseSelection(ActionEvent event) {
+        resetComboBoxes();
+        gestioneRicerca.setClasseCorso(classeCorso.getValue());
+    }
+
+    // 🔵 CERCA RISULTATI
+    @FXML
+    public void handleCercaSelection(ActionEvent event) {
+        resetComboBoxes();
+        List<String> risultato = gestioneRicerca.getRisultati();
+        if (risultato != null && !risultato.isEmpty()) {
+            listView.getItems().addAll(risultato);
+        } else {
+            label.setText("Nessun risultato, prova a cambiare i filtri.");
+        }
     }
 
     public void logOut(ActionEvent event) throws IOException {
@@ -35,106 +160,6 @@ public class RicercaController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
-
-    @FXML
-    private ComboBox<String> regione;
-    @FXML
-    private ComboBox<String> provincia;
-    @FXML
-    private ComboBox<String> ateneo;
-    @FXML
-    private ComboBox<String> facolta;
-    @FXML
-    private ComboBox<String> corso;
-    @FXML
-    private Button cerca;
-
-    //private final String[] ... implementare i dati provenienti dal database
-    private final String[] regioni = {"Lazio", "Lombardia"};
-
-    private final String[] provinciaLazio = {"Roma", "Latina"};
-
-    private final String[] ateneiRoma = {"TorVergata", "LaSapienza"};
-
-    private final String[] facoltaAteneo = {"Ingegneria", "Economia"};
-    private final String[] corsiIngegneria = {"Ingegneria informatica", "Ingegneria gestionale", "Ingegneria civile", "Ingegneria medica"};
-
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        regione.getItems().addAll(regioni);
-        regione.setOnAction(this::handleRegioneSelection);
-    }
-
-    @FXML
-    public void handleRegioneSelection(ActionEvent event) {
-        String selezione = regione.getValue();
-        if ("Lazio".equals(selezione)) {
-            provincia.getItems().clear();
-            provincia.getItems().addAll(provinciaLazio);
-            provincia.setDisable(false);
-            provincia.setOnAction(this::handleProvinciaSelection);
-        } else {
-            provincia.setDisable(true);
-            ateneo.setDisable(true);
-            facolta.setDisable(true);
-            corso.setDisable(true);
-            cerca.setDisable(true);
-        }
-    }
-
-    @FXML
-    public void handleProvinciaSelection(ActionEvent event) {
-        String selezione = provincia.getValue();
-
-        if ("Roma".equals(selezione)) {
-            ateneo.getItems().clear();
-            ateneo.getItems().addAll(ateneiRoma);
-            ateneo.setDisable(false);
-            ateneo.setOnAction(this::handleAteneoSelection);
-        } else {
-            ateneo.setDisable(true);
-            facolta.setDisable(true);
-            corso.setDisable(true);
-            cerca.setDisable(true);
-        }
-    }
-
-    @FXML
-    public void handleAteneoSelection(ActionEvent event) {
-        String selezione = ateneo.getValue();
-
-        if ("TorVergata".equals(selezione)) {
-            facolta.getItems().clear();
-            facolta.getItems().addAll(facoltaAteneo);
-            facolta.setDisable(false);
-            facolta.setOnAction(this::handleFacoltaSelection);
-        } else {
-            facolta.setDisable(true);
-            corso.setDisable(true);
-            cerca.setDisable(true);
-        }
-    }
-
-    @FXML
-    public void handleFacoltaSelection(ActionEvent event) {
-        String selezione = facolta.getValue();
-        if ("Ingegneria".equals(selezione)) {
-            corso.getItems().clear();
-            corso.getItems().addAll(corsiIngegneria);
-            corso.setDisable(false);
-            corso.setOnAction(this::handleCorsoSelection);
-
-        } else {
-            corso.setDisable(true);
-            cerca.setDisable(true);
-        }
-
-
-    }
-
-    public void handleCorsoSelection(ActionEvent event) {
-        String selezione = corso.getValue();
-        cerca.setDisable(selezione == null);
-    }
 }
+
+

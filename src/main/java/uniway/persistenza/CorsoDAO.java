@@ -38,6 +38,24 @@ public class CorsoDAO {
         return regioni;
     }
 
+    public List<String> getAllDurate() {
+        List<String> durate = new ArrayList<>();
+        String query = "SELECT DISTINCT durata FROM corsi";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                durate.add(rs.getString("durata"));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, eccezione, e);
+        }
+
+        return durate;
+    }
+
     public List<String> getProvinceByRegione(String regione) {
         List<String> province = new ArrayList<>();
         String query = "SELECT DISTINCT sedeprovincia FROM corsi WHERE regionecorso = ?";
@@ -230,6 +248,117 @@ public class CorsoDAO {
         }
         return null; // Restituisce null se il corso non è trovato
     }
+
+    public List<String> getDisciplineByDurata(String durata) {
+        List<String> discipline = new ArrayList<>();
+        String query = "SELECT DISTINCT gruppodisciplinare FROM corsi WHERE durata = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, durata);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                discipline.add(rs.getString("gruppodisciplinare"));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, eccezione, e);
+        }
+
+        return discipline;
+    }
+
+    public List<String> getClassiByDisciplina(String disciplina, String durata) {
+        List<String> classi = new ArrayList<>();
+        String query = "SELECT DISTINCT nomeclasse FROM corsi WHERE gruppodisciplinare = ? AND durata = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, disciplina);
+            stmt.setString(2, durata);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                classi.add(rs.getString("nomeclasse"));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, eccezione, e);
+        }
+
+        return classi;
+    }
+
+    public List<String> getRisultatiRicerca(String statale, String tipologia, String regione, String provincia,
+                                            String comune, String durata, String gruppoDisciplina, String classeCorso) {
+        List<String> risultati = new ArrayList<>();
+        StringBuilder query = new StringBuilder(
+                "SELECT DISTINCT c.nomecorso FROM corsi c " +
+                        "JOIN atenei a ON c.idateneo = a.id"); // Aggiunta JOIN con atenei
+
+        List<String> condizioni = new ArrayList<>();
+        List<Object> parametri = new ArrayList<>();
+
+        // Filtri dinamici
+        if (statale != null && !statale.isEmpty()) {
+            condizioni.add("a.statale = ?");
+            parametri.add(statale);
+        }
+        if (tipologia != null && !tipologia.isEmpty()) {
+            condizioni.add("a.tipologia = ?");
+            parametri.add(tipologia);
+        }
+        if (regione != null && !regione.isEmpty()) {
+            condizioni.add("c.regionecorso = ?");
+            parametri.add(regione);
+        }
+        if (provincia != null && !provincia.isEmpty()) {
+            condizioni.add("c.sedeprovincia = ?");
+            parametri.add(provincia);
+        }
+        if (comune != null && !comune.isEmpty()) {
+            condizioni.add("c.sedecomune = ?");
+            parametri.add(comune);
+        }
+        if (durata != null && !durata.isEmpty()) {
+            condizioni.add("c.durata = ?");
+            parametri.add(durata);
+        }
+        if (gruppoDisciplina != null && !gruppoDisciplina.isEmpty()) {
+            condizioni.add("c.gruppodisciplinare = ?");
+            parametri.add(gruppoDisciplina);
+        }
+        if (classeCorso != null && !classeCorso.isEmpty()) {
+            condizioni.add("c.nomeclasse = ?");
+            parametri.add(classeCorso);
+        }
+
+        // Aggiunta WHERE dinamico
+        if (!condizioni.isEmpty()) {
+            query.append(" WHERE ").append(String.join(" AND ", condizioni));
+        }
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+
+            // Impostazione parametri
+            for (int i = 0; i < parametri.size(); i++) {
+                stmt.setObject(i + 1, parametri.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                risultati.add(rs.getString("nomecorso"));
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore durante il recupero dei risultati della ricerca", e);
+        }
+
+        return risultati;
+    }
+
 
 
 }

@@ -59,7 +59,6 @@ public class GestioneLogin {
         try {
             if (instance == null) {
                 synchronized (GestioneLogin.class) {  // Blocco sincronizzato
-                    // Controllo doppio per evitare più istanze
                     instance = new GestioneLogin();
                 }
             }
