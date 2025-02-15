@@ -65,6 +65,7 @@ public class AccessoController {
 
     private void caricaInterfaccia(ActionEvent event, String percorsoFXML, UtenteBean utenteBean) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(percorsoFXML));
+        Parent newRoot = loader.load();
 
         // Ottieni il controller della nuova interfaccia
         Object controller = loader.getController();
@@ -78,7 +79,7 @@ public class AccessoController {
 
         // Mostra la nuova schermata
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
+        scene = new Scene(newRoot);
         stage.setScene(scene);
         stage.show();
     }
