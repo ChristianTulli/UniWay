@@ -70,8 +70,6 @@ public class RicercaController implements Initializable {
         });
     }
 
-
-
     private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> eventHandler) {
         comboBox.getItems().setAll(items);
         comboBox.setDisable(items.isEmpty());
@@ -174,8 +172,11 @@ public class RicercaController implements Initializable {
             Parent newRoot = loader.load();
 
             // Ottieni il controller della nuova interfaccia
-            DettaglioCorsoController controller = loader.getController();
-            controller.setCorsoSelezionato(corsoSelezionato);
+            DettaglioCorsoController dettaglioCorsoController = loader.getController();
+            dettaglioCorsoController.setUtenteBean(utenteBean);
+
+            // Passa il corso selezionato e la lista completa dei risultati
+            dettaglioCorsoController.setCorsoSelezionato(corsoSelezionato, listView.getItems());
 
             // Cambia la schermata attuale
             stage = (Stage) listView.getScene().getWindow();
@@ -184,9 +185,10 @@ public class RicercaController implements Initializable {
             stage.show();
 
         } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "errore nell'apertura nella visualizzazione del corso", e);
-            }
+            LOGGER.log(Level.SEVERE, "Errore nell'apertura della visualizzazione del corso", e);
+        }
     }
+
 
 
     public void logOut(ActionEvent event) throws IOException {

@@ -13,4 +13,6 @@ public interface UtenteDAO {
 
      void aggiungiCorsoUtente(String username, int idCorso) throws IOException;
 
+     void aggiungiPreferitiUtente(String username, int idPreferiti) throws IOException;
+
 }

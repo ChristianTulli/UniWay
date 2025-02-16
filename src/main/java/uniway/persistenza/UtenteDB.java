@@ -7,7 +7,9 @@ import uniway.model.UtenteIscritto;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UtenteDB implements UtenteDAO {
     private final String url;
@@ -58,14 +60,17 @@ public class UtenteDB implements UtenteDAO {
                 String utentePassword = rs.getString("password");
                 boolean iscritto = rs.getBoolean("iscritto");
                 Integer idCorso = rs.getObject("id_corso", Integer.class); // può essere NULL
-                List<String> preferenze = new ArrayList<>();
+                List<Integer> preferenze = new ArrayList<>();
 
                 if (!iscritto) {
                     String prefStr = rs.getString("preferenze");
                     if (prefStr != null && !prefStr.isEmpty()) {
-                        preferenze = List.of(prefStr.split(",")); // Converte la stringa in lista
+                        preferenze = Arrays.stream(prefStr.split(","))
+                                .map(Integer::parseInt) // Converte ogni elemento in Integer
+                                .collect(Collectors.toList()); // Converte in lista mutabile
                     }
                 }
+
 
                 // Creazione dell'oggetto corretto
                 if (iscritto) {
@@ -96,5 +101,35 @@ public class UtenteDB implements UtenteDAO {
 
     }
 
+    @Override
+    public void aggiungiPreferitiUtente(String usernameUtente, int idCorso) throws IOException {
+        String querySelect = "SELECT preferenze FROM utenti WHERE username = ?";
+        String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmtSelect = conn.prepareStatement(querySelect);
+             PreparedStatement stmtUpdate = conn.prepareStatement(queryUpdate)) {
+
+            stmtSelect.setString(1, usernameUtente);
+            ResultSet rs = stmtSelect.executeQuery();
+
+            String nuovaLista = String.valueOf(idCorso);
+            if (rs.next() && rs.getString("preferenze") != null) {
+                String preferenzeAttuali = rs.getString("preferenze");
+                List<String> listaPreferiti = new ArrayList<>(List.of(preferenzeAttuali.split(",")));
+
+                if (!listaPreferiti.contains(nuovaLista)) {
+                    listaPreferiti.add(nuovaLista);
+                }
+                nuovaLista = String.join(",", listaPreferiti);
+            }
+
+            stmtUpdate.setString(1, nuovaLista);
+            stmtUpdate.setString(2, usernameUtente);
+            stmtUpdate.executeUpdate();
+        } catch (SQLException e) {
+            throw new IOException("Errore durante l'aggiornamento dei preferiti", e);
+        }
+    }
 
 }

@@ -249,6 +249,30 @@ public class CorsoDAO {
         return null; // Restituisce null se il corso non è trovato
     }
 
+    public Integer getIdCorsoByNomeAndAteneo(String ateneo, String nomecorso){
+        String query = "SELECT c.id " +
+                "FROM corsi c " +
+                "JOIN atenei a ON c.idateneo = a.id " +
+                "WHERE a.nome = ?" +
+                "AND c.nomecorso = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, ateneo);
+            stmt.setString(2, nomecorso);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, eccezione, e);
+        }
+        return null;
+
+    }
+
     public List<String> getDisciplineByDurata(String durata) {
         List<String> discipline = new ArrayList<>();
         String query = "SELECT DISTINCT gruppodisciplinare FROM corsi WHERE durata = ?";

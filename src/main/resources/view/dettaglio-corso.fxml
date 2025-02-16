@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
@@ -22,43 +21,37 @@
       <Button alignment="CENTER" layoutX="1477.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
       <Pane layoutX="1004.0" layoutY="142.0" prefHeight="739.0" prefWidth="582.0">
          <children>
-            <Label layoutX="221.0" layoutY="14.0" text="CONFRONTA">
+            <Label layoutX="120.0" layoutY="14.0" prefHeight="35.0" prefWidth="356.0" text="CONFRONTA CON CORSI SIMILI:">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <ListView layoutX="15.0" layoutY="247.0" prefHeight="472.0" prefWidth="554.0" />
-            <Pane layoutX="44.0" layoutY="49.0" prefHeight="190.0" prefWidth="495.0">
-               <children>
-                  <ComboBox fx:id="regione" layoutX="173.0" layoutY="14.0" prefWidth="150.0" promptText="Regione" />
-                  <ComboBox fx:id="provincia" disable="true" layoutX="173.0" layoutY="51.0" prefWidth="150.0" promptText="Provincia" />
-                  <ComboBox fx:id="comune" disable="true" layoutX="173.0" layoutY="89.0" prefWidth="150.0" promptText="Comune" />
-                  <ComboBox fx:id="statale" layoutX="14.0" layoutY="14.0" prefWidth="150.0" promptText="Statale" />
-                  <ComboBox fx:id="tipologia" disable="true" layoutX="14.0" layoutY="51.0" prefWidth="150.0" promptText="Tipologia" />
-                  <ComboBox fx:id="durata" layoutX="333.0" layoutY="14.0" prefWidth="150.0" promptText="Durata" />
-                  <ComboBox fx:id="gruppoDisciplina" disable="true" layoutX="333.0" layoutY="51.0" prefWidth="150.0" promptText="Gruppo Disciplina" />
-                  <ComboBox fx:id="classeCorso" disable="true" layoutX="333.0" layoutY="89.0" prefWidth="150.0" promptText="Classe del corso" />
-                  <Button fx:id="cerca" disable="true" layoutX="150.0" layoutY="131.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="196.0" text="Cerca Corso di Laurea" />
-               </children>
-            </Pane>
+            <ListView fx:id="listaCorsiSimili" layoutX="15.0" layoutY="126.0" prefHeight="593.0" prefWidth="554.0" />
+            <Label fx:id="erroreLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="17.0" layoutY="356.0" prefHeight="27.0" prefWidth="548.0" textFill="RED" underline="true">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
-      <ListView fx:id="listView" layoutX="44.0" layoutY="272.0" prefHeight="585.0" prefWidth="918.0" />
-      <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
-      <Label layoutX="464.0" layoutY="141.0" text="CORSO">
+      <ListView fx:id="listaInsegnamentiCorso" layoutX="44.0" layoutY="264.0" prefHeight="593.0" prefWidth="918.0" />
+      <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
+      <Label layoutX="461.0" layoutY="136.0" text="CORSO:">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <Label fx:id="corsoLabel" layoutX="45.0" layoutY="176.0" prefHeight="35.0" prefWidth="918.0" text="NOME">
+      <Label fx:id="corsoLabel" layoutX="45.0" layoutY="171.0" prefHeight="35.0" prefWidth="660.0" text="NOME">
          <font>
-            <Font size="24.0" />
+            <Font size="18.0" />
          </font>
       </Label>
-      <Label layoutX="280.0" layoutY="211.0" prefHeight="35.0" prefWidth="449.0" text="ATENEO">
+      <Label fx:id="ateneoLabel" layoutX="45.0" layoutY="211.0" prefHeight="35.0" prefWidth="449.0" text="ATENEO">
          <font>
-            <Font size="24.0" />
+            <Font size="18.0" />
          </font>
       </Label>
+      <Button alignment="CENTER" layoutX="1217.0" layoutY="66.0" mnemonicParsing="false" onAction="#goBack" prefHeight="42.0" prefWidth="109.0" text="Indietro" />
+      <Button fx:id="preferitiButton" alignment="CENTER" layoutX="827.0" layoutY="204.0" mnemonicParsing="false" onAction="#aggiungiAiPreferiti" prefHeight="42.0" prefWidth="135.0" text="Aggiungi ai Preferiti" />
    </children>
 </AnchorPane>
