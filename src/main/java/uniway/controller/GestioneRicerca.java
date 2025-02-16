@@ -4,6 +4,7 @@ import uniway.persistenza.AteneoDAO;
 import uniway.persistenza.CorsoDAO;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -93,6 +94,8 @@ public class GestioneRicerca {
 
     // 🔵 CERCA RISULTATI
     public List<String> getRisultati() {
-        return corsoDAO.getRisultatiRicerca(statale, tipologia, regione, provincia, comune, durata, gruppoDisciplina, classeCorso);
+        List<String> filtri = List.of(statale, tipologia, regione, provincia, comune, durata, gruppoDisciplina, classeCorso);
+        return corsoDAO.getRisultatiRicerca(filtri);
     }
+
 }
