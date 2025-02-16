@@ -290,51 +290,28 @@ public class CorsoDAO {
         return classi;
     }
 
-    public List<String> getRisultatiRicerca(String statale, String tipologia, String regione, String provincia,
-                                            String comune, String durata, String gruppoDisciplina, String classeCorso) {
+    public List<String> getRisultatiRicerca(List<String> filtri) {
         List<String> risultati = new ArrayList<>();
         StringBuilder query = new StringBuilder(
                 "SELECT c.nomecorso, a.nome AS nome_ateneo FROM corsi c " +
                         "JOIN atenei a ON c.idateneo = a.id "
         );
+
         List<String> condizioni = new ArrayList<>();
         List<Object> parametri = new ArrayList<>();
 
-        // Aggiunta condizioni dinamiche solo se i filtri sono impostati
-        if (statale != null && !statale.isEmpty()) {
-            condizioni.add("a.statale = ?");
-            parametri.add(statale);
-        }
-        if (tipologia != null && !tipologia.isEmpty()) {
-            condizioni.add("a.tipologia = ?");
-            parametri.add(tipologia);
-        }
-        if (regione != null && !regione.isEmpty()) {
-            condizioni.add("c.regionecorso = ?");
-            parametri.add(regione);
-        }
-        if (provincia != null && !provincia.isEmpty()) {
-            condizioni.add("c.sedeprovincia = ?");
-            parametri.add(provincia);
-        }
-        if (comune != null && !comune.isEmpty()) {
-            condizioni.add("c.sedecomune = ?");
-            parametri.add(comune);
-        }
-        if (durata != null && !durata.isEmpty()) {
-            condizioni.add("c.durata = ?");
-            parametri.add(durata);
-        }
-        if (gruppoDisciplina != null && !gruppoDisciplina.isEmpty()) {
-            condizioni.add("c.gruppodisciplinare = ?");
-            parametri.add(gruppoDisciplina);
-        }
-        if (classeCorso != null && !classeCorso.isEmpty()) {
-            condizioni.add("c.nomeclasse = ?");
-            parametri.add(classeCorso);
+        // Definiamo i nomi delle colonne per ogni filtro
+        String[] colonne = {"a.statale", "a.tipologia", "c.regionecorso", "c.sedeprovincia",
+                "c.sedecomune", "c.durata", "c.gruppodisciplinare", "c.nomeclasse"};
+
+        // Iteriamo sui filtri, aggiungendo solo quelli non nulli e non vuoti
+        for (int i = 0; i < filtri.size(); i++) {
+            if (filtri.get(i) != null && !filtri.get(i).isEmpty()) {
+                condizioni.add(colonne[i] + " = ?");
+                parametri.add(filtri.get(i));
+            }
         }
 
-        // Costruzione della query con WHERE dinamico
         if (!condizioni.isEmpty()) {
             query.append(" WHERE ").append(String.join(" AND ", condizioni));
         }
@@ -342,7 +319,6 @@ public class CorsoDAO {
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query.toString())) {
 
-            // Assegnazione dei parametri
             for (int i = 0; i < parametri.size(); i++) {
                 stmt.setObject(i + 1, parametri.get(i));
             }
@@ -353,13 +329,13 @@ public class CorsoDAO {
                 String nomeAteneo = rs.getString("nome_ateneo");
                 risultati.add(nomeCorso + " - " + nomeAteneo);
             }
-
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Errore durante il recupero dei risultati della ricerca", e);
         }
 
         return risultati;
     }
+
 
 
 
