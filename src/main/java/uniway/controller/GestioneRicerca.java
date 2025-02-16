@@ -94,7 +94,16 @@ public class GestioneRicerca {
 
     // 🔵 CERCA RISULTATI
     public List<String> getRisultati() {
-        List<String> filtri = List.of(statale, tipologia, regione, provincia, comune, durata, gruppoDisciplina, classeCorso);
+        List<String> filtri = new ArrayList<>();
+        filtri.add(statale != null ? statale : "");
+        filtri.add(tipologia != null ? tipologia : "");
+        filtri.add(regione != null ? regione : "");
+        filtri.add(provincia != null ? provincia : "");
+        filtri.add(comune != null ? comune : "");
+        filtri.add(durata != null ? durata : "");
+        filtri.add(gruppoDisciplina != null ? gruppoDisciplina : "");
+        filtri.add(classeCorso != null ? classeCorso : "");
+
         return corsoDAO.getRisultatiRicerca(filtri);
     }
 
