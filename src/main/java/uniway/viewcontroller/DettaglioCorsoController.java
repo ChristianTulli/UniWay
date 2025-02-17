@@ -92,12 +92,20 @@ public class DettaglioCorsoController {
 
 
     public void goBack(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/ricerca-home.fxml")));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ricerca-home.fxml"));
+        Parent newRoot = loader.load();
+
+        // Passa l'UtenteBean al nuovo controller
+        RicercaController ricercaController = loader.getController();
+        ricercaController.setUtenteBean(utenteBean);  // ✅ Mantiene l'utente attivo
+
+        // Cambia schermata
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
+        scene = new Scene(newRoot);
         stage.setScene(scene);
         stage.show();
     }
+
 
     public void logOut(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/accesso-registrazione.fxml")));

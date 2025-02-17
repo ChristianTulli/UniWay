@@ -41,12 +41,12 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Label fx:id="corsoLabel" layoutX="45.0" layoutY="171.0" prefHeight="35.0" prefWidth="660.0" text="NOME">
+      <Label fx:id="corsoLabel" layoutX="45.0" layoutY="171.0" prefHeight="35.0" prefWidth="780.0" text="NOME">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="ateneoLabel" layoutX="45.0" layoutY="211.0" prefHeight="35.0" prefWidth="449.0" text="ATENEO">
+      <Label fx:id="ateneoLabel" layoutX="45.0" layoutY="211.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
          <font>
             <Font size="18.0" />
          </font>
