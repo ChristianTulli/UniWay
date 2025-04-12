@@ -135,11 +135,18 @@ public class UtenteFS implements UtenteDAO {
                     if (!split[3].equals("true")) { // Se l'utente NON è iscritto
                         List<Integer> listaPreferiti = new ArrayList<>();
 
-                        if (split.length > 4 && !split[4].isEmpty()) {
+                        if (split.length < 5) {
+                            // Se la riga non ha abbastanza elementi, aggiungo uno spazio vuoto per i preferiti
+                            split = Arrays.copyOf(split, 5);
+                            split[4] = "";
+                        }
+
+                        if (!split[4].isEmpty()) {
                             listaPreferiti = Arrays.stream(split[4].split(";"))
                                     .map(Integer::parseInt)
                                     .collect(Collectors.toList());
                         }
+
 
                         if (!listaPreferiti.contains(idCorso)) {
                             listaPreferiti.add(idCorso);

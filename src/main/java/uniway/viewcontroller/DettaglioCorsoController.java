@@ -1,23 +1,28 @@
 package uniway.viewcontroller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import uniway.beans.UtenteBean;
 import uniway.controller.GestoreDettaglioCorso;
+import uniway.model.Insegnamento;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
-public class DettaglioCorsoController {
+public class DettaglioCorsoController implements Initializable {
 
     private Scene scene;
     private Stage stage;
@@ -41,13 +46,39 @@ public class DettaglioCorsoController {
     private Label erroreLabel;
 
     @FXML
-    private ListView<String> listaInsegnamentiCorso;
+    private TableView<Insegnamento> tableView;
+
+    @FXML
+    private TableColumn<Insegnamento, Integer> cfu;
+
+    @FXML
+    private TableColumn<Insegnamento, String> curriculum;
+
+    @FXML
+    private TableColumn<Insegnamento, String> insegnamento;
+
+    @FXML
+    private TableColumn<Insegnamento, Integer> semestre;
 
     @FXML
     private ListView<String> listaCorsiSimili;
 
     @FXML
     private Button preferitiButton;
+
+    ObservableList<Insegnamento> listaInsegnamenti = FXCollections.observableArrayList(
+            //chiamare metodo controller applicativo che restituisca lista di insegnamenti
+            //ATTENZIONE CORREGGERE TUUTTO SUBITO, NON USARE MODEL MA BEAN DI INSEGNAMENTO
+    );
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        insegnamento.setCellValueFactory(new PropertyValueFactory<Insegnamento, String>("insegnamento"));
+        curriculum.setCellValueFactory(new PropertyValueFactory<Insegnamento, String>("curriculum"));
+        cfu.setCellValueFactory(new PropertyValueFactory<Insegnamento, Integer>("cfu"));
+        semestre.setCellValueFactory(new PropertyValueFactory<Insegnamento, Integer>("semestre"));
+
+    }
 
     private List<String> corsiSimili;
 
@@ -97,7 +128,7 @@ public class DettaglioCorsoController {
 
         // Passa l'UtenteBean al nuovo controller
         RicercaController ricercaController = loader.getController();
-        ricercaController.setUtenteBean(utenteBean);  // ✅ Mantiene l'utente attivo
+        ricercaController.setUtenteBean(utenteBean);  // Mantiene l'utente attivo
 
         // Cambia schermata
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
