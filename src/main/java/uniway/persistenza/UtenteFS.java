@@ -63,9 +63,12 @@ public class UtenteFS implements UtenteDAO {
                 } else {
                     List<Integer> preferenze = new ArrayList<>();
                     if (split.length > 4 && !split[4].isEmpty()) {
-                        preferenze = Arrays.stream(split[4].split(";")) // Dividi la stringa con ";"
-                                .map(Integer::parseInt)     // Converte in Integer
-                                .collect(Collectors.toList()); // Trasforma in List<Integer>
+                        preferenze = new ArrayList<>(
+                                Arrays.stream(split[4].split(";"))
+                                        .map(Integer::parseInt)
+                                        .toList()
+                        );
+
                     }
                     utenti.add(new UtenteInCerca(id, username, password, false, preferenze));
                 }
@@ -127,41 +130,13 @@ public class UtenteFS implements UtenteDAO {
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] split = line.split(",");
-
-                if (split.length >= 4 && split[1].equals(username)) {
+                String nuovaRiga = processaRigaPreferiti(line, username, idCorso);
+                if (nuovaRiga != null) {
                     utenteTrovato = true;
-
-                    if (!split[3].equals("true")) { // Se l'utente NON è iscritto
-                        List<Integer> listaPreferiti = new ArrayList<>();
-
-                        if (split.length < 5) {
-                            // Se la riga non ha abbastanza elementi, aggiungo uno spazio vuoto per i preferiti
-                            split = Arrays.copyOf(split, 5);
-                            split[4] = "";
-                        }
-
-                        if (!split[4].isEmpty()) {
-                            listaPreferiti = Arrays.stream(split[4].split(";"))
-                                    .map(Integer::parseInt)
-                                    .collect(Collectors.toList());
-                        }
-
-
-                        if (!listaPreferiti.contains(idCorso)) {
-                            listaPreferiti.add(idCorso);
-                        }
-
-                        split[4] = listaPreferiti.stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.joining(";")); // Riconverti in stringa
-
-                        line = String.join(",", split);
-                    }
-
+                    righe.add(nuovaRiga);
+                } else {
+                    righe.add(line);
                 }
-
-                righe.add(line);
             }
         }
 
@@ -175,6 +150,35 @@ public class UtenteFS implements UtenteDAO {
                 writer.newLine();
             }
         }
+    }
+
+    private String processaRigaPreferiti(String line, String username, int idCorso) {
+        String[] split = line.split(",");
+        if (split.length >= 4 && split[1].equals(username) && !split[3].equals("true")) {
+            if (split.length < 5) {
+                split = Arrays.copyOf(split, 5);
+                split[4] = "";
+            }
+
+            List<Integer> preferiti = new ArrayList<>();
+            if (!split[4].isEmpty()) {
+                preferiti = Arrays.stream(split[4].split(";"))
+                        .map(Integer::parseInt)
+                        .toList();
+            }
+
+            if (!preferiti.contains(idCorso)) {
+                preferiti = new ArrayList<>(preferiti);
+                preferiti.add(idCorso);
+            }
+
+            split[4] = preferiti.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(";"));
+
+            return String.join(",", split);
+        }
+        return null; // Nessuna modifica alla riga
     }
 
 

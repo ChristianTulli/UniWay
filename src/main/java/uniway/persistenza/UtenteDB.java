@@ -9,12 +9,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UtenteDB implements UtenteDAO {
     private final String url;
     private final String username;
     private final String password;
+    private String colonnaPreferenze= "preferenze";
 
     public UtenteDB(String url, String username, String password) {
         this.url = url;
@@ -65,11 +65,14 @@ public class UtenteDB implements UtenteDAO {
                 if (!iscritto) {
                     String prefStr = rs.getString("preferenze");
                     if (prefStr != null && !prefStr.isEmpty()) {
-                        preferenze = Arrays.stream(prefStr.split(","))
-                                .map(Integer::parseInt) // Converte ogni elemento in Integer
-                                .collect(Collectors.toList()); // Converte in lista mutabile
+                        preferenze = new ArrayList<>(
+                                Arrays.stream(prefStr.split(","))
+                                        .map(Integer::parseInt)
+                                        .toList()
+                        );
                     }
                 }
+
 
 
                 // Creazione dell'oggetto corretto
@@ -114,8 +117,8 @@ public class UtenteDB implements UtenteDAO {
             ResultSet rs = stmtSelect.executeQuery();
 
             String nuovaLista = String.valueOf(idCorso);
-            if (rs.next() && rs.getString("preferenze") != null) {
-                String preferenzeAttuali = rs.getString("preferenze");
+            if (rs.next() && rs.getString(colonnaPreferenze) != null) {
+                String preferenzeAttuali = rs.getString(colonnaPreferenze);
                 List<String> listaPreferiti = new ArrayList<>(List.of(preferenzeAttuali.split(",")));
 
                 if (!listaPreferiti.contains(nuovaLista)) {
