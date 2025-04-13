@@ -57,9 +57,10 @@
       <TableView fx:id="tableView" layoutX="44.0" layoutY="264.0" prefHeight="593.0" prefWidth="918.0">
         <columns>
           <TableColumn fx:id="insegnamento" prefWidth="248.0" text="Insegnamento" />
-            <TableColumn fx:id="curriculum" minWidth="0.0" prefWidth="511.0" text="Curriculum" />
-          <TableColumn fx:id="semestre" minWidth="0.0" prefWidth="79.0" text="Semestre" />
-            <TableColumn fx:id="cfu" minWidth="0.0" prefWidth="79.0" text="CFU" />
+          <TableColumn fx:id="semestre" minWidth="0.0" prefWidth="110.4000244140625" text="Semestre" />
+            <TableColumn fx:id="anno" minWidth="0.0" prefWidth="54.4000244140625" text="Anno" />
+            <TableColumn fx:id="cfu" minWidth="0.0" prefWidth="70.39999999999998" text="CFU" />
+            <TableColumn fx:id="curriculum" minWidth="0.0" prefWidth="432.79998779296875" text="Curriculum" />
         </columns>
       </TableView>
    </children>

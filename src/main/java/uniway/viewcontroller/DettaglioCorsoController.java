@@ -12,9 +12,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.GestoreDettaglioCorso;
-import uniway.model.Insegnamento;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +31,7 @@ public class DettaglioCorsoController implements Initializable {
     private String corsoCorrente;
     private String nomeCorso;
     private String nomeAteneo;
+    private GestoreDettaglioCorso gestoreDettaglioCorso;
 
     public void setUtenteBean(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
@@ -46,19 +47,23 @@ public class DettaglioCorsoController implements Initializable {
     private Label erroreLabel;
 
     @FXML
-    private TableView<Insegnamento> tableView;
+    private TableView<InsegnamentoBean> tableView;
 
     @FXML
-    private TableColumn<Insegnamento, Integer> cfu;
+    private TableColumn<InsegnamentoBean, Integer> cfu;
 
     @FXML
-    private TableColumn<Insegnamento, String> curriculum;
+    private TableColumn<InsegnamentoBean, String> curriculum;
 
     @FXML
-    private TableColumn<Insegnamento, String> insegnamento;
+    private TableColumn<InsegnamentoBean, String> insegnamento;
 
     @FXML
-    private TableColumn<Insegnamento, Integer> semestre;
+    private TableColumn<InsegnamentoBean, Integer> semestre;
+
+    @FXML
+    private TableColumn<InsegnamentoBean, Integer> anno;
+
 
     @FXML
     private ListView<String> listaCorsiSimili;
@@ -66,23 +71,20 @@ public class DettaglioCorsoController implements Initializable {
     @FXML
     private Button preferitiButton;
 
-    ObservableList<Insegnamento> listaInsegnamenti = FXCollections.observableArrayList(
-            //chiamare metodo controller applicativo che restituisca lista di insegnamenti
-            //ATTENZIONE CORREGGERE TUUTTO SUBITO, NON USARE MODEL MA BEAN DI INSEGNAMENTO
-    );
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        insegnamento.setCellValueFactory(new PropertyValueFactory<Insegnamento, String>("insegnamento"));
-        curriculum.setCellValueFactory(new PropertyValueFactory<Insegnamento, String>("curriculum"));
-        cfu.setCellValueFactory(new PropertyValueFactory<Insegnamento, Integer>("cfu"));
-        semestre.setCellValueFactory(new PropertyValueFactory<Insegnamento, Integer>("semestre"));
+        insegnamento.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, String>("nome"));
+        curriculum.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, String>("curriculum"));
+        cfu.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("cfu"));
+        semestre.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("semestre"));
+        anno.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("anno"));
 
     }
 
     private List<String> corsiSimili;
 
     public void setCorsoSelezionato(String corso, List<String> corsiSimili) {
+        this.corsoCorrente = corso;
         this.corsiSimili = corsiSimili;
         String[] dettagli = corso.split(" - ");
 
@@ -90,7 +92,6 @@ public class DettaglioCorsoController implements Initializable {
         nomeCorso = dettagli[0];
         ateneoLabel.setText("Ateneo: " + dettagli[1]);
         nomeAteneo = dettagli[1];
-
 
         // Popola la lista dei corsi simili escludendo il corso selezionato
         listaCorsiSimili.getItems().clear();
@@ -100,17 +101,17 @@ public class DettaglioCorsoController implements Initializable {
             }
         }
 
-        // Mostra il messaggio di errore se non ci sono altri corsi simili
-        if (listaCorsiSimili.getItems().isEmpty()) {
-            erroreLabel.setText("Nessun corso simile con i filtri precedentemente impostati.");
-        } else {
-            erroreLabel.setText("");
-        }
+        // Messaggio di errore se vuota
+        erroreLabel.setText(listaCorsiSimili.getItems().isEmpty() ?
+                "Nessun corso simile con i filtri precedentemente impostati." : "");
 
-        // Popola la lista degli insegnamenti usando GestoreDettaglioCorso
-        List<String> insegnamenti = GestoreDettaglioCorso.getInsegnamenti(nomeCorso);
-        listaInsegnamentiCorso.getItems().setAll(insegnamenti);
+        // Inizializza il controller e popola la tabella insegnamenti
+        gestoreDettaglioCorso = new GestoreDettaglioCorso();
+        List<InsegnamentoBean> lista = gestoreDettaglioCorso.getInsegnamenti(nomeCorso, nomeAteneo);
+        ObservableList<InsegnamentoBean> listaInsegnamenti = FXCollections.observableArrayList(lista);
+        tableView.setItems(listaInsegnamenti);
     }
+
 
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {

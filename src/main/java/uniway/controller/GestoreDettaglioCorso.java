@@ -1,8 +1,11 @@
 package uniway.controller;
 
+import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
+import uniway.model.Insegnamento;
 import uniway.model.UtenteInCerca;
 import uniway.persistenza.CorsoDAO;
+import uniway.persistenza.InsegnamentoDAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,12 +22,14 @@ public class GestoreDettaglioCorso {
     private String ateneo;
     private String tipologia;
     private final GestioneLogin gestioneLogin = GestioneLogin.getInstance();
+    private InsegnamentoDAO insegnamentoDAO;
 
     public GestoreDettaglioCorso() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
             corsoDAO = new CorsoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
+            insegnamentoDAO = new InsegnamentoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("File config.properties non trovato", e);
         } catch (Exception e) {
@@ -32,10 +37,22 @@ public class GestoreDettaglioCorso {
         }
     }
 
-    public static List<String> getInsegnamenti(String corsoCorrente) {
+    public List<InsegnamentoBean> getInsegnamenti(String corsoCorrente, String ateneoCorrente) {
         // Implementare la logica per ottenere gli insegnamenti
-        List<String> insegnamenti = new ArrayList<>();
-        return insegnamenti;
+        List<Insegnamento> insegnamenti = new ArrayList<>();
+        List<InsegnamentoBean> insegnamentiBean = new ArrayList<>();
+        insegnamentoDAO.getInsegnamentiFromDB(corsoCorrente, ateneoCorrente, insegnamenti);
+        for (Insegnamento ins : insegnamenti) {
+            InsegnamentoBean bean = new InsegnamentoBean();
+            bean.setNome(ins.getNome());
+            bean.setAnno(ins.getAnno());
+            bean.setSemestre(ins.getSemestre());
+            bean.setCfu(ins.getCfu());
+            bean.setCurriculum(ins.getCurriculum());
+            insegnamentiBean.add(bean);
+        }
+
+        return insegnamentiBean;
     }
 
     public void aggiungiAiPreferiti(UtenteBean utenteBean, String corsoSelezionato, String ateneoSelezionato) {
