@@ -23,3 +23,8 @@ file.path=filepersistenza.txt
 
 
 running.mode=full   # possibili valori: 'full' o 'demo'
+2.  
+impostare la VM come segue:
+Run -> Edit Configurations, aggiungere una nuova configurazione
+su VM options inserire il seguente comando:
+--module-path "path del vostro jfx" --add-modules javafx.controls,javafx.fxml 

@@ -6,7 +6,9 @@ import uniway.model.UtenteInCerca;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UtenteFS implements UtenteDAO {
     private final String path;
@@ -30,7 +32,9 @@ public class UtenteFS implements UtenteDAO {
             if (utente instanceof UtenteIscritto iscritto) {
                 sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
             } else if (utente instanceof UtenteInCerca inCerca) {
-                sb.append(",").append(String.join(";", inCerca.getPreferenze()));
+                sb.append(",").append(inCerca.getPreferenze().stream()
+                        .map(String::valueOf) // Converte Integer in String
+                        .collect(Collectors.joining(";"))); // Unisce con ";"
             }
 
             writer.write(sb.toString());
@@ -57,7 +61,15 @@ public class UtenteFS implements UtenteDAO {
                     Integer idCorso = split.length > 4 && !split[4].isEmpty() ? Integer.parseInt(split[4]) : null;
                     utenti.add(new UtenteIscritto(id, username, password, true, idCorso));
                 } else {
-                    List<String> preferenze = split.length > 5 ? List.of(split[5].split(";")) : new ArrayList<>();
+                    List<Integer> preferenze = new ArrayList<>();
+                    if (split.length > 4 && !split[4].isEmpty()) {
+                        preferenze = new ArrayList<>(
+                                Arrays.stream(split[4].split(";"))
+                                        .map(Integer::parseInt)
+                                        .toList()
+                        );
+
+                    }
                     utenti.add(new UtenteInCerca(id, username, password, false, preferenze));
                 }
             }
@@ -109,5 +121,65 @@ public class UtenteFS implements UtenteDAO {
             }
         }
     }
+
+    @Override
+    public void aggiungiPreferitiUtente(String username, int idCorso) throws IOException {
+        List<String> righe = new ArrayList<>();
+        boolean utenteTrovato = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String nuovaRiga = processaRigaPreferiti(line, username, idCorso);
+                if (nuovaRiga != null) {
+                    utenteTrovato = true;
+                    righe.add(nuovaRiga);
+                } else {
+                    righe.add(line);
+                }
+            }
+        }
+
+        if (!utenteTrovato) {
+            throw new IOException("Utente non trovato nel file.");
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+            for (String riga : righe) {
+                writer.write(riga);
+                writer.newLine();
+            }
+        }
+    }
+
+    private String processaRigaPreferiti(String line, String username, int idCorso) {
+        String[] split = line.split(",");
+        if (split.length >= 4 && split[1].equals(username) && !split[3].equals("true")) {
+            if (split.length < 5) {
+                split = Arrays.copyOf(split, 5);
+                split[4] = "";
+            }
+
+            List<Integer> preferiti = new ArrayList<>();
+            if (!split[4].isEmpty()) {
+                preferiti = Arrays.stream(split[4].split(";"))
+                        .map(Integer::parseInt)
+                        .toList();
+            }
+
+            if (!preferiti.contains(idCorso)) {
+                preferiti = new ArrayList<>(preferiti);
+                preferiti.add(idCorso);
+            }
+
+            split[4] = preferiti.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(";"));
+
+            return String.join(",", split);
+        }
+        return null; // Nessuna modifica alla riga
+    }
+
 
 }

@@ -107,5 +107,4 @@ public class GestioneRicerca {
         return corsoDAO.getRisultatiRicerca(filtri);
     }
 
-
 }
