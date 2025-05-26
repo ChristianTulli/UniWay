@@ -31,7 +31,7 @@ public class DettaglioCorsoController implements Initializable {
     private String corsoCorrente;
     private String nomeCorso;
     private String nomeAteneo;
-    private GestoreDettaglioCorso gestoreDettaglioCorso;
+    private GestoreDettaglioCorso gestoreDettaglioCorso = new GestoreDettaglioCorso();
 
     public void setUtenteBean(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
@@ -105,8 +105,7 @@ public class DettaglioCorsoController implements Initializable {
         erroreLabel.setText(listaCorsiSimili.getItems().isEmpty() ?
                 "Nessun corso simile con i filtri precedentemente impostati." : "");
 
-        // Inizializza il controller e popola la tabella insegnamenti
-        gestoreDettaglioCorso = new GestoreDettaglioCorso();
+        // popola la tabella insegnamenti
         List<InsegnamentoBean> lista = gestoreDettaglioCorso.getInsegnamenti(nomeCorso, nomeAteneo);
         ObservableList<InsegnamentoBean> listaInsegnamenti = FXCollections.observableArrayList(lista);
         tableView.setItems(listaInsegnamenti);
@@ -116,8 +115,7 @@ public class DettaglioCorsoController implements Initializable {
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {
         if (utenteBean != null && nomeCorso != null) {
-            GestoreDettaglioCorso gestore = new GestoreDettaglioCorso(); // Creazione dell'istanza
-            gestore.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
+            gestoreDettaglioCorso.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
             preferitiButton.setDisable(true);
         }
     }

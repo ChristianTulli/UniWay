@@ -45,6 +45,7 @@ public class AccessoController {
 
     private final GestioneLogin gestioneLogin = GestioneLogin.getInstance(); //non creare una nuova istanza ma usare la stessa, altrimenti creo una nuova lista
 
+    //fa apparire i tasti in cerca e iscritto se ho cliccato su registrati
     public void onRegisratiButtonClick() {
         registratiButton.setDisable(true);
         iscrittoButton.setVisible(true);
@@ -52,6 +53,7 @@ public class AccessoController {
         iscrittoButton.setDisable(false);
         ricercaButton.setDisable(false);
     }
+
 
     boolean registra(UtenteBean utenteBean) {
         if (gestioneLogin.registrazione(utenteBean)) {
@@ -84,14 +86,14 @@ public class AccessoController {
         stage.show();
     }
 
-
+    //mi sto registrando come Iscritto
     public void onIscrittoButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), true);
         if (registra(utenteBean)) {
             caricaInterfaccia(event, interfacciaIscritto, utenteBean);
         }
     }
-
+    //mi sto registrando come In Cerca
     public void onRicercaButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), false);
         if (registra(utenteBean)) {
@@ -99,6 +101,7 @@ public class AccessoController {
         }
     }
 
+    //sto facendo LogIn
     public void logIn(ActionEvent event) throws IOException {
         Optional<UtenteBean> utenteOpt = gestioneLogin.autenticazione(usernameField.getText(), passwordField.getText());
 
@@ -114,5 +117,4 @@ public class AccessoController {
             errorLabel.setText("Nessun utente o password corrispondente");
         }
     }
-
 } 
