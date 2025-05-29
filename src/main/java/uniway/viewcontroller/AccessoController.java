@@ -23,6 +23,7 @@ public class AccessoController {
     private Parent root;
     private String interfacciaIscritto = "/view/iscritto-selezione.fxml";
     private String interfacciaRicerca = "/view/ricerca-home.fxml";
+    private String interfacciaCorsoIscritto = "/view/iscritto-selezione.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
 
 
     @FXML
@@ -109,6 +110,9 @@ public class AccessoController {
             UtenteBean utenteBean = utenteOpt.get();
 
             if (utenteBean.getIscritto()) {
+                if(utenteBean.getIdCorso()!=null){
+                    caricaInterfaccia(event, interfacciaCorsoIscritto, utenteBean);
+                }
                 caricaInterfaccia(event, interfacciaIscritto, utenteBean);
             } else {
                 caricaInterfaccia(event, interfacciaRicerca, utenteBean);
