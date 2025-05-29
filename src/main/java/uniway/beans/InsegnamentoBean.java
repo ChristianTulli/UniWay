@@ -7,14 +7,26 @@ public class InsegnamentoBean {
     private String curriculum;
     private Integer cfu;
 
-    public InsegnamentoBean() {
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public InsegnamentoBean(String nome, Integer anno, Integer semestre, String curriculum, Integer cfu) {
-        this.nome = nome;
+
+    public void setAnno(Integer anno) {
         this.anno = anno;
+    }
+
+
+    public void setSemestre(Integer semestre) {
         this.semestre = semestre;
+    }
+
+
+    public void setCurriculum(String curriculum) {
         this.curriculum = curriculum;
+    }
+
+    public void setCfu(Integer cfu) {
         this.cfu = cfu;
     }
 
@@ -22,40 +34,20 @@ public class InsegnamentoBean {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Integer getAnno() {
+    public int getAnno() {
         return anno;
-    }
-
-    public void setAnno(Integer anno) {
-        this.anno = anno;
     }
 
     public Integer getSemestre() {
         return semestre;
     }
 
-    public void setSemestre(Integer semestre) {
-        this.semestre = semestre;
+    public int getCfu() {
+        return cfu;
     }
 
     public String getCurriculum() {
         return curriculum;
-    }
-
-    public void setCurriculum(String curriculum) {
-        this.curriculum = curriculum;
-    }
-
-    public Integer getCfu() {
-        return cfu;
-    }
-
-    public void setCfu(Integer cfu) {
-        this.cfu = cfu;
     }
 }
 
