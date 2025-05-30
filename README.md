@@ -23,6 +23,7 @@ file.path=filepersistenza.txt
 
 
 running.mode=full   # possibili valori: 'full' o 'demo'
+
 2.  
 impostare la VM come segue:
 Run -> Edit Configurations, aggiungere una nuova configurazione
