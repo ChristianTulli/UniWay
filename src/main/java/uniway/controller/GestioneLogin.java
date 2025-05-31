@@ -106,7 +106,22 @@ public class GestioneLogin {
         return utenti.stream()
                 .filter(utente -> utente.getUsername().equals(username) && utente.getPassword().equals(password))
                 .findFirst()
-                .map(utente -> new UtenteBean(utente.getUsername(), utente.getPassword(), utente instanceof UtenteIscritto));
+                .map(utente -> {
+                    if (utente instanceof UtenteIscritto utenteIscritto) {
+                        return new UtenteBean(
+                                utenteIscritto.getUsername(),
+                                utenteIscritto.getPassword(),
+                                true,
+                                utenteIscritto.getIdCorso()
+                        );
+                    } else {
+                        return new UtenteBean(
+                                utente.getUsername(),
+                                utente.getPassword(),
+                                false
+                        );
+                    }
+                });
     }
 
     public boolean isFullMode() {

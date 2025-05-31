@@ -18,11 +18,9 @@ import java.util.Optional;
 
 
 public class AccessoController {
-    private Scene scene;
-    private Stage stage;
-    private Parent root;
     private String interfacciaIscritto = "/view/iscritto-selezione.fxml";
     private String interfacciaRicerca = "/view/ricerca-home.fxml";
+    private String interfacciaCorsoIscritto = "/view/iscritto-commento.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
 
 
     @FXML
@@ -45,6 +43,7 @@ public class AccessoController {
 
     private final GestioneLogin gestioneLogin = GestioneLogin.getInstance(); //non creare una nuova istanza ma usare la stessa, altrimenti creo una nuova lista
 
+    //fa apparire i tasti in cerca e iscritto se ho cliccato su registrati
     public void onRegisratiButtonClick() {
         registratiButton.setDisable(true);
         iscrittoButton.setVisible(true);
@@ -52,6 +51,7 @@ public class AccessoController {
         iscrittoButton.setDisable(false);
         ricercaButton.setDisable(false);
     }
+
 
     boolean registra(UtenteBean utenteBean) {
         if (gestioneLogin.registrazione(utenteBean)) {
@@ -75,23 +75,23 @@ public class AccessoController {
             iscrittoController.setUtenteBean(utenteBean);
         } else if (controller instanceof RicercaController ricercaController) {
             ricercaController.setUtenteBean(utenteBean);
+        } else if (controller instanceof CommentiController commentiController) {
+            commentiController.setUtenteBean(utenteBean);
         }
-
         // Mostra la nuova schermata
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(newRoot);
-        stage.setScene(scene);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(newRoot));
         stage.show();
     }
 
-
+    //mi sto registrando come Iscritto
     public void onIscrittoButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), true);
         if (registra(utenteBean)) {
             caricaInterfaccia(event, interfacciaIscritto, utenteBean);
         }
     }
-
+    //mi sto registrando come In Cerca
     public void onRicercaButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), false);
         if (registra(utenteBean)) {
@@ -99,6 +99,7 @@ public class AccessoController {
         }
     }
 
+    //sto facendo LogIn
     public void logIn(ActionEvent event) throws IOException {
         Optional<UtenteBean> utenteOpt = gestioneLogin.autenticazione(usernameField.getText(), passwordField.getText());
 
@@ -106,7 +107,11 @@ public class AccessoController {
             UtenteBean utenteBean = utenteOpt.get();
 
             if (utenteBean.getIscritto()) {
-                caricaInterfaccia(event, interfacciaIscritto, utenteBean);
+                if(utenteBean.getIdCorso()!=null){
+                    caricaInterfaccia(event, interfacciaCorsoIscritto, utenteBean);
+                } else {
+                    caricaInterfaccia(event, interfacciaIscritto, utenteBean);
+                }
             } else {
                 caricaInterfaccia(event, interfacciaRicerca, utenteBean);
             }
@@ -114,5 +119,4 @@ public class AccessoController {
             errorLabel.setText("Nessun utente o password corrispondente");
         }
     }
-
 } 
