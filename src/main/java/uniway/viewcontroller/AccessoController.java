@@ -18,12 +18,9 @@ import java.util.Optional;
 
 
 public class AccessoController {
-    private Scene scene;
-    private Stage stage;
-    private Parent root;
     private String interfacciaIscritto = "/view/iscritto-selezione.fxml";
     private String interfacciaRicerca = "/view/ricerca-home.fxml";
-    private String interfacciaCorsoIscritto = "/view/iscritto-selezione.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
+    private String interfacciaCorsoIscritto = "/view/iscritto-commento.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
 
 
     @FXML
@@ -78,12 +75,12 @@ public class AccessoController {
             iscrittoController.setUtenteBean(utenteBean);
         } else if (controller instanceof RicercaController ricercaController) {
             ricercaController.setUtenteBean(utenteBean);
+        } else if (controller instanceof CommentiController commentiController) {
+            commentiController.setUtenteBean(utenteBean);
         }
-
         // Mostra la nuova schermata
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(newRoot);
-        stage.setScene(scene);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(newRoot));
         stage.show();
     }
 
@@ -112,8 +109,9 @@ public class AccessoController {
             if (utenteBean.getIscritto()) {
                 if(utenteBean.getIdCorso()!=null){
                     caricaInterfaccia(event, interfacciaCorsoIscritto, utenteBean);
+                } else {
+                    caricaInterfaccia(event, interfacciaIscritto, utenteBean);
                 }
-                caricaInterfaccia(event, interfacciaIscritto, utenteBean);
             } else {
                 caricaInterfaccia(event, interfacciaRicerca, utenteBean);
             }

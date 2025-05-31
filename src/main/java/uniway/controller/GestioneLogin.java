@@ -112,7 +112,7 @@ public class GestioneLogin {
                                 utenteIscritto.getUsername(),
                                 utenteIscritto.getPassword(),
                                 true,
-                                utenteIscritto.getIdCorso() != null ? utenteIscritto.getIdCorso() : null
+                                utenteIscritto.getIdCorso()
                         );
                     } else {
                         return new UtenteBean(

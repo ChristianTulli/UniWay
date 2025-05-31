@@ -18,6 +18,7 @@ public class UtenteBean {
         this.username = username;
         this.password = password;
         this.iscritto = iscritto;
+        this.idCorso = idCorso;
     }
 
     public String getUsername() {
