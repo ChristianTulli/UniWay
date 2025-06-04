@@ -123,18 +123,6 @@ public class IscrittoController implements Initializable {
         cerca.setOnAction(this::handleCercaSelection);
     }
 
-    private void mostraSceltaCurriculum(List<String> opzioni) {
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(opzioni.get(0), opzioni);
-        dialog.setTitle("Seleziona curriculum");
-        dialog.setHeaderText("Curriculum disponibili per il corso selezionato:");
-        dialog.setContentText("Scegli curriculum:");
-
-        dialog.showAndWait().ifPresent(curr -> {
-            gestioneIscritto.setCurriculumUtente(utenteBean, curr);
-            label.setText(label.getText() + "\nCurriculum selezionato: " + curr);
-        });
-    }
-
     private void caricaInterfacciaCommenti(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/iscritto-commento.fxml"));
         Parent root = loader.load();

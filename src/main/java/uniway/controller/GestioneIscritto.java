@@ -7,6 +7,7 @@ import uniway.persistenza.InsegnamentoDAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -109,21 +110,23 @@ public class GestioneIscritto {
         return corsoDAO.getCurriculum(idCorso);
     }
 
-    public void setCurriculumUtente(UtenteBean utenteBean, String curriculum) {
-        utenteBean.setCurriculum(curriculum);
-        if (gestioneLogin.isFullMode()) { // Ora possiamo accedere a isFullMode
+    public void setCurriculumUtente(UtenteBean utente, String curriculum) {
+        utente.setCurriculum(curriculum);
+
+        if (gestioneLogin.isFullMode()) {
             try {
-                gestioneLogin.getUtenteDAO().aggiungiCurriculumUtente(utenteBean.getUsername(), curriculum);
-            } catch (Exception e) {
+                gestioneLogin.getUtenteDAO().aggiungiCurriculumUtente(utente.getUsername(), curriculum);
+            } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del curriculum", e);
             }
         } else {
             gestioneLogin.getUtenti().stream()
-                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
                     .map(u -> (UtenteIscritto) u)
                     .findFirst()
                     .ifPresent(u -> u.setCurriculum(curriculum));
         }
     }
+
 
 }
