@@ -43,11 +43,10 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="label" alignment="CENTER" contentDisplay="CENTER" layoutX="438.0" layoutY="619.0" prefHeight="35.0" prefWidth="725.0" textAlignment="CENTER" textFill="RED" underline="true">
+      <Label fx:id="label" alignment="CENTER" contentDisplay="CENTER" layoutX="438.0" layoutY="619.0" prefHeight="78.0" prefWidth="726.0" textAlignment="CENTER" textFill="RED" underline="true">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <ComboBox fx:id="curriculum" disable="true" layoutX="724.0" layoutY="281.0" prefWidth="150.0" promptText="Curriculum" visible="false" />
    </children>
 </AnchorPane>

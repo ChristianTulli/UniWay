@@ -103,12 +103,27 @@ public class GestioneIscritto {
         return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, tipologia, classe);
     }
 
-    public List<String> getCurriculumPerCorso(String idCorso) {
+    public List<String> getCurriculumPerCorso(String corsoSelezionato) {
+        this.corso = corsoSelezionato;
+        Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, tipologia, corso);
         return corsoDAO.getCurriculum(idCorso);
     }
 
-    public void setCurriculumUtente(UtenteBean utente, String curriculum) {
-        utente.setCurriculum(curriculum);
+    public void setCurriculumUtente(UtenteBean utenteBean, String curriculum) {
+        utenteBean.setCurriculum(curriculum);
+        if (gestioneLogin.isFullMode()) { // Ora possiamo accedere a isFullMode
+            try {
+                gestioneLogin.getUtenteDAO().aggiungiCurriculumUtente(utenteBean.getUsername(), curriculum);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del curriculum", e);
+            }
+        } else {
+            gestioneLogin.getUtenti().stream()
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
+                    .map(u -> (UtenteIscritto) u)
+                    .findFirst()
+                    .ifPresent(u -> u.setCurriculum(curriculum));
+        }
     }
 
 }

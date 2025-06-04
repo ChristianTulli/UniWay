@@ -11,8 +11,10 @@ public interface UtenteDAO {
 
      List<Utente> ottieniUtenti() throws IOException, IllegalArgumentException;
 
-     void aggiungiCorsoUtente(String username, int idCorso) throws IOException;
+     void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException;
 
-     void aggiungiPreferitiUtente(String username, int idPreferiti) throws IOException;
+     void aggiungiPreferitiUtente(String username, Integer idPreferiti) throws IOException;
+
+     void aggiungiCurriculumUtente(String username, String curriculum) throws IOException;
 
 }

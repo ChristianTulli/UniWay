@@ -74,8 +74,6 @@ public class UtenteDB implements UtenteDAO {
                     }
                 }
 
-
-
                 // Creazione dell'oggetto corretto
                 if (iscritto) {
                     utenti.add(new UtenteIscritto(id, utenteUsername, utentePassword, iscritto, idCorso, curriculum));
@@ -90,23 +88,22 @@ public class UtenteDB implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiCorsoUtente(String usernameUtente, int idCorso) throws IOException {
+    public void aggiungiCorsoUtente(String usernameUtente, Integer idCorso) throws IOException {
         String query = "UPDATE utenti SET id_corso = ? WHERE username = ?";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setObject(1, idCorso, Types.INTEGER);
+            stmt.setInt(1, idCorso);
             stmt.setString(2, usernameUtente);
             stmt.executeUpdate();
         }catch (SQLException e) {
-            throw new IOException("Errore durante il recupero degli utenti", e);
+            throw new IOException("Errore durante la selezione del corso", e);
         }
-
     }
 
     @Override
-    public void aggiungiPreferitiUtente(String usernameUtente, int idCorso) throws IOException {
+    public void aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
         String querySelect = "SELECT preferenze FROM utenti WHERE username = ?";
         String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
 
@@ -133,6 +130,21 @@ public class UtenteDB implements UtenteDAO {
             stmtUpdate.executeUpdate();
         } catch (SQLException e) {
             throw new IOException("Errore durante l'aggiornamento dei preferiti", e);
+        }
+    }
+
+    @Override
+    public void aggiungiCurriculumUtente(String user, String curriculum) throws IOException {
+        String query = "UPDATE utenti SET curriculum = ? WHERE username = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, curriculum);
+            stmt.setString(2, user);
+            stmt.executeUpdate();
+        }catch (SQLException e) {
+            throw new IOException("Errore durante la selezione del curriculum", e);
         }
     }
 

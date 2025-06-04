@@ -81,7 +81,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiCorsoUtente(String username, int idCorso) throws IOException {
+    public void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException {
         List<String> righe = new ArrayList<>();
         boolean utenteTrovato = false;
 
@@ -124,7 +124,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiPreferitiUtente(String username, int idCorso) throws IOException {
+    public void aggiungiPreferitiUtente(String username, Integer idCorso) throws IOException {
         List<String> righe = new ArrayList<>();
         boolean utenteTrovato = false;
 
@@ -151,6 +151,11 @@ public class UtenteFS implements UtenteDAO {
                 writer.newLine();
             }
         }
+    }
+
+    @Override
+    public void aggiungiCurriculumUtente(String username, String curriculum) throws IOException {
+
     }
 
     private String processaRigaPreferiti(String line, String username, int idCorso) {

@@ -362,14 +362,14 @@ public class CorsoDAO {
         return risultati;
     }
 
-    public List<String> getCurriculum(String idCorso) {
+    public List<String> getCurriculum(Integer idCorso) {
         List<String> curriculum = new ArrayList<>();
         String query = "SELECT curriculum FROM corsi WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, idCorso);
+            stmt.setInt(1, idCorso);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -395,7 +395,7 @@ public class CorsoDAO {
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, idCorso); // usa setInt, non setString per un intero
+            stmt.setInt(1, idCorso);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
