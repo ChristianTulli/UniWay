@@ -53,9 +53,15 @@ public class IscrittoController implements Initializable {
     @FXML
     private Label label;
 
+    @FXML
+    private ComboBox curriculum;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupComboBox(regione, gestioneIscritto.getRegioni(), this::handleRegioneSelection);
+        curriculum.setVisible(false);
+        curriculum.setDisable(true);
+
     }
 
     private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> eventHandler) {
@@ -122,6 +128,19 @@ public class IscrittoController implements Initializable {
         cerca.setOnAction(this::handleCercaSelection);
     }
 
+    private void mostraSceltaCurriculum(List<String> opzioni) {
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(opzioni.get(0), opzioni);
+        dialog.setTitle("Seleziona curriculum");
+        dialog.setHeaderText("Curriculum disponibili per il corso selezionato:");
+        dialog.setContentText("Scegli curriculum:");
+
+        dialog.showAndWait().ifPresent(curr -> {
+            gestioneIscritto.setCurriculumUtente(utenteBean, curr);
+            label.setText(label.getText() + "\nCurriculum selezionato: " + curr);
+        });
+    }
+
+
     @FXML
     public void handleCercaSelection(ActionEvent event) {
         listView.getItems().clear();
@@ -133,6 +152,18 @@ public class IscrittoController implements Initializable {
             label.setText("Nessun risultato, controlla i filtri");
         }
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            List<String> curriculumDisponibili = gestioneIscritto.getCurriculumPerCorso(newValue);
+
+            if (curriculumDisponibili != null && curriculumDisponibili.size() > 1) {
+                curriculum.setVisible(true);
+                curriculum.setDisable(false);
+
+                curriculum.setOnAction(e -> mostraSceltaCurriculum(curriculumDisponibili));
+            } else {
+                curriculum.setVisible(false);
+                curriculum.setDisable(true);
+            }
+
             if (newValue != null) {
                 gestioneIscritto.setCorsoUtente(utenteBean, newValue); // Aggiorna idCorso di utenteBean
                 label.setText("Corso selezionato: " + newValue);

@@ -59,7 +59,8 @@ public class UtenteFS implements UtenteDAO {
 
                 if (iscritto) {
                     Integer idCorso = split.length > 4 && !split[4].isEmpty() ? Integer.parseInt(split[4]) : null;
-                    utenti.add(new UtenteIscritto(id, username, password, true, idCorso));
+                    String curriculum = split.length > 5 && !split[5].isEmpty() ? split[5] : null;
+                    utenti.add(new UtenteIscritto(id, username, password, true, idCorso, curriculum));
                 } else {
                     List<Integer> preferenze = new ArrayList<>();
                     if (split.length > 4 && !split[4].isEmpty()) {

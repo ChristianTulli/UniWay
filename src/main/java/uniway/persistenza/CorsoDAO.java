@@ -3,9 +3,11 @@ package uniway.persistenza;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class CorsoDAO {
     private final String url;
@@ -359,6 +361,82 @@ public class CorsoDAO {
 
         return risultati;
     }
+
+    public List<String> getCurriculum(String idCorso) {
+        List<String> curriculum = new ArrayList<>();
+        String query = "SELECT curriculum FROM corsi WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, idCorso);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String raw = rs.getString("curriculum");
+                if (raw != null && !raw.isBlank()) {
+                    curriculum = Arrays.stream(raw.split(",\\s*"))
+                            .map(String::trim)
+                            .collect(Collectors.toList());
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore durante il recupero dei risultati della ricerca", e);
+        }
+
+        return curriculum;
+    }
+
+    public String getNomeByIdCorso(Integer idCorso) {
+        String query = "SELECT nomecorso FROM corsi WHERE id = ?";
+        String risultato = null;
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, idCorso); // usa setInt, non setString per un intero
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                risultato = rs.getString("nomecorso");
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore nella query getNomeByIdCorso", e);
+        }
+
+        return risultato;
+    }
+
+    public String getAteneoByIdCorso(Integer idCorso) {
+        String query = """
+        SELECT a.nome
+        FROM atenei a
+        JOIN corsi c ON a.id = c.idateneo
+        WHERE c.id = ?
+    """;
+
+        String nomeAteneo = null;
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, idCorso);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                nomeAteneo = rs.getString("nome");
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore nel recupero del nome dell'ateneo", e);
+        }
+
+        return nomeAteneo;
+    }
+
+
 
 }
 

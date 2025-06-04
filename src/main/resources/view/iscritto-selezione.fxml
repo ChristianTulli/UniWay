@@ -48,5 +48,6 @@
             <Font size="24.0" />
          </font>
       </Label>
+      <ComboBox fx:id="curriculum" disable="true" layoutX="724.0" layoutY="281.0" prefWidth="150.0" promptText="Curriculum" visible="false" />
    </children>
 </AnchorPane>

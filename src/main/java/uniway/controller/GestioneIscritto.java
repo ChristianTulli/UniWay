@@ -3,6 +3,7 @@ package uniway.controller;
 import uniway.beans.UtenteBean;
 import uniway.model.UtenteIscritto;
 import uniway.persistenza.CorsoDAO;
+import uniway.persistenza.InsegnamentoDAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -101,4 +102,13 @@ public class GestioneIscritto {
         this.classe = classeselezionata;
         return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, tipologia, classe);
     }
+
+    public List<String> getCurriculumPerCorso(String idCorso) {
+        return corsoDAO.getCurriculum(idCorso);
+    }
+
+    public void setCurriculumUtente(UtenteBean utente, String curriculum) {
+        utente.setCurriculum(curriculum);
+    }
+
 }

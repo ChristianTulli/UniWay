@@ -112,7 +112,9 @@ public class GestioneLogin {
                                 utenteIscritto.getUsername(),
                                 utenteIscritto.getPassword(),
                                 true,
-                                utenteIscritto.getIdCorso()
+                                utenteIscritto.getIdCorso(),
+                                utenteIscritto.getCurriculum()
+                                //aggiungere attributo curriculum
                         );
                     } else {
                         return new UtenteBean(
