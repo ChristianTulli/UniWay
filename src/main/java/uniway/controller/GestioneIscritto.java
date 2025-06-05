@@ -3,7 +3,6 @@ package uniway.controller;
 import uniway.beans.UtenteBean;
 import uniway.model.UtenteIscritto;
 import uniway.persistenza.CorsoDAO;
-import uniway.persistenza.InsegnamentoDAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,13 +18,10 @@ public class GestioneIscritto {
     private CorsoDAO corsoDAO;
     private String errore = "errore";
 
-    private String regione;
-    private String provincia;
     private String comune;
     private String ateneo;
     private String disciplina;
     private String tipologia;
-    private String classe;
     private String corso;
 
     private final GestioneLogin gestioneLogin = GestioneLogin.getInstance(); // Otteniamo il Singleton
@@ -75,13 +71,11 @@ public class GestioneIscritto {
     }
 
     public List<String> getProvince(String regioneselezionata) {
-        this.regione = regioneselezionata;
-        return corsoDAO.getProvinceByRegione(regione);
+        return corsoDAO.getProvinceByRegione(regioneselezionata);
     }
 
     public List<String> getComuni(String provinciaselezionata) {
-        this.provincia = provinciaselezionata;
-        return corsoDAO.getComuniByProvincia(provincia);
+        return corsoDAO.getComuniByProvincia(provinciaselezionata);
     }
 
     public List<String> getAtenei(String comuneselezionata) {
@@ -105,8 +99,7 @@ public class GestioneIscritto {
     }
 
     public List<String> getRisultati(String classeselezionata) {
-        this.classe = classeselezionata;
-        return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, tipologia, classe);
+        return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, tipologia, classeselezionata);
     }
 
     public List<String> getCurriculumPerCorso(String corsoSelezionato) {

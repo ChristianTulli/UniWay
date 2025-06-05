@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GestioneCommenti {
-    private static final Logger LOGGER = Logger.getLogger(GestoreDettaglioCorso.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GestioneCommenti.class.getName());
     private CorsoDAO corsoDAO;
     private InsegnamentoDAO insegnamentoDAO;
     private RecensioneDAO recensioneDAO;
@@ -24,9 +24,13 @@ public class GestioneCommenti {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
-            corsoDAO = new CorsoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
-            insegnamentoDAO = new InsegnamentoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
-            recensioneDAO = new RecensioneDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
+            String username= properties.getProperty("db.username");
+            String dbUrl = properties.getProperty("db.url");
+            String password = properties.getProperty("db.password");
+
+            corsoDAO = new CorsoDAO(dbUrl, username, password);
+            insegnamentoDAO = new InsegnamentoDAO(dbUrl, username, password);
+            recensioneDAO = new RecensioneDAO(dbUrl, username, password);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("File config.properties non trovato", e);
         } catch (Exception e) {

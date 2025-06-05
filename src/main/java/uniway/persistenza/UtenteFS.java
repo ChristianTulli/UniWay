@@ -48,37 +48,46 @@ public class UtenteFS implements UtenteDAO {
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] split = line.split(",");
-
-                if (split.length < 4) continue;
-
-                int id = Integer.parseInt(split[0]);
-                String username = split[1];
-                String password = split[2];
-                boolean iscritto = Boolean.parseBoolean(split[3]);
-
-                if (iscritto) {
-                    Integer idCorso = split.length > 4 && !split[4].isEmpty() ? Integer.parseInt(split[4]) : null;
-                    String curriculum = split.length > 5 && !split[5].isEmpty() ? split[5] : null;
-                    utenti.add(new UtenteIscritto(id, username, password, true, idCorso, curriculum));
-                } else {
-                    List<Integer> preferenze = new ArrayList<>();
-                    if (split.length > 4 && !split[4].isEmpty()) {
-                        preferenze = new ArrayList<>(
-                                Arrays.stream(split[4].split(";"))
-                                        .map(Integer::parseInt)
-                                        .toList()
-                        );
-
-                    }
-                    utenti.add(new UtenteInCerca(id, username, password, false, preferenze));
-                }
+                processaRiga(line, utenti);
             }
         } catch (IOException e) {
             throw new IOException("Errore nella lettura del file utenti", e);
         }
         return utenti;
     }
+
+    private void processaRiga(String line, List<Utente> utenti) {
+        String[] split = line.split(",");
+        if (split.length < 4) return;
+
+        int id = Integer.parseInt(split[0]);
+        String username = split[1];
+        String password = split[2];
+        boolean iscritto = Boolean.parseBoolean(split[3]);
+
+        if (iscritto) {
+            utenti.add(creaUtenteIscritto(id, username, password, split));
+        } else {
+            utenti.add(creaUtenteInCerca(id, username, password, split));
+        }
+    }
+
+    private UtenteIscritto creaUtenteIscritto(int id, String username, String password, String[] split) {
+        Integer idCorso = (split.length > 4 && !split[4].isEmpty()) ? Integer.parseInt(split[4]) : null;
+        String curriculum = (split.length > 5 && !split[5].isEmpty()) ? split[5] : null;
+        return new UtenteIscritto(id, username, password, true, idCorso, curriculum);
+    }
+
+    private UtenteInCerca creaUtenteInCerca(int id, String username, String password, String[] split) {
+        List<Integer> preferenze = new ArrayList<>();
+        if (split.length > 4 && !split[4].isEmpty()) {
+            preferenze = Arrays.stream(split[4].split(";"))
+                    .map(Integer::parseInt)
+                    .toList();
+        }
+        return new UtenteInCerca(id, username, password, false, preferenze);
+    }
+
 
     @Override
     public void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException {
@@ -155,8 +164,42 @@ public class UtenteFS implements UtenteDAO {
 
     @Override
     public void aggiungiCurriculumUtente(String username, String curriculum) throws IOException {
+        List<String> righe = new ArrayList<>();
+        boolean utenteTrovato = false;
 
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] split = line.split(",");
+
+                if (split.length >= 4 && split[1].equals(username) && split[3].equals("true")) {
+                    utenteTrovato = true;
+
+                    // Estendi array se necessario
+                    while (split.length < 6) {
+                        split = Arrays.copyOf(split, split.length + 1);
+                    }
+
+                    split[5] = curriculum;
+                    line = String.join(",", split);
+                }
+
+                righe.add(line);
+            }
+        }
+
+        if (!utenteTrovato) {
+            throw new IOException("Utente iscritto non trovato nel file.");
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+            for (String riga : righe) {
+                writer.write(riga);
+                writer.newLine();
+            }
+        }
     }
+
 
     private String processaRigaPreferiti(String line, String username, int idCorso) {
         String[] split = line.split(",");

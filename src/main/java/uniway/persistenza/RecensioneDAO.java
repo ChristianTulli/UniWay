@@ -8,7 +8,7 @@ public class RecensioneDAO {
     private final String url;
     private final String username;
     private final String password;
-    private static final Logger LOGGER = Logger.getLogger(AteneoDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RecensioneDAO.class.getName());
     private String eccezione = "problema nella comunicazione con la tabella recensioni nel databse";
 
     public RecensioneDAO(String url, String username, String password) {
