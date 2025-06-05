@@ -3,9 +3,11 @@ package uniway.controller;
 import uniway.beans.UtenteBean;
 import uniway.model.UtenteIscritto;
 import uniway.persistenza.CorsoDAO;
+import uniway.persistenza.InsegnamentoDAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -53,6 +55,11 @@ public class GestioneIscritto {
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del corso", e);
             }
+            gestioneLogin.getUtenti().stream()
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
+                    .map(u -> (UtenteIscritto) u)
+                    .findFirst()
+                    .ifPresent(u -> u.setIdCorso(idCorso));
         } else {
             gestioneLogin.getUtenti().stream()
                     .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
@@ -101,4 +108,35 @@ public class GestioneIscritto {
         this.classe = classeselezionata;
         return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, tipologia, classe);
     }
+
+    public List<String> getCurriculumPerCorso(String corsoSelezionato) {
+        this.corso = corsoSelezionato;
+        Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, tipologia, corso);
+        return corsoDAO.getCurriculum(idCorso);
+    }
+
+    public void setCurriculumUtente(UtenteBean utente, String curriculum) {
+        utente.setCurriculum(curriculum);
+
+        if (gestioneLogin.isFullMode()) {
+            try {
+                gestioneLogin.getUtenteDAO().aggiungiCurriculumUtente(utente.getUsername(), curriculum);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del curriculum", e);
+            }
+            gestioneLogin.getUtenti().stream()
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
+                    .map(u -> (UtenteIscritto) u)
+                    .findFirst()
+                    .ifPresent(u -> u.setCurriculum(curriculum));
+        } else {
+            gestioneLogin.getUtenti().stream()
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
+                    .map(u -> (UtenteIscritto) u)
+                    .findFirst()
+                    .ifPresent(u -> u.setCurriculum(curriculum));
+        }
+    }
+
+
 }

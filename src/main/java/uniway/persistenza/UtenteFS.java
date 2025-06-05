@@ -59,7 +59,8 @@ public class UtenteFS implements UtenteDAO {
 
                 if (iscritto) {
                     Integer idCorso = split.length > 4 && !split[4].isEmpty() ? Integer.parseInt(split[4]) : null;
-                    utenti.add(new UtenteIscritto(id, username, password, true, idCorso));
+                    String curriculum = split.length > 5 && !split[5].isEmpty() ? split[5] : null;
+                    utenti.add(new UtenteIscritto(id, username, password, true, idCorso, curriculum));
                 } else {
                     List<Integer> preferenze = new ArrayList<>();
                     if (split.length > 4 && !split[4].isEmpty()) {
@@ -80,7 +81,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiCorsoUtente(String username, int idCorso) throws IOException {
+    public void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException {
         List<String> righe = new ArrayList<>();
         boolean utenteTrovato = false;
 
@@ -123,7 +124,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiPreferitiUtente(String username, int idCorso) throws IOException {
+    public void aggiungiPreferitiUtente(String username, Integer idCorso) throws IOException {
         List<String> righe = new ArrayList<>();
         boolean utenteTrovato = false;
 
@@ -150,6 +151,11 @@ public class UtenteFS implements UtenteDAO {
                 writer.newLine();
             }
         }
+    }
+
+    @Override
+    public void aggiungiCurriculumUtente(String username, String curriculum) throws IOException {
+
     }
 
     private String processaRigaPreferiti(String line, String username, int idCorso) {

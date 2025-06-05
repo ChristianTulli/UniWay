@@ -107,12 +107,13 @@ public class AccessoController {
             UtenteBean utenteBean = utenteOpt.get();
 
             if (utenteBean.getIscritto()) {
-                if(utenteBean.getIdCorso()!=null){
+                if (utenteBean.getIdCorso() != null && utenteBean.getCurriculum() != null) {
                     caricaInterfaccia(event, interfacciaCorsoIscritto, utenteBean);
                 } else {
                     caricaInterfaccia(event, interfacciaIscritto, utenteBean);
                 }
-            } else {
+            }
+            else {
                 caricaInterfaccia(event, interfacciaRicerca, utenteBean);
             }
         } else {

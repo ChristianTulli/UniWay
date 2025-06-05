@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -17,21 +18,40 @@
             <Image url="@../image/titolo.png" />
          </image>
       </ImageView>
-      <Label layoutX="572.0" layoutY="137.0" text="L'UTENTE HA GIA' SELEZIONATO IL CORSO">
+      <Label layoutX="329.0" layoutY="247.0" text="SELEZIONA UN INSEGNAMENTO PER LASCIARE UNA VALUTAZIONE ED UN COMMENTO">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <Label layoutX="698.0" layoutY="390.0" text="commenta insegnamento:">
+      <TableView fx:id="tableView" layoutX="468.0" layoutY="291.0" prefHeight="594.0" prefWidth="707.0">
+         <columns>
+            <TableColumn fx:id="insegnamento" prefWidth="248.0" text="Insegnamento" />
+            <TableColumn fx:id="semestre" minWidth="0.0" prefWidth="110.4000244140625" text="Semestre" />
+            <TableColumn fx:id="anno" minWidth="0.0" prefWidth="54.4000244140625" text="Anno" />
+            <TableColumn fx:id="cfu" minWidth="0.0" prefWidth="70.39999999999998" text="CFU" />
+            <TableColumn fx:id="valutazione" minWidth="0.0" prefWidth="221.60002441406255" text="Valutazione /5" />
+         </columns>
+      </TableView>
+      <Button alignment="CENTER" layoutX="1476.0" layoutY="76.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
+      <Label layoutX="287.0" layoutY="137.0" text="CORSO:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="corsoLabel" layoutX="395.0" layoutY="137.0" prefHeight="35.0" prefWidth="780.0" text="NOME">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <TableView layoutX="700.0" layoutY="450.0" prefHeight="200.0" prefWidth="200.0">
-        <columns>
-          <TableColumn prefWidth="82.4000244140625" text="C1" />
-          <TableColumn prefWidth="68.0" text="C2" />
-        </columns>
-      </TableView>
+      <Label fx:id="curriculumLabel" layoutX="395.0" layoutY="172.0" prefHeight="35.0" prefWidth="780.0" text="CURRICULUM">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="ateneoLabel" layoutX="395.0" layoutY="212.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

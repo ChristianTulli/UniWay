@@ -47,7 +47,7 @@ public class UtenteDB implements UtenteDAO {
 
     @Override
     public List<Utente> ottieniUtenti() throws IOException {
-        String query = "SELECT id, username, password, iscritto, id_corso, preferenze FROM utenti";
+        String query = "SELECT id, username, password, iscritto, id_corso, preferenze, curriculum FROM utenti";
 
         List<Utente> utenti = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, username, password);
@@ -59,7 +59,8 @@ public class UtenteDB implements UtenteDAO {
                 String utenteUsername = rs.getString("username");
                 String utentePassword = rs.getString("password");
                 boolean iscritto = rs.getBoolean("iscritto");
-                Integer idCorso = rs.getObject("id_corso", Integer.class); // può essere NULL
+                Integer idCorso = rs.getObject("id_corso", Integer.class);// può essere NULL
+                String curriculum = rs.getString("curriculum");
                 List<Integer> preferenze = new ArrayList<>();
 
                 if (!iscritto) {
@@ -73,11 +74,9 @@ public class UtenteDB implements UtenteDAO {
                     }
                 }
 
-
-
                 // Creazione dell'oggetto corretto
                 if (iscritto) {
-                    utenti.add(new UtenteIscritto(id, utenteUsername, utentePassword, iscritto, idCorso));
+                    utenti.add(new UtenteIscritto(id, utenteUsername, utentePassword, iscritto, idCorso, curriculum));
                 } else {
                     utenti.add(new UtenteInCerca(id, utenteUsername, utentePassword, iscritto, preferenze));
                 }
@@ -89,23 +88,22 @@ public class UtenteDB implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiCorsoUtente(String usernameUtente, int idCorso) throws IOException {
+    public void aggiungiCorsoUtente(String usernameUtente, Integer idCorso) throws IOException {
         String query = "UPDATE utenti SET id_corso = ? WHERE username = ?";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setObject(1, idCorso, Types.INTEGER);
+            stmt.setInt(1, idCorso);
             stmt.setString(2, usernameUtente);
             stmt.executeUpdate();
         }catch (SQLException e) {
-            throw new IOException("Errore durante il recupero degli utenti", e);
+            throw new IOException("Errore durante la selezione del corso", e);
         }
-
     }
 
     @Override
-    public void aggiungiPreferitiUtente(String usernameUtente, int idCorso) throws IOException {
+    public void aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
         String querySelect = "SELECT preferenze FROM utenti WHERE username = ?";
         String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
 
@@ -132,6 +130,21 @@ public class UtenteDB implements UtenteDAO {
             stmtUpdate.executeUpdate();
         } catch (SQLException e) {
             throw new IOException("Errore durante l'aggiornamento dei preferiti", e);
+        }
+    }
+
+    @Override
+    public void aggiungiCurriculumUtente(String user, String curriculum) throws IOException {
+        String query = "UPDATE utenti SET curriculum = ? WHERE username = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, curriculum);
+            stmt.setString(2, user);
+            stmt.executeUpdate();
+        }catch (SQLException e) {
+            throw new IOException("Errore durante la selezione del curriculum", e);
         }
     }
 

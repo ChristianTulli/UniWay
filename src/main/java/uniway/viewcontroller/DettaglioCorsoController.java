@@ -32,44 +32,33 @@ public class DettaglioCorsoController implements Initializable {
     private String nomeCorso;
     private String nomeAteneo;
     private GestoreDettaglioCorso gestoreDettaglioCorso = new GestoreDettaglioCorso();
+    @FXML
+    private Label corsoLabel;
+    @FXML
+    private Label ateneoLabel;
+    @FXML
+    private Label erroreLabel;
+    @FXML
+    private TableView<InsegnamentoBean> tableView;
+    @FXML
+    private TableColumn<InsegnamentoBean, Integer> cfu;
+    @FXML
+    private TableColumn<InsegnamentoBean, String> curriculum;
+    @FXML
+    private TableColumn<InsegnamentoBean, String> insegnamento;
+    @FXML
+    private TableColumn<InsegnamentoBean, Integer> semestre;
+    @FXML
+    private TableColumn<InsegnamentoBean, Integer> anno;
+    @FXML
+    private ListView<String> listaCorsiSimili;
+    @FXML
+    private Button preferitiButton;
+    private List<String> corsiSimili;
 
     public void setUtenteBean(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
     }
-
-    @FXML
-    private Label corsoLabel;
-
-    @FXML
-    private Label ateneoLabel;
-
-    @FXML
-    private Label erroreLabel;
-
-    @FXML
-    private TableView<InsegnamentoBean> tableView;
-
-    @FXML
-    private TableColumn<InsegnamentoBean, Integer> cfu;
-
-    @FXML
-    private TableColumn<InsegnamentoBean, String> curriculum;
-
-    @FXML
-    private TableColumn<InsegnamentoBean, String> insegnamento;
-
-    @FXML
-    private TableColumn<InsegnamentoBean, Integer> semestre;
-
-    @FXML
-    private TableColumn<InsegnamentoBean, Integer> anno;
-
-
-    @FXML
-    private ListView<String> listaCorsiSimili;
-
-    @FXML
-    private Button preferitiButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -80,8 +69,6 @@ public class DettaglioCorsoController implements Initializable {
         anno.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("anno"));
 
     }
-
-    private List<String> corsiSimili;
 
     public void setCorsoSelezionato(String corso, List<String> corsiSimili) {
         this.corsoCorrente = corso;

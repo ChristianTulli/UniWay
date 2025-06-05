@@ -53,6 +53,7 @@ public class IscrittoController implements Initializable {
     @FXML
     private Label label;
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupComboBox(regione, gestioneIscritto.getRegioni(), this::handleRegioneSelection);
@@ -122,6 +123,20 @@ public class IscrittoController implements Initializable {
         cerca.setOnAction(this::handleCercaSelection);
     }
 
+    private void caricaInterfacciaCommenti(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/iscritto-commento.fxml"));
+        Parent root = loader.load();
+
+        CommentiController controller = loader.getController();
+        controller.setUtenteBean(utenteBean); // passa l'utente alla nuova schermata
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
     @FXML
     public void handleCercaSelection(ActionEvent event) {
         listView.getItems().clear();
@@ -134,8 +149,34 @@ public class IscrittoController implements Initializable {
         }
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                gestioneIscritto.setCorsoUtente(utenteBean, newValue); // Aggiorna idCorso di utenteBean
-                label.setText("Corso selezionato: " + newValue);
+                List<String> curriculumDisponibili = gestioneIscritto.getCurriculumPerCorso(newValue);
+                //logica del curriculum
+                if (curriculumDisponibili != null && curriculumDisponibili.size() > 1) {
+                    // Scelta curriculum tramite dialog
+                    ChoiceDialog<String> dialog = new ChoiceDialog<>(curriculumDisponibili.get(0), curriculumDisponibili);
+                    dialog.setTitle("Seleziona curriculum");
+                    dialog.setHeaderText("Curriculum disponibili per il corso selezionato:");
+                    dialog.setContentText("Scegli curriculum:");
+
+                    dialog.showAndWait().ifPresent(curr -> {
+                        gestioneIscritto.setCorsoUtente(utenteBean, newValue); // imposta idCorso
+                        gestioneIscritto.setCurriculumUtente(utenteBean, curr); // imposta curriculum
+                        label.setText("Corso selezionato: " + newValue + "\ncurriculum: " + curr);
+                    });
+                } else if (curriculumDisponibili != null && curriculumDisponibili.size() == 1) {
+                    // Salva direttamente
+                    gestioneIscritto.setCorsoUtente(utenteBean, newValue);
+                    gestioneIscritto.setCurriculumUtente(utenteBean, curriculumDisponibili.get(0));
+                    label.setText("Corso selezionato: " + newValue + "\ncurriculum: " + curriculumDisponibili.get(0));
+                } else{
+                    // Nessun curriculum salva solo il corso
+                    gestioneIscritto.setCorsoUtente(utenteBean, newValue);
+                    label.setText("Corso selezionato: " + newValue);
+                }try {
+                    caricaInterfacciaCommenti(event);
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
