@@ -1,6 +1,5 @@
 package uniway.persistenza;
 
-import uniway.beans.InsegnamentoBean;
 import uniway.model.Insegnamento;
 
 import java.sql.*;

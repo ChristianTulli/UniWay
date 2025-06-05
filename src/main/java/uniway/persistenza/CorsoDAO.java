@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class CorsoDAO {
     private final String url;
@@ -15,6 +14,7 @@ public class CorsoDAO {
     private final String password;
     private static final Logger LOGGER = Logger.getLogger(CorsoDAO.class.getName());
     private String eccezione = "problema nella comunicazione col databse";
+    private String nomecorso = "nomecorso";
 
     public CorsoDAO(String url, String username, String password) {
         this.url = url;
@@ -215,7 +215,7 @@ public class CorsoDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                risultati.add(rs.getString("nomecorso"));
+                risultati.add(rs.getString(nomecorso));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, eccezione, e);
@@ -351,7 +351,7 @@ public class CorsoDAO {
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                String nomeCorso = rs.getString("nomecorso");
+                String nomeCorso = rs.getString(nomecorso);
                 String nomeAteneo = rs.getString("nome_ateneo");
                 risultati.add(nomeCorso + " - " + nomeAteneo);
             }
@@ -377,7 +377,7 @@ public class CorsoDAO {
                 if (raw != null && !raw.isBlank()) {
                     curriculum = Arrays.stream(raw.split(",\\s*"))
                             .map(String::trim)
-                            .collect(Collectors.toList());
+                            .toList();
                 }
             }
 
@@ -399,7 +399,7 @@ public class CorsoDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                risultato = rs.getString("nomecorso");
+                risultato = rs.getString(nomecorso);
             }
 
         } catch (SQLException e) {

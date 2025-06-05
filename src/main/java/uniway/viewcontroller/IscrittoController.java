@@ -26,6 +26,7 @@ public class IscrittoController implements Initializable {
     private Parent root;
     private final GestioneIscritto gestioneIscritto = new GestioneIscritto();
     private UtenteBean utenteBean; // Aggiunto per tenere traccia dell'utente loggato
+    private String corsoSelezionato= "Corso selezionato: ";
 
     public void setUtenteBean(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
@@ -125,13 +126,13 @@ public class IscrittoController implements Initializable {
 
     private void caricaInterfacciaCommenti(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/iscritto-commento.fxml"));
-        Parent root = loader.load();
+        root = loader.load();
 
         CommentiController controller = loader.getController();
         controller.setUtenteBean(utenteBean); // passa l'utente alla nuova schermata
 
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
@@ -161,17 +162,17 @@ public class IscrittoController implements Initializable {
                     dialog.showAndWait().ifPresent(curr -> {
                         gestioneIscritto.setCorsoUtente(utenteBean, newValue); // imposta idCorso
                         gestioneIscritto.setCurriculumUtente(utenteBean, curr); // imposta curriculum
-                        label.setText("Corso selezionato: " + newValue + "\ncurriculum: " + curr);
+                        label.setText(corsoSelezionato + newValue + "\ncurriculum: " + curr);
                     });
                 } else if (curriculumDisponibili != null && curriculumDisponibili.size() == 1) {
                     // Salva direttamente
                     gestioneIscritto.setCorsoUtente(utenteBean, newValue);
                     gestioneIscritto.setCurriculumUtente(utenteBean, curriculumDisponibili.get(0));
-                    label.setText("Corso selezionato: " + newValue + "\ncurriculum: " + curriculumDisponibili.get(0));
+                    label.setText(corsoSelezionato + newValue + "\ncurriculum: " + curriculumDisponibili.get(0));
                 } else{
                     // Nessun curriculum salva solo il corso
                     gestioneIscritto.setCorsoUtente(utenteBean, newValue);
-                    label.setText("Corso selezionato: " + newValue);
+                    label.setText(corsoSelezionato + newValue);
                 }try {
                     caricaInterfacciaCommenti(event);
                 }catch (IOException e) {
