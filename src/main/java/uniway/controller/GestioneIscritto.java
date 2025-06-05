@@ -55,6 +55,11 @@ public class GestioneIscritto {
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del corso", e);
             }
+            gestioneLogin.getUtenti().stream()
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
+                    .map(u -> (UtenteIscritto) u)
+                    .findFirst()
+                    .ifPresent(u -> u.setIdCorso(idCorso));
         } else {
             gestioneLogin.getUtenti().stream()
                     .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
@@ -119,6 +124,11 @@ public class GestioneIscritto {
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del curriculum", e);
             }
+            gestioneLogin.getUtenti().stream()
+                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
+                    .map(u -> (UtenteIscritto) u)
+                    .findFirst()
+                    .ifPresent(u -> u.setCurriculum(curriculum));
         } else {
             gestioneLogin.getUtenti().stream()
                     .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
