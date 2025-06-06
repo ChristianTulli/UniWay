@@ -54,13 +54,13 @@
       </Label>
       <Button alignment="CENTER" layoutX="1217.0" layoutY="66.0" mnemonicParsing="false" onAction="#goBack" prefHeight="42.0" prefWidth="109.0" text="Indietro" />
       <Button fx:id="preferitiButton" alignment="CENTER" layoutX="827.0" layoutY="204.0" mnemonicParsing="false" onAction="#aggiungiAiPreferiti" prefHeight="42.0" prefWidth="135.0" text="Aggiungi ai Preferiti" />
-      <TableView fx:id="tableView" layoutX="44.0" layoutY="264.0" prefHeight="593.0" prefWidth="918.0">
+      <TableView fx:id="tableView" layoutX="44.0" layoutY="264.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="920.0">
         <columns>
-          <TableColumn fx:id="insegnamento" prefWidth="248.0" text="Insegnamento" />
-          <TableColumn fx:id="semestre" minWidth="0.0" prefWidth="110.4000244140625" text="Semestre" />
-            <TableColumn fx:id="anno" minWidth="0.0" prefWidth="54.4000244140625" text="Anno" />
-            <TableColumn fx:id="cfu" minWidth="0.0" prefWidth="70.39999999999998" text="CFU" />
-            <TableColumn fx:id="curriculum" minWidth="0.0" prefWidth="432.79998779296875" text="Curriculum" />
+          <TableColumn fx:id="insegnamento" prefWidth="400.0" text="Insegnamento" />
+          <TableColumn fx:id="semestre" minWidth="0.0" prefWidth="60.0" text="Semestre" />
+            <TableColumn fx:id="anno" minWidth="0.0" prefWidth="60.0" text="Anno" />
+            <TableColumn fx:id="cfu" minWidth="0.0" prefWidth="60.0" text="CFU" />
+            <TableColumn fx:id="curriculum" minWidth="0.0" prefWidth="325.0" text="Curriculum" />
         </columns>
       </TableView>
    </children>

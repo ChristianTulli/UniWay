@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
@@ -68,6 +69,25 @@ public class DettaglioCorsoController implements Initializable {
         semestre.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("semestre"));
         anno.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("anno"));
 
+        insegnamento.setCellFactory(column -> new TableCell<>() {
+            private final Text text = new Text();
+
+            {
+                text.wrappingWidthProperty().bind(insegnamento.widthProperty().subtract(10)); // Wrapping dinamico
+                setGraphic(text);
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    text.setText(item);
+                    setGraphic(text);
+                }
+            }
+        });
     }
 
     public void setCorsoSelezionato(String corso, List<String> corsiSimili) {

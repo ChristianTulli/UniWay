@@ -23,13 +23,13 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <TableView fx:id="tableView" layoutX="468.0" layoutY="291.0" prefHeight="594.0" prefWidth="707.0">
+      <TableView fx:id="tableView" layoutX="468.0" layoutY="291.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="725.0">
          <columns>
-            <TableColumn fx:id="insegnamento" prefWidth="248.0" text="Insegnamento" />
-            <TableColumn fx:id="semestre" minWidth="0.0" prefWidth="110.4000244140625" text="Semestre" />
-            <TableColumn fx:id="anno" minWidth="0.0" prefWidth="54.4000244140625" text="Anno" />
-            <TableColumn fx:id="cfu" minWidth="0.0" prefWidth="70.39999999999998" text="CFU" />
-            <TableColumn fx:id="valutazione" minWidth="0.0" prefWidth="221.60002441406255" text="Valutazione /5" />
+            <TableColumn fx:id="insegnamento" prefWidth="440.0" text="Insegnamento" />
+            <TableColumn fx:id="semestre" minWidth="0.0" prefWidth="60.0" text="Semestre" />
+            <TableColumn fx:id="anno" minWidth="0.0" prefWidth="60.0" text="Anno" />
+            <TableColumn fx:id="cfu" minWidth="0.0" prefWidth="60.0" text="CFU" />
+            <TableColumn fx:id="valutazione" minWidth="0.0" prefWidth="100.0" text="Valutazione /5" />
          </columns>
       </TableView>
       <Button alignment="CENTER" layoutX="1476.0" layoutY="76.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
