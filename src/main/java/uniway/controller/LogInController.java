@@ -17,18 +17,18 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GestioneLogin {
+public class LogInController {
 
     //pattern singleton
-    private static GestioneLogin instance;
+    private static LogInController instance;
     private final List<Utente> utenti = new ArrayList<>();
     private UtenteDAO utenteDAO;
     private boolean isFullMode;
-    private static final Logger LOGGER = Logger.getLogger(GestioneLogin.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LogInController.class.getName());
     private String errore = "errore";
 
 
-    private GestioneLogin() throws IllegalArgumentException {
+    private LogInController() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
@@ -55,11 +55,11 @@ public class GestioneLogin {
         }
     }
 
-    public static GestioneLogin getInstance() {
+    public static LogInController getInstance() {
         try {
             if (instance == null) {
-                synchronized (GestioneLogin.class) {  // Blocco sincronizzato
-                    instance = new GestioneLogin();
+                synchronized (LogInController.class) {  // Blocco sincronizzato
+                    instance = new LogInController();
                 }
             }
         } catch (IllegalArgumentException e) {

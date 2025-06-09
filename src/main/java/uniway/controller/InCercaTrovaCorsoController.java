@@ -10,9 +10,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GestioneRicerca {
+public class InCercaTrovaCorsoController {
 
-    private static final Logger LOGGER = Logger.getLogger(GestioneRicerca.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(InCercaTrovaCorsoController.class.getName());
     private CorsoDAO corsoDAO;
     private AteneoDAO ateneoDAO;
     private String errore = "Errore";
@@ -26,7 +26,7 @@ public class GestioneRicerca {
     private String gruppoDisciplina;
     private String classeCorso;
 
-    public GestioneRicerca() throws IllegalArgumentException {
+    public InCercaTrovaCorsoController() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);

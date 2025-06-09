@@ -10,17 +10,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GestioneCommenti {
-    private static final Logger LOGGER = Logger.getLogger(GestioneCommenti.class.getName());
+public class IscrittoVisualizzaInsegnamentiController {
+    private static final Logger LOGGER = Logger.getLogger(IscrittoVisualizzaInsegnamentiController.class.getName());
     private CorsoDAO corsoDAO;
     private InsegnamentoDAO insegnamentoDAO;
     private RecensioneDAO recensioneDAO;
+    private List<Insegnamento> insegnamentiDelCorso = new ArrayList<>();
+    private Insegnamento insegnamentoSelezionato;
 
-    public GestioneCommenti() throws IllegalArgumentException {
+    public IscrittoVisualizzaInsegnamentiController() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
@@ -38,12 +41,11 @@ public class GestioneCommenti {
         }
     }
     public List<InsegnamentoBean> getInsegnamenti(Integer idCorso, String curriculum, String usernameUtente) {
-        List<Insegnamento> insegnamenti = new ArrayList<>();
         List<InsegnamentoBean> insegnamentiBean = new ArrayList<>();
-        insegnamentoDAO.getInsegnamentiByCurriculum(idCorso, curriculum, insegnamenti);
+        insegnamentoDAO.getInsegnamentiByCurriculum(idCorso, curriculum, insegnamentiDelCorso);
         //trasmettere risultato passando la lista ottenuta a lista di InsegnamentiBean
 
-        for (Insegnamento ins : insegnamenti) {
+        for (Insegnamento ins : insegnamentiDelCorso) {
             InsegnamentoBean bean = new InsegnamentoBean();
             bean.setNome(ins.getNome());
             bean.setAnno(ins.getAnno());
@@ -56,12 +58,25 @@ public class GestioneCommenti {
         }
         return insegnamentiBean;
     }
+    public Insegnamento passaInsegnamento(InsegnamentoBean insegnamentoBean) {
+        return insegnamentiDelCorso.stream()
+                .filter(ins ->
+                        ins.getNome().equals(insegnamentoBean.getNome()) &&
+                                ins.getAnno() == insegnamentoBean.getAnno() &&
+                                ins.getSemestre() == insegnamentoBean.getSemestre() &&
+                                ins.getCfu() == insegnamentoBean.getCfu() &&
+                                Objects.equals(ins.getCurriculum(), insegnamentoBean.getCurriculum())
+                )
+                .findFirst()
+                .orElse(null); // oppure puoi lanciare un'eccezione se è obbligatorio trovarlo
+    }
+
 
     public String getCorso(Integer idCorso) {
-        return corsoDAO.getNomeByIdCorso(idCorso); //fare DAO
+        return corsoDAO.getNomeByIdCorso(idCorso);
     }
 
     public String getAteneo(Integer idCorso) {
-        return corsoDAO.getAteneoByIdCorso(idCorso); //fare DAO
+        return corsoDAO.getAteneoByIdCorso(idCorso);
     }
 }

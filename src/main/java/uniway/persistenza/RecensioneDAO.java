@@ -1,5 +1,9 @@
 package uniway.persistenza;
 
+import uniway.model.Insegnamento;
+import uniway.model.Utente;
+
+import java.io.IOException;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,9 +22,7 @@ public class RecensioneDAO {
     }
 
     public Integer getValutazioneUtente(int idInsegnamento, String usernameUtente) {
-        String query = "SELECT valutazione_generale FROM recensioni r " +
-                "JOIN utenti u ON r.id_utente = u.id " +
-                "WHERE r.id_insegnamento = ? AND u.username = ?";
+        String query = "SELECT valutazione_generale FROM recensioni WHERE id_insegnamento = ? AND nome_utente = ?";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
         PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -40,4 +42,26 @@ public class RecensioneDAO {
         return null; // Nessuna recensione trovata
     }
 
+    public void setRecesnione(String testo, Integer valutazione, String nomeUtente, Integer idInsegnamento) {
+            String query;
+            query = "INSERT INTO recensioni (commento, valutazione_generale, nome_utente, id_insegnamento) VALUES (?, ?, ?, ?)";//scrivere query per inserire le recensioni
+
+            try (Connection conn = DriverManager.getConnection(url, username, password);
+                 PreparedStatement stmt = conn.prepareStatement(query)){
+
+                stmt.setString(1, testo);
+                stmt.setInt(2, valutazione);
+                stmt.setString(3, nomeUtente);
+                stmt.setInt(4, idInsegnamento);
+
+                int rowsAffected = stmt.executeUpdate(); // Eseguiamo la query
+
+                if (rowsAffected == 0) {
+                    throw new IOException("Nessuna recensione è stata inserita nel database.");
+                }
+
+            } catch (IOException | SQLException e) {
+                e.printStackTrace();
+            }
+    }
 }

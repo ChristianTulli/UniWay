@@ -12,9 +12,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GestioneIscritto {
+public class IscrittoSelezionaCorsoController {
 
-    private static final Logger LOGGER = Logger.getLogger(GestioneIscritto.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(IscrittoSelezionaCorsoController.class.getName());
     private CorsoDAO corsoDAO;
     private String errore = "errore";
 
@@ -24,10 +24,10 @@ public class GestioneIscritto {
     private String tipologia;
     private String corso;
 
-    private final GestioneLogin gestioneLogin = GestioneLogin.getInstance(); // Otteniamo il Singleton
+    private final LogInController loginController = LogInController.getInstance(); // Otteniamo il Singleton
 
 
-    public GestioneIscritto() throws IllegalArgumentException {
+    public IscrittoSelezionaCorsoController() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
@@ -45,19 +45,19 @@ public class GestioneIscritto {
         Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, tipologia, corso);
         utenteBean.setIdCorso(idCorso);
 
-        if (gestioneLogin.isFullMode()) { // Ora possiamo accedere a isFullMode
+        if (loginController.isFullMode()) { // Ora possiamo accedere a isFullMode
             try {
-                gestioneLogin.getUtenteDAO().aggiungiCorsoUtente(utenteBean.getUsername(), idCorso);
+                loginController.getUtenteDAO().aggiungiCorsoUtente(utenteBean.getUsername(), idCorso);
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del corso", e);
             }
-            gestioneLogin.getUtenti().stream()
+            loginController.getUtenti().stream()
                     .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
                     .map(u -> (UtenteIscritto) u)
                     .findFirst()
                     .ifPresent(u -> u.setIdCorso(idCorso));
         } else {
-            gestioneLogin.getUtenti().stream()
+            loginController.getUtenti().stream()
                     .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
                     .map(u -> (UtenteIscritto) u)
                     .findFirst()
@@ -111,19 +111,19 @@ public class GestioneIscritto {
     public void setCurriculumUtente(UtenteBean utente, String curriculum) {
         utente.setCurriculum(curriculum);
 
-        if (gestioneLogin.isFullMode()) {
+        if (loginController.isFullMode()) {
             try {
-                gestioneLogin.getUtenteDAO().aggiungiCurriculumUtente(utente.getUsername(), curriculum);
+                loginController.getUtenteDAO().aggiungiCurriculumUtente(utente.getUsername(), curriculum);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del curriculum", e);
             }
-            gestioneLogin.getUtenti().stream()
+            loginController.getUtenti().stream()
                     .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
                     .map(u -> (UtenteIscritto) u)
                     .findFirst()
                     .ifPresent(u -> u.setCurriculum(curriculum));
         } else {
-            gestioneLogin.getUtenti().stream()
+            loginController.getUtenti().stream()
                     .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
                     .map(u -> (UtenteIscritto) u)
                     .findFirst()

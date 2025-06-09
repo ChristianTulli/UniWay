@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
-import uniway.controller.GestoreDettaglioCorso;
+import uniway.controller.InCercaDettaglioCorsoController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-public class DettaglioCorsoController implements Initializable {
+public class InCercaDettaglioCorsoViewController implements Initializable {
 
     private Scene scene;
     private Stage stage;
@@ -32,7 +32,7 @@ public class DettaglioCorsoController implements Initializable {
     private String corsoCorrente;
     private String nomeCorso;
     private String nomeAteneo;
-    private GestoreDettaglioCorso gestoreDettaglioCorso = new GestoreDettaglioCorso();
+    private InCercaDettaglioCorsoController inCercaDettaglioCorsoController = new InCercaDettaglioCorsoController();
     @FXML
     private Label corsoLabel;
     @FXML
@@ -113,7 +113,7 @@ public class DettaglioCorsoController implements Initializable {
                 "Nessun corso simile con i filtri precedentemente impostati." : "");
 
         // popola la tabella insegnamenti
-        List<InsegnamentoBean> lista = gestoreDettaglioCorso.getInsegnamenti(nomeCorso, nomeAteneo);
+        List<InsegnamentoBean> lista = inCercaDettaglioCorsoController.getInsegnamenti(nomeCorso, nomeAteneo);
         ObservableList<InsegnamentoBean> listaInsegnamenti = FXCollections.observableArrayList(lista);
         tableView.setItems(listaInsegnamenti);
     }
@@ -122,19 +122,19 @@ public class DettaglioCorsoController implements Initializable {
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {
         if (utenteBean != null && nomeCorso != null) {
-            gestoreDettaglioCorso.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
+            inCercaDettaglioCorsoController.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
             preferitiButton.setDisable(true);
         }
     }
 
 
     public void goBack(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ricerca-home.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaTrovaCorsoUI.fxml"));
         Parent newRoot = loader.load();
 
         // Passa l'UtenteBean al nuovo controller
-        RicercaController ricercaController = loader.getController();
-        ricercaController.setUtenteBean(utenteBean);  // Mantiene l'utente attivo
+        InCercaTrovaCorsoViewController inCercaTrovaCorsoViewController = loader.getController();
+        inCercaTrovaCorsoViewController.impostaSchermata(utenteBean);  // Mantiene l'utente attivo
 
         // Cambia schermata
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -145,7 +145,7 @@ public class DettaglioCorsoController implements Initializable {
 
 
     public void logOut(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/accesso-registrazione.fxml")));
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
