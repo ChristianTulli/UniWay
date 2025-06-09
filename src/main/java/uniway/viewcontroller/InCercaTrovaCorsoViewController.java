@@ -9,10 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import uniway.beans.UtenteBean;
-import uniway.controller.GestioneRicerca;
+import uniway.controller.InCercaTrovaCorsoController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,17 +21,17 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RicercaController implements Initializable {
+public class InCercaTrovaCorsoViewController implements Initializable {
 
     private Scene scene;
     private Stage stage;
     private Parent root;
-    private final GestioneRicerca gestioneRicerca = new GestioneRicerca();
+    private final InCercaTrovaCorsoController inCercaTrovaCorsoController = new InCercaTrovaCorsoController();
     private UtenteBean utenteBean;
-    private String interfacciaCorso = "/view/dettaglio-corso.fxml";
-    private static final Logger LOGGER = Logger.getLogger(RicercaController.class.getName());
+    private String interfacciaCorso = "/view/InCercaDettaglioCorsoUI.fxml";
+    private static final Logger LOGGER = Logger.getLogger(InCercaTrovaCorsoViewController.class.getName());
 
-    public void setUtenteBean(UtenteBean utenteBean) {
+    public void impostaSchermata(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
     }
 
@@ -56,9 +55,9 @@ public class RicercaController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setupComboBox(statale, gestioneRicerca.getTipiAteneo(), this::handleStataleSelection);
-        setupComboBox(regione, gestioneRicerca.getRegioni(), this::handleRegioneSelection);
-        setupComboBox(durata, gestioneRicerca.getDurate(), this::handleDurataSelection);
+        setupComboBox(statale, inCercaTrovaCorsoController.getTipiAteneo(), this::handleStataleSelection);
+        setupComboBox(regione, inCercaTrovaCorsoController.getRegioni(), this::handleRegioneSelection);
+        setupComboBox(durata, inCercaTrovaCorsoController.getDurate(), this::handleDurataSelection);
         cerca.setDisable(true); // Disattiva il tasto "Cerca" all'inizio
 
         // Listener per il doppio click su un elemento della ListView
@@ -103,61 +102,61 @@ public class RicercaController implements Initializable {
     @FXML
     public void handleStataleSelection(ActionEvent event) {
         resetComboBoxes(tipologia);
-        setupComboBox(tipologia, gestioneRicerca.getTipologie(statale.getValue()), this::handleTipologiaSelection);
+        setupComboBox(tipologia, inCercaTrovaCorsoController.getTipologie(statale.getValue()), this::handleTipologiaSelection);
         checkCercaEnabled();
     }
 
     @FXML
     public void handleTipologiaSelection(ActionEvent event) {
         resetComboBoxes();
-        gestioneRicerca.setTipologia(tipologia.getValue());
+        inCercaTrovaCorsoController.setTipologia(tipologia.getValue());
     }
 
     // 🔵 COLONNA 2: UBICAZIONE
     @FXML
     public void handleRegioneSelection(ActionEvent event) {
         resetComboBoxes(provincia, comune);
-        setupComboBox(provincia, gestioneRicerca.getProvince(regione.getValue()), this::handleProvinciaSelection);
+        setupComboBox(provincia, inCercaTrovaCorsoController.getProvince(regione.getValue()), this::handleProvinciaSelection);
         checkCercaEnabled();
     }
 
     @FXML
     public void handleProvinciaSelection(ActionEvent event) {
         resetComboBoxes(comune);
-        setupComboBox(comune, gestioneRicerca.getComuni(provincia.getValue()), this::handleComuneSelection);
+        setupComboBox(comune, inCercaTrovaCorsoController.getComuni(provincia.getValue()), this::handleComuneSelection);
     }
 
     @FXML
     public void handleComuneSelection(ActionEvent event) {
         resetComboBoxes();
-        gestioneRicerca.setComune(comune.getValue());
+        inCercaTrovaCorsoController.setComune(comune.getValue());
     }
 
     // 🔵 COLONNA 3: CARATTERISTICHE CORSO
     @FXML
     public void handleDurataSelection(ActionEvent event) {
         resetComboBoxes(gruppoDisciplina, classeCorso);
-        setupComboBox(gruppoDisciplina, gestioneRicerca.getDiscipline(durata.getValue()), this::handleGruppoSelection);
+        setupComboBox(gruppoDisciplina, inCercaTrovaCorsoController.getDiscipline(durata.getValue()), this::handleGruppoSelection);
         checkCercaEnabled();
     }
 
     @FXML
     public void handleGruppoSelection(ActionEvent event) {
         resetComboBoxes(classeCorso);
-        setupComboBox(classeCorso, gestioneRicerca.getClassi(gruppoDisciplina.getValue()), this::handleClasseSelection);
+        setupComboBox(classeCorso, inCercaTrovaCorsoController.getClassi(gruppoDisciplina.getValue()), this::handleClasseSelection);
     }
 
     @FXML
     public void handleClasseSelection(ActionEvent event) {
         resetComboBoxes();
-        gestioneRicerca.setClasseCorso(classeCorso.getValue());
+        inCercaTrovaCorsoController.setClasseCorso(classeCorso.getValue());
     }
 
     // 🔵 CERCA RISULTATI
     @FXML
     public void handleCercaSelection(ActionEvent event) {
         resetComboBoxes();
-        List<String> risultato = gestioneRicerca.getRisultati();
+        List<String> risultato = inCercaTrovaCorsoController.getRisultati();
         if (risultato != null && !risultato.isEmpty()) {
             listView.getItems().addAll(risultato);
         } else {
@@ -172,11 +171,11 @@ public class RicercaController implements Initializable {
             Parent newRoot = loader.load();
 
             // Ottieni il controller della nuova interfaccia
-            DettaglioCorsoController dettaglioCorsoController = loader.getController();
-            dettaglioCorsoController.setUtenteBean(utenteBean);
+            InCercaDettaglioCorsoViewController inCercaDettaglioCorsoViewController = loader.getController();
+            inCercaDettaglioCorsoViewController.setUtenteBean(utenteBean);
 
             // Passa il corso selezionato e la lista completa dei risultati
-            dettaglioCorsoController.setCorsoSelezionato(corsoSelezionato, listView.getItems());
+            inCercaDettaglioCorsoViewController.setCorsoSelezionato(corsoSelezionato, listView.getItems());
 
             // Cambia la schermata attuale
             stage = (Stage) listView.getScene().getWindow();
@@ -192,7 +191,7 @@ public class RicercaController implements Initializable {
 
 
     public void logOut(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/accesso-registrazione.fxml")));
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);

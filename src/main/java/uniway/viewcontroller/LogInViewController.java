@@ -2,7 +2,7 @@ package uniway.viewcontroller;
 
 import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
-import uniway.controller.GestioneLogin;
+import uniway.controller.LogInController;
 
 
 import javafx.event.ActionEvent;
@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.util.Optional;
 
 
-public class AccessoController {
-    private String interfacciaIscritto = "/view/iscritto-selezione.fxml";
-    private String interfacciaRicerca = "/view/ricerca-home.fxml";
-    private String interfacciaCorsoIscritto = "/view/iscritto-commento.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
+public class LogInViewController {
+    private String interfacciaIscritto = "/view/IscrittoSelezionaCorsoUI.fxml";
+    private String interfacciaRicerca = "/view/InCercaTrovaCorsoUI.fxml";
+    private String interfacciaCorsoIscritto = "/view/IscrittoVisualizzaInsegnamentiUI.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
 
 
     @FXML
@@ -41,7 +41,7 @@ public class AccessoController {
     @FXML
     private Button ricercaButton;
 
-    private final GestioneLogin gestioneLogin = GestioneLogin.getInstance(); //non creare una nuova istanza ma usare la stessa, altrimenti creo una nuova lista
+    private final LogInController loginController = LogInController.getInstance(); //non creare una nuova istanza ma usare la stessa, altrimenti creo una nuova lista
 
     //fa apparire i tasti in cerca e iscritto se ho cliccato su registrati
     public void onRegisratiButtonClick() {
@@ -54,7 +54,7 @@ public class AccessoController {
 
 
     boolean registra(UtenteBean utenteBean) {
-        if (gestioneLogin.registrazione(utenteBean)) {
+        if (loginController.registrazione(utenteBean)) {
             errorLabel.setText("Utente registrato con successo");
             return true;
         } else {
@@ -71,12 +71,12 @@ public class AccessoController {
         Object controller = loader.getController();
 
         // Passa l'utente al nuovo controller, verificando il tipo
-        if (controller instanceof IscrittoController iscrittoController) {
-            iscrittoController.setUtenteBean(utenteBean);
-        } else if (controller instanceof RicercaController ricercaController) {
-            ricercaController.setUtenteBean(utenteBean);
-        } else if (controller instanceof CommentiController commentiController) {
-            commentiController.setUtenteBean(utenteBean);
+        if (controller instanceof IscrittoSelezionaCorsoViewController iscrittoSelezionaCorsoViewController) {
+            iscrittoSelezionaCorsoViewController.impostaSchermata(utenteBean);
+        } else if (controller instanceof InCercaTrovaCorsoViewController inCercaTrovaCorsoViewController) {
+            inCercaTrovaCorsoViewController.impostaSchermata(utenteBean);
+        } else if (controller instanceof IscrittoVisualizzaInsegnamentiViewController iscrittoVisualizzaInsegnamentiViewController) {
+            iscrittoVisualizzaInsegnamentiViewController.impostaSchermata(utenteBean);
         }
         // Mostra la nuova schermata
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -101,7 +101,7 @@ public class AccessoController {
 
     //sto facendo LogIn
     public void logIn(ActionEvent event) throws IOException {
-        Optional<UtenteBean> utenteOpt = gestioneLogin.autenticazione(usernameField.getText(), passwordField.getText());
+        Optional<UtenteBean> utenteOpt = loginController.autenticazione(usernameField.getText(), passwordField.getText());
 
         if (utenteOpt.isPresent()) {
             UtenteBean utenteBean = utenteOpt.get();

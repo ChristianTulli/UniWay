@@ -15,16 +15,16 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GestoreDettaglioCorso {
-    private static final Logger LOGGER = Logger.getLogger(GestoreDettaglioCorso.class.getName());
+public class InCercaDettaglioCorsoController {
+    private static final Logger LOGGER = Logger.getLogger(InCercaDettaglioCorsoController.class.getName());
     private CorsoDAO corsoDAO;
     private String comune;
     private String ateneo;
     private String tipologia;
-    private final GestioneLogin gestioneLogin = GestioneLogin.getInstance();
+    private final LogInController loginController = LogInController.getInstance();
     private InsegnamentoDAO insegnamentoDAO;
 
-    public GestoreDettaglioCorso() throws IllegalArgumentException {
+    public InCercaDettaglioCorsoController() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
@@ -58,14 +58,14 @@ public class GestoreDettaglioCorso {
     public void aggiungiAiPreferiti(UtenteBean utenteBean, String corsoSelezionato, String ateneoSelezionato) {
         Integer idCorso = corsoDAO.getIdCorsoByNomeAndAteneo(ateneoSelezionato, corsoSelezionato);
 
-        if (gestioneLogin.isFullMode()) {
+        if (loginController.isFullMode()) {
             try {
-                gestioneLogin.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
+                loginController.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "Errore durante l'inserimento nei preferiti", e);
             }
         } else {
-            gestioneLogin.getUtenti().stream()
+            loginController.getUtenti().stream()
                     .filter(u -> u instanceof UtenteInCerca && u.getUsername().equals(utenteBean.getUsername()))
                     .map(u -> (UtenteInCerca) u)
                     .findFirst()
