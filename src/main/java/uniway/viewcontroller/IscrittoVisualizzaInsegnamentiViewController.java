@@ -76,18 +76,22 @@ public class IscrittoVisualizzaInsegnamentiViewController implements Initializab
 
     private void configuraInsegnamentoCellFactory() {
         insegnamento.setCellFactory(column -> new TableCell<>() {
-            private final Text text = new Text();
-
-            {
-                text.wrappingWidthProperty().bind(insegnamento.widthProperty().subtract(10));
-                setGraphic(text);
-            }
+            private Text text;
 
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic((empty || item == null) ? null : text);
-                if (item != null) text.setText(item);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    if (text == null) {
+                        text = new Text();
+                        text.wrappingWidthProperty().bind(insegnamento.widthProperty().subtract(10));
+                    }
+                    text.setText(item);
+                    setGraphic(text);
+                }
             }
         });
     }

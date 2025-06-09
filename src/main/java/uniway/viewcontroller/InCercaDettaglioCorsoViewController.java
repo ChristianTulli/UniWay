@@ -70,24 +70,25 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         anno.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("anno"));
 
         insegnamento.setCellFactory(column -> new TableCell<>() {
-            private final Text text = new Text();
-
-            {
-                text.wrappingWidthProperty().bind(insegnamento.widthProperty().subtract(10)); // Wrapping dinamico
-                setGraphic(text);
-            }
+            private Text text;
 
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
+                    if (text == null) {
+                        text = new Text();
+                        text.wrappingWidthProperty().bind(insegnamento.widthProperty().subtract(10));
+                    }
                     text.setText(item);
                     setGraphic(text);
                 }
             }
         });
+
     }
 
     public void setCorsoSelezionato(String corso, List<String> corsiSimili) {
