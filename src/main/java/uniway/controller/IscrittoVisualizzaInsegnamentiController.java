@@ -61,15 +61,16 @@ public class IscrittoVisualizzaInsegnamentiController {
     public Insegnamento passaInsegnamento(InsegnamentoBean insegnamentoBean) {
         return insegnamentiDelCorso.stream()
                 .filter(ins ->
-                        ins.getNome().equals(insegnamentoBean.getNome()) &&
-                                ins.getAnno() == insegnamentoBean.getAnno() &&
-                                ins.getSemestre() == insegnamentoBean.getSemestre() &&
-                                ins.getCfu() == insegnamentoBean.getCfu() &&
+                        Objects.equals(ins.getNome(), insegnamentoBean.getNome()) &&
+                                Objects.equals(ins.getAnno(), insegnamentoBean.getAnno()) &&
+                                Objects.equals(ins.getSemestre(), insegnamentoBean.getSemestre()) &&
+                                Objects.equals(ins.getCfu(), insegnamentoBean.getCfu()) &&
                                 Objects.equals(ins.getCurriculum(), insegnamentoBean.getCurriculum())
                 )
                 .findFirst()
-                .orElse(null); // oppure puoi lanciare un'eccezione se è obbligatorio trovarlo
+                .orElse(null); // oppure lancia eccezione se obbligatorio
     }
+
 
 
     public String getCorso(Integer idCorso) {

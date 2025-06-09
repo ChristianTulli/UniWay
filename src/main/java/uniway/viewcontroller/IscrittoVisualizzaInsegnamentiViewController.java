@@ -61,57 +61,65 @@ public class IscrittoVisualizzaInsegnamentiViewController implements Initializab
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        insegnamento.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, String>("nome"));
-        cfu.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("cfu"));
-        semestre.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("semestre"));
-        anno.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("anno"));
-        valutazione.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("valutazione"));
+        configuraColonne();
+        configuraInsegnamentoCellFactory();
+        configuraRowFactory();
+    }
 
+    private void configuraColonne() {
+        insegnamento.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        cfu.setCellValueFactory(new PropertyValueFactory<>("cfu"));
+        semestre.setCellValueFactory(new PropertyValueFactory<>("semestre"));
+        anno.setCellValueFactory(new PropertyValueFactory<>("anno"));
+        valutazione.setCellValueFactory(new PropertyValueFactory<>("valutazione"));
+    }
+
+    private void configuraInsegnamentoCellFactory() {
         insegnamento.setCellFactory(column -> new TableCell<>() {
             private final Text text = new Text();
 
             {
-                text.wrappingWidthProperty().bind(insegnamento.widthProperty().subtract(10)); // Wrapping dinamico
+                text.wrappingWidthProperty().bind(insegnamento.widthProperty().subtract(10));
                 setGraphic(text);
             }
 
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    text.setText(item);
-                    setGraphic(text);
-                }
+                setGraphic((empty || item == null) ? null : text);
+                if (item != null) text.setText(item);
             }
         });
+    }
 
+    private void configuraRowFactory() {
         tableView.setRowFactory(tv -> {
             TableRow<InsegnamentoBean> row = new TableRow<>();
             row.itemProperty().addListener((obs, oldItem, newItem) -> {
-                if (newItem != null && newItem.getValutazione() != null) {
-                    row.setStyle("-fx-background-color: #dddddd;"); // Grigia la riga
-                } else {
-                    row.setStyle(""); // Stile predefinito
-                }
+                boolean giaRecensito = newItem != null && newItem.getValutazione() != null;
+                row.setStyle(giaRecensito ? "-fx-background-color: #dddddd;" : "");
             });
+
             row.setOnMouseClicked(event -> {
                 InsegnamentoBean selected = row.getItem();
-                if (event.getClickCount() == 2 && selected != null && selected.getValutazione() == null) {
-                    apriSchermataCommento(selected);
-                } else if (event.getClickCount() == 2 && selected != null && selected.getValutazione() != null) {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Già recensito");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Hai già recensito questo insegnamento.");
-                    alert.showAndWait();
+                if (event.getClickCount() == 2 && selected != null) {
+                    if (selected.getValutazione() == null) {
+                        apriSchermataCommento(selected);
+                    } else {
+                        mostraAlertRecensionePresente();
+                    }
                 }
             });
             return row;
         });
+    }
 
-
+    private void mostraAlertRecensionePresente() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Già recensito");
+        alert.setHeaderText(null);
+        alert.setContentText("Hai già recensito questo insegnamento.");
+        alert.showAndWait();
     }
 
     private void apriSchermataCommento(InsegnamentoBean insegnamentoBean) {

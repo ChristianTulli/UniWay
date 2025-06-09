@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: linear-gradient(to bottom, #FF00DD, #00BBFF );" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniway.viewcontroller.IscrittoCommentaInsegnamentoViewController">
+   <children>
+      <Separator layoutX="-4.0" layoutY="119.0" prefHeight="17.0" prefWidth="1920.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="119.0" />
+      <ImageView fitHeight="108.0" fitWidth="248.0" layoutX="676.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/titolo.png" />
+         </image>
+      </ImageView>
+      <Button alignment="CENTER" layoutX="1476.0" layoutY="76.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
+      <Label layoutX="287.0" layoutY="137.0" text="CORSO:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="corsoLabel" layoutX="395.0" layoutY="137.0" prefHeight="35.0" prefWidth="780.0" text="NOME">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="curriculumLabel" layoutX="395.0" layoutY="172.0" prefHeight="35.0" prefWidth="780.0" text="CURRICULUM">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="ateneoLabel" layoutX="395.0" layoutY="212.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <VBox layoutX="1302.0" layoutY="384.0" prefHeight="257.0" prefWidth="59.0">
+         <children>
+            <ImageView fx:id="star1" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/stella-vuota.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="star2" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/stella-vuota.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="star3" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/stella-vuota.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="star4" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/stella-vuota.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="star5" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/stella-vuota.png" />
+               </image>
+            </ImageView>
+         </children>
+      </VBox>
+      <Label layoutX="1175.0" layoutY="326.0" text="COME VALUTI QUESTO CORSO?">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <TextArea fx:id="commentoArea" layoutX="209.0" layoutY="326.0" prefHeight="410.0" prefWidth="856.0" />
+      <Label layoutX="435.0" layoutY="288.0" text="LASCIA UN COMMENTO:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Button alignment="CENTER" layoutX="1338.0" layoutY="76.0" mnemonicParsing="false" onAction="#goBack" prefHeight="42.0" prefWidth="109.0" text="Indietro" />
+      <Button fx:id="salvaButton" alignment="CENTER" disable="true" layoutX="638.0" layoutY="804.0" mnemonicParsing="false" onAction="#salvaRecensione" prefHeight="42.0" prefWidth="294.0" text="Salva la recensnione" />
+      <Label fx:id="insegnamentoLabel" layoutX="395.0" layoutY="247.0" prefHeight="35.0" prefWidth="780.0" text="INSEGNAMENTO">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <VBox layoutX="1363.0" layoutY="384.0" prefHeight="257.0" prefWidth="59.0">
+         <children>
+            <Label prefHeight="51.0" prefWidth="60.0" text="1">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="10.0" layoutY="10.0" prefHeight="51.0" prefWidth="60.0" text="2">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="10.0" layoutY="61.0" prefHeight="51.0" prefWidth="60.0" text="3">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="10.0" layoutY="112.0" prefHeight="51.0" prefWidth="60.0" text="4">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="10.0" layoutY="163.0" prefHeight="51.0" prefWidth="60.0" text="5">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

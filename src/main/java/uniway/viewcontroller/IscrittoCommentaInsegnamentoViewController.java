@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IscrittoCommentaInsegnamentoViewController implements Initializable {
 
@@ -30,6 +32,7 @@ public class IscrittoCommentaInsegnamentoViewController implements Initializable
     private InsegnamentoBean insegnamentoBean;
     private IscrittoCommentaInsegnamentoController iscrittoCommentaInsegnamentoController= new IscrittoCommentaInsegnamentoController();
     private int valutazioneSelezionata = 0;
+    private static final Logger LOGGER = Logger.getLogger(IscrittoCommentaInsegnamentoViewController.class.getName());
 
     @FXML
     private Label corsoLabel;
@@ -136,7 +139,7 @@ public class IscrittoCommentaInsegnamentoViewController implements Initializable
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata della lista die corsi", e);
         }
     }
     public void logOut (ActionEvent event) throws IOException {

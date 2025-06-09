@@ -3,8 +3,6 @@ package uniway.controller;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.model.Insegnamento;
-import uniway.model.Utente;
-import uniway.model.UtenteIscritto;
 import uniway.persistenza.RecensioneDAO;
 
 import java.io.FileInputStream;

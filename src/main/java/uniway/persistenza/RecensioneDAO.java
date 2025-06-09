@@ -1,8 +1,5 @@
 package uniway.persistenza;
 
-import uniway.model.Insegnamento;
-import uniway.model.Utente;
-
 import java.io.IOException;
 import java.sql.*;
 import java.util.logging.Level;
@@ -61,7 +58,7 @@ public class RecensioneDAO {
                 }
 
             } catch (IOException | SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, eccezione, e);
             }
     }
 }
