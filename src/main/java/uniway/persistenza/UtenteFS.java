@@ -231,8 +231,8 @@ public class UtenteFS implements UtenteDAO {
     }
 
     public List<String> getPreferitiUtente ( String username){
-        List<String> preferiti = new ArrayList<>();
-        return preferiti;
+        return new ArrayList<>();
+        // definire metodo che ritorna la lista degli insegnamenti preferiti per la versione FS
     }
 
 

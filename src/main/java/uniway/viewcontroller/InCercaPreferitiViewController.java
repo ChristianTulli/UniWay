@@ -18,10 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class InCercaPreferitiViewController implements Initializable {
     private UtenteBean utenteBean;
     private InCercaPreferitiController inCercaPreferitiController=new InCercaPreferitiController();
+    private static final Logger LOGGER = Logger.getLogger(InCercaPreferitiViewController.class.getName());
 
     @FXML
     private ListView<String> listView;
@@ -36,7 +39,7 @@ public class InCercaPreferitiViewController implements Initializable {
                 try {
                     apriDettaglioCorso(newValue);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    LOGGER.log(Level.SEVERE, "Errore nell'apertura della visualizzazione del corso", e);
                 }
             }
         });
@@ -46,7 +49,7 @@ public class InCercaPreferitiViewController implements Initializable {
         try {
             listView.getItems().addAll(inCercaPreferitiController.getPreferiti(utenteBean.getUsername()));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.log(Level.SEVERE, "Errore nell'impostazione della schermata", e);
         }
     }
 

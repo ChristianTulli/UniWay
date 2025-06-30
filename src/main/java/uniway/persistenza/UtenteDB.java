@@ -9,7 +9,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 public class UtenteDB implements UtenteDAO {
     private final String url;
@@ -65,7 +64,7 @@ public class UtenteDB implements UtenteDAO {
                 List<Integer> preferenze = new ArrayList<>();
 
                 if (!iscritto) {
-                    String prefStr = rs.getString("preferenze");
+                    String prefStr = rs.getString(colonnaPreferenze);
                     if (prefStr != null && !prefStr.isEmpty()) {
                         preferenze = new ArrayList<>(
                                 Arrays.stream(prefStr.split(","))
@@ -169,7 +168,7 @@ public class UtenteDB implements UtenteDAO {
             ResultSet rsPref = stmtPref.executeQuery();
 
             if (rsPref.next()) {
-                String preferenzeStr = rsPref.getString("preferenze");
+                String preferenzeStr = rsPref.getString(colonnaPreferenze);
                 if (preferenzeStr != null && !preferenzeStr.isBlank()) {
                     String[] idCorsi = preferenzeStr.split(",");
 
