@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 public class UtenteDB implements UtenteDAO {
     private final String url;
@@ -147,5 +148,54 @@ public class UtenteDB implements UtenteDAO {
             throw new IOException("Errore durante la selezione del curriculum", e);
         }
     }
+
+    @Override
+    public List<String> getPreferitiUtente(String username) throws IOException {
+        String queryPreferenze = "SELECT preferenze FROM utenti WHERE username = ?";
+        String queryCorso = """
+    SELECT c.nomecorso, a.nome 
+    FROM corsi c
+    JOIN atenei a ON c.idateneo = a.id
+    WHERE c.id = ?
+""";
+
+
+        List<String> preferiti = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(url, this.username, password);
+             PreparedStatement stmtPref = conn.prepareStatement(queryPreferenze)) {
+
+            stmtPref.setString(1, username);
+            ResultSet rsPref = stmtPref.executeQuery();
+
+            if (rsPref.next()) {
+                String preferenzeStr = rsPref.getString("preferenze");
+                if (preferenzeStr != null && !preferenzeStr.isBlank()) {
+                    String[] idCorsi = preferenzeStr.split(",");
+
+                    try (PreparedStatement stmtCorso = conn.prepareStatement(queryCorso)) {
+                        for (String idStr : idCorsi) {
+                            int id = Integer.parseInt(idStr.trim());
+                            stmtCorso.setInt(1, id);
+                            try (ResultSet rsCorso = stmtCorso.executeQuery()) {
+                                if (rsCorso.next()) {
+                                    String nomeCorso = rsCorso.getString("nomecorso");
+                                    String nomeAteneo = rsCorso.getString("nome");
+                                    preferiti.add(nomeCorso + " - " + nomeAteneo);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IOException("Errore durante il recupero dei preferiti", e);
+        }
+
+        return preferiti;
+    }
+
 
 }

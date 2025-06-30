@@ -15,6 +15,8 @@ public interface UtenteDAO {
 
      void aggiungiPreferitiUtente(String username, Integer idPreferiti) throws IOException;
 
+     List <String > getPreferitiUtente(String username) throws IOException;
+
      void aggiungiCurriculumUtente(String username, String curriculum) throws IOException;
 
 }

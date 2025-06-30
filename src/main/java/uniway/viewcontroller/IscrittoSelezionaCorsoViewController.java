@@ -125,10 +125,10 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     }
 
     private void caricaInterfacciaCommenti(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IscrittoVisualizzaInsegnamentiUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IscrittoInsegnamentiUI.fxml"));
         root = loader.load();
 
-        IscrittoVisualizzaInsegnamentiViewController controller = loader.getController();
+        IscrittoInsegnamentiViewController controller = loader.getController();
         controller.impostaSchermata(utenteBean); // passa l'utente alla nuova schermata
 
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

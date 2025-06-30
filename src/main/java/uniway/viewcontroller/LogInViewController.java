@@ -20,7 +20,7 @@ import java.util.Optional;
 public class LogInViewController {
     private String interfacciaIscritto = "/view/IscrittoSelezionaCorsoUI.fxml";
     private String interfacciaRicerca = "/view/InCercaTrovaCorsoUI.fxml";
-    private String interfacciaCorsoIscritto = "/view/IscrittoVisualizzaInsegnamentiUI.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
+    private String interfacciaCorsoIscritto = "/view/IscrittoInsegnamentiUI.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
 
 
     @FXML
@@ -75,8 +75,8 @@ public class LogInViewController {
             iscrittoSelezionaCorsoViewController.impostaSchermata(utenteBean);
         } else if (controller instanceof InCercaTrovaCorsoViewController inCercaTrovaCorsoViewController) {
             inCercaTrovaCorsoViewController.impostaSchermata(utenteBean);
-        } else if (controller instanceof IscrittoVisualizzaInsegnamentiViewController iscrittoVisualizzaInsegnamentiViewController) {
-            iscrittoVisualizzaInsegnamentiViewController.impostaSchermata(utenteBean);
+        } else if (controller instanceof IscrittoInsegnamentiViewController iscrittoInsegnamentiViewController) {
+            iscrittoInsegnamentiViewController.impostaSchermata(utenteBean);
         }
         // Mostra la nuova schermata
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

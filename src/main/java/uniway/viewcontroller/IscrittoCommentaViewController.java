@@ -16,8 +16,8 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
-import uniway.controller.IscrittoCommentaInsegnamentoController;
-import uniway.controller.IscrittoVisualizzaInsegnamentiController;
+import uniway.controller.IscrittoCommentaController;
+import uniway.controller.IscrittoInsegnamentiController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,13 +26,13 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class IscrittoCommentaInsegnamentoViewController implements Initializable {
+public class IscrittoCommentaViewController implements Initializable {
 
     private UtenteBean utenteBean;
     private InsegnamentoBean insegnamentoBean;
-    private IscrittoCommentaInsegnamentoController iscrittoCommentaInsegnamentoController= new IscrittoCommentaInsegnamentoController();
+    private IscrittoCommentaController iscrittoCommentaController = new IscrittoCommentaController();
     private int valutazioneSelezionata = 0;
-    private static final Logger LOGGER = Logger.getLogger(IscrittoCommentaInsegnamentoViewController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(IscrittoCommentaViewController.class.getName());
 
     @FXML
     private Label corsoLabel;
@@ -86,14 +86,14 @@ public class IscrittoCommentaInsegnamentoViewController implements Initializable
         insegnamentoLabel.setText(insegnamentoBean.getNome());
     }
 
-    public void setIscrittoVisualizzaInsegnamentiController(IscrittoVisualizzaInsegnamentiController iscrittoVisualizzaInsegnamentiController){
-        iscrittoCommentaInsegnamentoController.setIscrittoVisualizzaInsegnamentiController(iscrittoVisualizzaInsegnamentiController);
+    public void setIscrittoVisualizzaInsegnamentiController(IscrittoInsegnamentiController iscrittoInsegnamentiController){
+        iscrittoCommentaController.setIscrittoVisualizzaInsegnamentiController(iscrittoInsegnamentiController);
     }
-    public void impostaSchermata(UtenteBean utenteBean, String nomeCorso, String nomeAteneo, InsegnamentoBean insegnamentoBean, IscrittoVisualizzaInsegnamentiController iscrittoVisualizzaInsegnamentiController){
+    public void impostaSchermata(UtenteBean utenteBean, String nomeCorso, String nomeAteneo, InsegnamentoBean insegnamentoBean, IscrittoInsegnamentiController iscrittoInsegnamentiController){
         setUtenteBean(utenteBean);
         setCorso(nomeCorso,nomeAteneo);
         setInsegnamentoBean(insegnamentoBean);
-        setIscrittoVisualizzaInsegnamentiController(iscrittoVisualizzaInsegnamentiController);
+        setIscrittoVisualizzaInsegnamentiController(iscrittoInsegnamentiController);
     }
 
     private void aggiornaStelle(int valore) {
@@ -117,7 +117,7 @@ public class IscrittoCommentaInsegnamentoViewController implements Initializable
 
     @FXML
     private void salvaRecensione(ActionEvent event) {
-        iscrittoCommentaInsegnamentoController.salvaRecensione(utenteBean, insegnamentoBean, commentoArea.getText(), valutazioneSelezionata);
+        iscrittoCommentaController.salvaRecensione(utenteBean, insegnamentoBean, commentoArea.getText(), valutazioneSelezionata);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Recensione salvata");
         alert.setHeaderText(null);
@@ -128,10 +128,10 @@ public class IscrittoCommentaInsegnamentoViewController implements Initializable
 
     public void goBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IscrittoVisualizzaInsegnamentiUI.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IscrittoInsegnamentiUI.fxml"));
             Parent newRoot = loader.load();
 
-            IscrittoVisualizzaInsegnamentiViewController controller = loader.getController();
+            IscrittoInsegnamentiViewController controller = loader.getController();
             controller.impostaSchermata(utenteBean);
 
             Stage stage = (Stage) commentoArea.getScene().getWindow(); // usa un nodo qualsiasi
