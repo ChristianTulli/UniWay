@@ -36,7 +36,7 @@
             </Label>
          </children>
       </Pane>
-      <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
+      <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" onAction="#goToPreferiti" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
       <Label layoutX="461.0" layoutY="136.0" text="CORSO:">
          <font>
             <Font size="24.0" />

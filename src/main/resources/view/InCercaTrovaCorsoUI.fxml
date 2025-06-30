@@ -34,7 +34,7 @@
          </children>
       </Pane>
       <ListView fx:id="listView" layoutX="405.0" layoutY="450.0" prefHeight="418.0" prefWidth="791.0" />
-      <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
+      <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" onAction="#goToPreferiti" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
       <Label layoutX="749.0" layoutY="148.0" text="IN CERCA">
          <font>
             <Font size="24.0" />

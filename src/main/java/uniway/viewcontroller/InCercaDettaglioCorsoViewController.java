@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaDettaglioCorsoController;
+import uniway.controller.InCercaPreferitiController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -57,10 +58,6 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     private Button preferitiButton;
     private List<String> corsiSimili;
 
-    public void setUtenteBean(UtenteBean utenteBean) {
-        this.utenteBean = utenteBean;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         insegnamento.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, String>("nome"));
@@ -91,6 +88,10 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
 
     }
 
+    public void setUtenteBean(UtenteBean utenteBean) {
+        this.utenteBean = utenteBean;
+    }
+
     public void setCorsoSelezionato(String corso, List<String> corsiSimili) {
         this.corsoCorrente = corso;
         this.corsiSimili = corsiSimili;
@@ -119,6 +120,11 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         tableView.setItems(listaInsegnamenti);
     }
 
+    public void impostaSchermata(UtenteBean utenteBean, String corso, List<String> corsiSimili){
+        setUtenteBean(utenteBean);
+        setCorsoSelezionato(corso, corsiSimili);
+    }
+
 
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {
@@ -136,6 +142,21 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         // Passa l'UtenteBean al nuovo controller
         InCercaTrovaCorsoViewController inCercaTrovaCorsoViewController = loader.getController();
         inCercaTrovaCorsoViewController.impostaSchermata(utenteBean);  // Mantiene l'utente attivo
+
+        // Cambia schermata
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(newRoot);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void goToPreferiti(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaPreferitiUI.fxml"));
+        Parent newRoot = loader.load();
+
+        // Passa l'UtenteBean al nuovo controller
+        InCercaPreferitiViewController inCercaPreferitiViewController = loader.getController();
+        inCercaPreferitiViewController.impostaSchermata(utenteBean);  // Mantiene l'utente attivo
 
         // Cambia schermata
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

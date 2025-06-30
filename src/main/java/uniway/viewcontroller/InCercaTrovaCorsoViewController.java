@@ -172,10 +172,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
 
             // Ottieni il controller della nuova interfaccia
             InCercaDettaglioCorsoViewController inCercaDettaglioCorsoViewController = loader.getController();
-            inCercaDettaglioCorsoViewController.setUtenteBean(utenteBean);
-
-            // Passa il corso selezionato e la lista completa dei risultati
-            inCercaDettaglioCorsoViewController.setCorsoSelezionato(corsoSelezionato, listView.getItems());
+            inCercaDettaglioCorsoViewController.impostaSchermata(utenteBean, corsoSelezionato, listView.getItems());
 
             // Cambia la schermata attuale
             stage = (Stage) listView.getScene().getWindow();
@@ -188,7 +185,20 @@ public class InCercaTrovaCorsoViewController implements Initializable {
         }
     }
 
+    public void goToPreferiti(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaPreferitiUI.fxml"));
+        Parent newRoot = loader.load();
 
+        // Passa l'UtenteBean al nuovo controller
+        InCercaPreferitiViewController inCercaPreferitiViewController = loader.getController();
+        inCercaPreferitiViewController.impostaSchermata(utenteBean);  // Mantiene l'utente attivo
+
+        // Cambia schermata
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(newRoot);
+        stage.setScene(scene);
+        stage.show();
+    }
 
     public void logOut(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));

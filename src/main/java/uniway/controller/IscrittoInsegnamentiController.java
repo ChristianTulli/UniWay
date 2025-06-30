@@ -15,15 +15,15 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class IscrittoVisualizzaInsegnamentiController {
-    private static final Logger LOGGER = Logger.getLogger(IscrittoVisualizzaInsegnamentiController.class.getName());
+public class IscrittoInsegnamentiController {
+    private static final Logger LOGGER = Logger.getLogger(IscrittoInsegnamentiController.class.getName());
     private CorsoDAO corsoDAO;
     private InsegnamentoDAO insegnamentoDAO;
     private RecensioneDAO recensioneDAO;
     private List<Insegnamento> insegnamentiDelCorso = new ArrayList<>();
     private Insegnamento insegnamentoSelezionato;
 
-    public IscrittoVisualizzaInsegnamentiController() throws IllegalArgumentException {
+    public IscrittoInsegnamentiController() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);

@@ -11,13 +11,13 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class IscrittoCommentaInsegnamentoController {
+public class IscrittoCommentaController {
 
-    private static final Logger LOGGER = Logger.getLogger(IscrittoCommentaInsegnamentoController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(IscrittoCommentaController.class.getName());
     private RecensioneDAO recensioneDAO;
-    private IscrittoVisualizzaInsegnamentiController iscrittoVisualizzaInsegnamentiController;
+    private IscrittoInsegnamentiController iscrittoInsegnamentiController;
 
-    public IscrittoCommentaInsegnamentoController() throws IllegalArgumentException {
+    public IscrittoCommentaController() throws IllegalArgumentException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
@@ -34,12 +34,12 @@ public class IscrittoCommentaInsegnamentoController {
 
     }
 
-    public void setIscrittoVisualizzaInsegnamentiController(IscrittoVisualizzaInsegnamentiController iscrittoVisualizzaInsegnamentiController) {
-        this.iscrittoVisualizzaInsegnamentiController = iscrittoVisualizzaInsegnamentiController;
+    public void setIscrittoVisualizzaInsegnamentiController(IscrittoInsegnamentiController iscrittoInsegnamentiController) {
+        this.iscrittoInsegnamentiController = iscrittoInsegnamentiController;
     }
 
     public void salvaRecensione(UtenteBean utenteBean, InsegnamentoBean insegnamentoBean, String testo, Integer valutazione){
-        Insegnamento insegnamento = iscrittoVisualizzaInsegnamentiController.passaInsegnamento(insegnamentoBean);
+        Insegnamento insegnamento = iscrittoInsegnamentiController.passaInsegnamento(insegnamentoBean);
         recensioneDAO.setRecesnione(testo, valutazione, utenteBean.getUsername(), insegnamento.getId());
 
     }

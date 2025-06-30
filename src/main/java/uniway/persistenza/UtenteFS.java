@@ -230,5 +230,10 @@ public class UtenteFS implements UtenteDAO {
         return null; // Nessuna modifica alla riga
     }
 
+    public List<String> getPreferitiUtente ( String username){
+        List<String> preferiti = new ArrayList<>();
+        return preferiti;
+    }
+
 
 }

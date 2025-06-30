@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
-import uniway.controller.IscrittoVisualizzaInsegnamentiController;
+import uniway.controller.IscrittoInsegnamentiController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,12 +25,12 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class IscrittoVisualizzaInsegnamentiViewController implements Initializable {
+public class IscrittoInsegnamentiViewController implements Initializable {
     private UtenteBean utenteBean;
     private String nomeCorso;
     private String nomeAteneo;
-    private IscrittoVisualizzaInsegnamentiController iscrittoVisualizzaInsegnamentiController = new IscrittoVisualizzaInsegnamentiController();
-    private static final Logger LOGGER = Logger.getLogger(IscrittoVisualizzaInsegnamentiViewController.class.getName());
+    private IscrittoInsegnamentiController iscrittoInsegnamentiController = new IscrittoInsegnamentiController();
+    private static final Logger LOGGER = Logger.getLogger(IscrittoInsegnamentiViewController.class.getName());
 
     @FXML
     private Label corsoLabel;
@@ -128,16 +128,16 @@ public class IscrittoVisualizzaInsegnamentiViewController implements Initializab
 
     private void apriSchermataCommento(InsegnamentoBean insegnamentoBean) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IscrittoCommentaInsegnamentoUI.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IscrittoCommentaUI.fxml"));
                 Parent newRoot = loader.load();
 
                 // Ottieni il controller della nuova interfaccia
-                IscrittoCommentaInsegnamentoViewController iscrittoCommentaInsegnamentoViewController = loader.getController();
-                iscrittoCommentaInsegnamentoViewController.impostaSchermata(utenteBean,
-                        iscrittoVisualizzaInsegnamentiController.getCorso(utenteBean.getIdCorso()),
-                        iscrittoVisualizzaInsegnamentiController.getAteneo(utenteBean.getIdCorso()),
+                IscrittoCommentaViewController iscrittoCommentaViewController = loader.getController();
+                iscrittoCommentaViewController.impostaSchermata(utenteBean,
+                        iscrittoInsegnamentiController.getCorso(utenteBean.getIdCorso()),
+                        iscrittoInsegnamentiController.getAteneo(utenteBean.getIdCorso()),
                         insegnamentoBean,
-                        iscrittoVisualizzaInsegnamentiController);
+                        iscrittoInsegnamentiController);
 
 
                 // Cambia la schermata attuale
@@ -156,14 +156,14 @@ public class IscrittoVisualizzaInsegnamentiViewController implements Initializab
         this.utenteBean = utenteBean;
 
         // popola la tabella insegnamenti
-        List<InsegnamentoBean> lista = iscrittoVisualizzaInsegnamentiController.getInsegnamenti(utenteBean.getIdCorso(), utenteBean.getCurriculum(), utenteBean.getUsername());
+        List<InsegnamentoBean> lista = iscrittoInsegnamentiController.getInsegnamenti(utenteBean.getIdCorso(), utenteBean.getCurriculum(), utenteBean.getUsername());
         ObservableList<InsegnamentoBean> listaInsegnamenti = FXCollections.observableArrayList(lista);
         tableView.setItems(listaInsegnamenti);
 
         //imposta nome corso, curriculum, ateneo
         curriculumLabel.setText(utenteBean.getCurriculum());
-        corsoLabel.setText(iscrittoVisualizzaInsegnamentiController.getCorso(utenteBean.getIdCorso()));
-        ateneoLabel.setText(iscrittoVisualizzaInsegnamentiController.getAteneo(utenteBean.getIdCorso()));
+        corsoLabel.setText(iscrittoInsegnamentiController.getCorso(utenteBean.getIdCorso()));
+        ateneoLabel.setText(iscrittoInsegnamentiController.getAteneo(utenteBean.getIdCorso()));
     }
 
     public void logOut (ActionEvent event) throws IOException {
