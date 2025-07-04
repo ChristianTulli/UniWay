@@ -2,20 +2,13 @@ package uniway.controller;
 
 import uniway.persistenza.AteneoDAO;
 import uniway.persistenza.CorsoDAO;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class InCercaTrovaCorsoController {
 
-    private static final Logger LOGGER = Logger.getLogger(InCercaTrovaCorsoController.class.getName());
     private CorsoDAO corsoDAO;
     private AteneoDAO ateneoDAO;
-    private String errore = "Errore";
 
     private String statale;
     private String tipologia;
@@ -26,18 +19,9 @@ public class InCercaTrovaCorsoController {
     private String gruppoDisciplina;
     private String classeCorso;
 
-    public InCercaTrovaCorsoController() throws IllegalArgumentException {
-        Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
-            properties.load(input);
-            corsoDAO = new CorsoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
-            ateneoDAO = new AteneoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
-
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("File config.properties non trovato", e);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, errore, e);
-        }
+    public InCercaTrovaCorsoController() {
+            corsoDAO = new CorsoDAO();
+            ateneoDAO = new AteneoDAO();
     }
 
     // 🔵 COLONNA 1: TIPOLOGIA ATENEO

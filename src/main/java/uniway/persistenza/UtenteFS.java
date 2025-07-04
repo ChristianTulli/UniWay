@@ -230,10 +230,26 @@ public class UtenteFS implements UtenteDAO {
         return null; // Nessuna modifica alla riga
     }
 
-    public List<String> getPreferitiUtente ( String username){
-        return new ArrayList<>();
-        // definire metodo che ritorna la lista degli insegnamenti preferiti per la versione FS
-    }
+    @Override
+    public List<Integer> getPreferitiUtente(String username) throws IOException {
+        List<Integer> preferiti = new ArrayList<>();
 
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] split = line.split(",");
+                if (split.length >= 5 && split[1].equals(username) && split[3].equals("false")) {
+                    String preferenzeStr = split[4];
+                    if (preferenzeStr != null && !preferenzeStr.isBlank()) {
+                        for (String idStr : preferenzeStr.split(";")) {
+                            preferiti.add(Integer.parseInt(idStr.trim()));
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        return preferiti;
+    }
 
 }

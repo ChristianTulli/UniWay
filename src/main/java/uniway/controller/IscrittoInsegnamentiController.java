@@ -6,39 +6,20 @@ import uniway.persistenza.CorsoDAO;
 import uniway.persistenza.InsegnamentoDAO;
 import uniway.persistenza.RecensioneDAO;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class IscrittoInsegnamentiController {
-    private static final Logger LOGGER = Logger.getLogger(IscrittoInsegnamentiController.class.getName());
     private CorsoDAO corsoDAO;
     private InsegnamentoDAO insegnamentoDAO;
     private RecensioneDAO recensioneDAO;
     private List<Insegnamento> insegnamentiDelCorso = new ArrayList<>();
-    private Insegnamento insegnamentoSelezionato;
 
-    public IscrittoInsegnamentiController() throws IllegalArgumentException {
-        Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
-            properties.load(input);
-            String username= properties.getProperty("db.username");
-            String dbUrl = properties.getProperty("db.url");
-            String password = properties.getProperty("db.password");
-
-            corsoDAO = new CorsoDAO(dbUrl, username, password);
-            insegnamentoDAO = new InsegnamentoDAO(dbUrl, username, password);
-            recensioneDAO = new RecensioneDAO(dbUrl, username, password);
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("File config.properties non trovato", e);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Errore durante il caricamento della configurazione", e);
-        }
+    public IscrittoInsegnamentiController(){
+            corsoDAO = new CorsoDAO();
+            insegnamentoDAO = new InsegnamentoDAO();
+            recensioneDAO = PersistenzaController.getInstance().getRecensioneDAO();
     }
     public List<InsegnamentoBean> getInsegnamenti(Integer idCorso, String curriculum, String usernameUtente) {
         List<InsegnamentoBean> insegnamentiBean = new ArrayList<>();

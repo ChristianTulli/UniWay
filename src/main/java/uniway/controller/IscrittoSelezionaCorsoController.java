@@ -1,67 +1,37 @@
 package uniway.controller;
 
 import uniway.beans.UtenteBean;
-import uniway.model.UtenteIscritto;
 import uniway.persistenza.CorsoDAO;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class IscrittoSelezionaCorsoController {
 
     private static final Logger LOGGER = Logger.getLogger(IscrittoSelezionaCorsoController.class.getName());
+    private final PersistenzaController persistenzaController = PersistenzaController.getInstance(); // Otteniamo il Singleton
     private CorsoDAO corsoDAO;
-    private String errore = "errore";
-
     private String comune;
     private String ateneo;
     private String disciplina;
     private String tipologia;
     private String corso;
 
-    private final LogInController loginController = LogInController.getInstance(); // Otteniamo il Singleton
-
 
     public IscrittoSelezionaCorsoController() throws IllegalArgumentException {
-        Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
-            properties.load(input);
-            corsoDAO = new CorsoDAO(properties.getProperty("db.url"), properties.getProperty("db.username"), properties.getProperty("db.password"));
-
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("File config.properties non trovato", e);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, errore, e);
-        }
+        corsoDAO = new CorsoDAO();
     }
 
     public void setCorsoUtente(UtenteBean utenteBean, String corsoSelezionato) {
         this.corso = corsoSelezionato;
         Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, tipologia, corso);
         utenteBean.setIdCorso(idCorso);
-
-        if (loginController.isFullMode()) { // Ora possiamo accedere a isFullMode
-            try {
-                loginController.getUtenteDAO().aggiungiCorsoUtente(utenteBean.getUsername(), idCorso);
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del corso", e);
-            }
-            loginController.getUtenti().stream()
-                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
-                    .map(u -> (UtenteIscritto) u)
-                    .findFirst()
-                    .ifPresent(u -> u.setIdCorso(idCorso));
-        } else {
-            loginController.getUtenti().stream()
-                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utenteBean.getUsername()))
-                    .map(u -> (UtenteIscritto) u)
-                    .findFirst()
-                    .ifPresent(u -> u.setIdCorso(idCorso));
+        try {
+            persistenzaController.getUtenteDAO().aggiungiCorsoUtente(utenteBean.getUsername(), idCorso);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del corso", e);
         }
     }
 
@@ -110,24 +80,10 @@ public class IscrittoSelezionaCorsoController {
 
     public void setCurriculumUtente(UtenteBean utente, String curriculum) {
         utente.setCurriculum(curriculum);
-
-        if (loginController.isFullMode()) {
-            try {
-                loginController.getUtenteDAO().aggiungiCurriculumUtente(utente.getUsername(), curriculum);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del curriculum", e);
-            }
-            loginController.getUtenti().stream()
-                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
-                    .map(u -> (UtenteIscritto) u)
-                    .findFirst()
-                    .ifPresent(u -> u.setCurriculum(curriculum));
-        } else {
-            loginController.getUtenti().stream()
-                    .filter(u -> u instanceof UtenteIscritto && u.getUsername().equals(utente.getUsername()))
-                    .map(u -> (UtenteIscritto) u)
-                    .findFirst()
-                    .ifPresent(u -> u.setCurriculum(curriculum));
+        try {
+            persistenzaController.getUtenteDAO().aggiungiCurriculumUtente(utente.getUsername(), curriculum);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del curriculum", e);
         }
     }
 

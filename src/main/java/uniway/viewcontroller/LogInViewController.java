@@ -1,17 +1,18 @@
 package uniway.viewcontroller;
 
-import javafx.scene.control.*;
-import uniway.beans.UtenteBean;
-import uniway.controller.LogInController;
-
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import uniway.beans.UtenteBean;
+import uniway.controller.LogInController;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class LogInViewController {
     @FXML
     private Button ricercaButton;
 
-    private final LogInController loginController = LogInController.getInstance(); //non creare una nuova istanza ma usare la stessa, altrimenti creo una nuova lista
+    private LogInController loginController = new LogInController();
 
     //fa apparire i tasti in cerca e iscritto se ho cliccato su registrati
     public void onRegisratiButtonClick() {
@@ -53,7 +54,7 @@ public class LogInViewController {
     }
 
 
-    boolean registra(UtenteBean utenteBean) {
+    boolean registra(UtenteBean utenteBean) throws IOException {
         if (loginController.registrazione(utenteBean)) {
             errorLabel.setText("Utente registrato con successo");
             return true;
@@ -91,6 +92,7 @@ public class LogInViewController {
             caricaInterfaccia(event, interfacciaIscritto, utenteBean);
         }
     }
+
     //mi sto registrando come In Cerca
     public void onRicercaButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), false);
@@ -112,8 +114,7 @@ public class LogInViewController {
                 } else {
                     caricaInterfaccia(event, interfacciaIscritto, utenteBean);
                 }
-            }
-            else {
+            } else {
                 caricaInterfaccia(event, interfacciaRicerca, utenteBean);
             }
         } else {
