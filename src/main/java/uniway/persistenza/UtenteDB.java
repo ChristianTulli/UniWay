@@ -136,48 +136,28 @@ public class UtenteDB implements UtenteDAO {
     }
 
     @Override
-    public List<String> getPreferitiUtente(String username) throws IOException {
-        String queryPreferenze = "SELECT preferenze FROM utenti WHERE username = ?";
-        String queryCorso = """
-            SELECT c.nomecorso, a.nome 
-            FROM corsi c
-            JOIN atenei a ON c.idateneo = a.id
-            WHERE c.id = ?
-        """;
+    public List<Integer> getPreferitiUtente(String username) throws IOException {
+        List<Integer> preferiti = new ArrayList<>();
+        String query = "SELECT preferenze FROM utenti WHERE username = ?";
 
-        List<String> preferiti = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
 
-        try (
-                PreparedStatement stmtPref = conn.prepareStatement(queryPreferenze);
-                PreparedStatement stmtCorso = conn.prepareStatement(queryCorso)
-        ) {
-            stmtPref.setString(1, username);
-            ResultSet rsPref = stmtPref.executeQuery();
-
-            if (rsPref.next()) {
-                String preferenzeStr = rsPref.getString(colonnaPreferenze);
+            if (rs.next()) {
+                String preferenzeStr = rs.getString("preferenze");
                 if (preferenzeStr != null && !preferenzeStr.isBlank()) {
-                    String[] idCorsi = preferenzeStr.split(",");
-
-                    for (String idStr : idCorsi) {
-                        int id = Integer.parseInt(idStr.trim());
-                        stmtCorso.setInt(1, id);
-                        try (ResultSet rsCorso = stmtCorso.executeQuery()) {
-                            if (rsCorso.next()) {
-                                String nomeCorso = rsCorso.getString("nomecorso");
-                                String nomeAteneo = rsCorso.getString("nome");
-                                preferiti.add(nomeCorso + " - " + nomeAteneo);
-                            }
-                        }
+                    for (String id : preferenzeStr.split(",")) {
+                        preferiti.add(Integer.parseInt(id.trim()));
                     }
                 }
             }
-
         } catch (SQLException e) {
             throw new IOException("Errore durante il recupero dei preferiti", e);
         }
 
         return preferiti;
     }
+
 }
 

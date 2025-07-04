@@ -11,7 +11,7 @@ public class IscrittoCommentaController {
     private IscrittoInsegnamentiController iscrittoInsegnamentiController;
 
     public IscrittoCommentaController() {
-            recensioneDAO = new RecensioneDAO();
+            recensioneDAO = PersistenzaController.getInstance().getRecensioneDAO();
     }
 
     public void setIscrittoVisualizzaInsegnamentiController(IscrittoInsegnamentiController iscrittoInsegnamentiController) {

@@ -41,5 +41,9 @@ public class Utente {
     public int getId() {
         return id;
     }
+
+    public void setId(int andIncrement) {
+        this.id = andIncrement;
+    }
 }
 

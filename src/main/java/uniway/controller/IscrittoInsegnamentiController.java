@@ -19,7 +19,7 @@ public class IscrittoInsegnamentiController {
     public IscrittoInsegnamentiController(){
             corsoDAO = new CorsoDAO();
             insegnamentoDAO = new InsegnamentoDAO();
-            recensioneDAO = new RecensioneDAO();
+            recensioneDAO = PersistenzaController.getInstance().getRecensioneDAO();
     }
     public List<InsegnamentoBean> getInsegnamenti(Integer idCorso, String curriculum, String usernameUtente) {
         List<InsegnamentoBean> insegnamentiBean = new ArrayList<>();

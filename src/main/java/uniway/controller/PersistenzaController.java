@@ -1,8 +1,6 @@
 package uniway.controller;
 
-import uniway.persistenza.UtenteDAO;
-import uniway.persistenza.UtenteDB;
-import uniway.persistenza.UtenteFS;
+import uniway.persistenza.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,11 +13,11 @@ import java.util.logging.Logger;
 public class PersistenzaController {
     private static final Logger LOGGER = Logger.getLogger(PersistenzaController.class.getName());
     private static PersistenzaController instance;
-    //private DemoDAO demoDAO;
     Properties properties = new Properties();
     private Connection connessione;
     private String isFullMode;
     private UtenteDAO utenteDAO;
+    private RecensioneDAO recensioneDAO;
     private String dbUrl;
     private String dbUsername;
     private String dbPassword;
@@ -31,19 +29,24 @@ public class PersistenzaController {
             String mode = properties.getProperty("persistence.mode");
             isFullMode = properties.getProperty("running.mode");
 
+            dbUrl = properties.getProperty("db.url");
+            dbUsername = properties.getProperty("db.username");
+            dbPassword = properties.getProperty("db.password");
+            this.connessione = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+
             if ("full".equals(isFullMode)) {
-                dbUrl = properties.getProperty("db.url");
-                dbUsername = properties.getProperty("db.username");
-                dbPassword = properties.getProperty("db.password");
-                this.connessione = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
                 if ("file".equals(mode)) {
                     utenteDAO = new UtenteFS(properties.getProperty("file.path"));
+
                 } else if ("db".equals(mode)) {
                     utenteDAO = new UtenteDB(connessione);
                 }
 
+                recensioneDAO=new RecensioneDB(connessione);
+
             } else if ("demo".equals(isFullMode)) {
-                //this.utenteDAO = new DemoDAO();
+                utenteDAO = new UtenteDemo();
+                recensioneDAO = new RecensioneDemo();
                 // aggiungere funzionalità
             }
         } catch (FileNotFoundException e) {
@@ -68,6 +71,10 @@ public class PersistenzaController {
 
     public UtenteDAO getUtenteDAO() {
         return utenteDAO;
+    }
+
+    public RecensioneDAO getRecensioneDAO() {
+        return recensioneDAO;
     }
 
     public Connection getConnessione() {
