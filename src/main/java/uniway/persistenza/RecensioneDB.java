@@ -1,6 +1,5 @@
 package uniway.persistenza;
 
-import uniway.controller.PersistenzaController;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RecensioneDB implements RecensioneDAO {
-    private static final Logger LOGGER = Logger.getLogger(RecensioneDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RecensioneDB.class.getName());
     private static final String ECCEZIONE = "problema nella comunicazione con la tabella recensioni nel database";
     private final Connection conn;
 

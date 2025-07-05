@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class UtenteDB implements UtenteDAO {
-    private final String colonnaPreferenze = "preferenze";
+    private String colonnaPreferenze = "preferenze";
     private final Connection conn;
 
     public UtenteDB(Connection conn) {
