@@ -33,59 +33,66 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     private String corsoCorrente;
     private String nomeCorso;
     private String nomeAteneo;
-    private InCercaDettaglioCorsoController inCercaDettaglioCorsoController = new InCercaDettaglioCorsoController();
-    @FXML
-    private Label corsoLabel;
-    @FXML
-    private Label ateneoLabel;
-    @FXML
-    private Label erroreLabel;
-    @FXML
-    private TableView<InsegnamentoBean> tableView;
-    @FXML
-    private TableColumn<InsegnamentoBean, Integer> cfu;
-    @FXML
-    private TableColumn<InsegnamentoBean, String> curriculum;
-    @FXML
-    private TableColumn<InsegnamentoBean, String> insegnamento;
-    @FXML
-    private TableColumn<InsegnamentoBean, Integer> semestre;
-    @FXML
-    private TableColumn<InsegnamentoBean, Integer> anno;
-    @FXML
-    private ListView<String> listaCorsiSimili;
-    @FXML
-    private Button preferitiButton;
+    private final InCercaDettaglioCorsoController inCercaDettaglioCorsoController = new InCercaDettaglioCorsoController();
+
+    @FXML private Label corsoLabel;
+    @FXML private Label ateneoLabel;
+    @FXML private Label erroreLabel;
+    @FXML private TableView<InsegnamentoBean> tableView;
+    @FXML private TableColumn<InsegnamentoBean, Integer> cfu;
+    @FXML private TableColumn<InsegnamentoBean, String> curriculum;
+    @FXML private TableColumn<InsegnamentoBean, String> insegnamento;
+    @FXML private TableColumn<InsegnamentoBean, Integer> semestre;
+    @FXML private TableColumn<InsegnamentoBean, Integer> anno;
+    @FXML private ListView<String> listaCorsiSimili;
+    @FXML private Button preferitiButton;
+
     private List<String> corsiSimili;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        insegnamento.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, String>("nome"));
-        curriculum.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, String>("curriculum"));
-        cfu.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("cfu"));
-        semestre.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("semestre"));
-        anno.setCellValueFactory(new PropertyValueFactory<InsegnamentoBean, Integer>("anno"));
+        insegnamento.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        curriculum.setCellValueFactory(new PropertyValueFactory<>("curriculum"));
+        cfu.setCellValueFactory(new PropertyValueFactory<>("cfu"));
+        semestre.setCellValueFactory(new PropertyValueFactory<>("semestre"));
+        anno.setCellValueFactory(new PropertyValueFactory<>("anno"));
 
         insegnamento.setCellFactory(column -> new TableCell<>() {
-            private Text text;
+            private final Text text = new Text();
+            {
+                text.wrappingWidthProperty().bind(column.widthProperty().subtract(10));
+            }
 
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    if (text == null) {
-                        text = new Text();
-                        text.wrappingWidthProperty().bind(insegnamento.widthProperty().subtract(10));
-                    }
                     text.setText(item);
                     setGraphic(text);
                 }
             }
         });
 
+        listaCorsiSimili.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                String corsoSimile = listaCorsiSimili.getSelectionModel().getSelectedItem();
+                if (corsoSimile != null) {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaConfrontaCorsoUI.fxml"));
+                        Parent root = loader.load();
+                        uniway.viewcontroller.InCercaConfrontaCorsoViewController controller = loader.getController();
+                        controller.impostaSchermata(utenteBean, corsoCorrente, corsoSimile, corsiSimili);
+                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage.setScene(new Scene(root));
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     public void setUtenteBean(UtenteBean utenteBean) {
@@ -102,7 +109,6 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         ateneoLabel.setText("Ateneo: " + dettagli[1]);
         nomeAteneo = dettagli[1];
 
-        // Popola la lista dei corsi simili escludendo il corso selezionato
         listaCorsiSimili.getItems().clear();
         for (String corsoSimile : corsiSimili) {
             if (!corsoSimile.equals(corso)) {
@@ -110,21 +116,18 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
             }
         }
 
-        // Messaggio di errore se vuota
-        erroreLabel.setText(listaCorsiSimili.getItems().isEmpty() ?
-                "Nessun corso simile con i filtri precedentemente impostati." : "");
+        erroreLabel.setText(listaCorsiSimili.getItems().isEmpty()
+                ? "Nessun corso simile con i filtri precedentemente impostati."
+                : "");
 
-        // popola la tabella insegnamenti
         List<InsegnamentoBean> lista = inCercaDettaglioCorsoController.getInsegnamenti(nomeCorso, nomeAteneo);
-        ObservableList<InsegnamentoBean> listaInsegnamenti = FXCollections.observableArrayList(lista);
-        tableView.setItems(listaInsegnamenti);
+        tableView.setItems(FXCollections.observableArrayList(lista));
     }
 
     public void impostaSchermata(UtenteBean utenteBean, String corso, List<String> corsiSimili){
         setUtenteBean(utenteBean);
         setCorsoSelezionato(corso, corsiSimili);
     }
-
 
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {
@@ -134,45 +137,33 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         }
     }
 
-
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaTrovaCorsoUI.fxml"));
         Parent newRoot = loader.load();
-
-        // Passa l'UtenteBean al nuovo controller
-        InCercaTrovaCorsoViewController inCercaTrovaCorsoViewController = loader.getController();
-        inCercaTrovaCorsoViewController.impostaSchermata(utenteBean);  // Mantiene l'utente attivo
-
-        // Cambia schermata
+        InCercaTrovaCorsoViewController controller = loader.getController();
+        controller.impostaSchermata(utenteBean);
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(newRoot);
-        stage.setScene(scene);
+        stage.setScene(new Scene(newRoot));
         stage.show();
     }
 
     public void goToPreferiti(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaPreferitiUI.fxml"));
         Parent newRoot = loader.load();
-
-        // Passa l'UtenteBean al nuovo controller
-        InCercaPreferitiViewController inCercaPreferitiViewController = loader.getController();
-        inCercaPreferitiViewController.impostaSchermata(utenteBean);  // Mantiene l'utente attivo
-
-        // Cambia schermata
+        InCercaPreferitiViewController controller = loader.getController();
+        controller.impostaSchermata(utenteBean);
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(newRoot);
-        stage.setScene(scene);
+        stage.setScene(new Scene(newRoot));
         stage.show();
     }
-
 
     public void logOut(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
+        stage.setScene(new Scene(root));
         stage.show();
     }
 }
+
 
 
