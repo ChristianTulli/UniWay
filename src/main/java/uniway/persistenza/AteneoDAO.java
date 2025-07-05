@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public class AteneoDAO {
     private static final Logger LOGGER = Logger.getLogger(AteneoDAO.class.getName());
     private final Connection conn;
-    private final String eccezione = "problema nella comunicazione col database";
+    private String eccezione = "problema nella comunicazione col database";
 
     public AteneoDAO() {
         this.conn = PersistenzaController.getInstance().getConnessione();
