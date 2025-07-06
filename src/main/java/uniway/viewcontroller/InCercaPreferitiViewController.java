@@ -57,7 +57,6 @@ public class InCercaPreferitiViewController implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaDettaglioCorsoUI.fxml"));
         Parent newRoot = loader.load();
         List<String> corsiSimili=new ArrayList<>();
-        corsiSimili.add("effettua una ricerca con filtri per confrontare");
         InCercaDettaglioCorsoViewController controller = loader.getController();
         controller.impostaSchermata(utenteBean, corso, corsiSimili);
 
