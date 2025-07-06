@@ -57,10 +57,15 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         semestre.setCellValueFactory(new PropertyValueFactory<>("semestre"));
         anno.setCellValueFactory(new PropertyValueFactory<>("anno"));
 
-        insegnamento.setCellFactory(column -> new TableCell<>() {
+        setWrappedTextCellFactory(insegnamento);
+        setWrappedTextCellFactory(curriculum);
+    }
+
+    private void setWrappedTextCellFactory(TableColumn<InsegnamentoBean, String> column) {
+        column.setCellFactory(col -> new TableCell<>() {
             private final Text text = new Text();
             {
-                text.wrappingWidthProperty().bind(column.widthProperty().subtract(10));
+                text.wrappingWidthProperty().bind(col.widthProperty().subtract(10));
             }
 
             @Override
@@ -117,7 +122,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         }
 
         erroreLabel.setText(listaCorsiSimili.getItems().isEmpty()
-                ? "Nessun corso simile con i filtri precedentemente impostati."
+                ? "Effettua una nuova ricerca per vedere corsi simili"
                 : "");
 
         List<InsegnamentoBean> lista = inCercaDettaglioCorsoController.getInsegnamenti(nomeCorso, nomeAteneo);

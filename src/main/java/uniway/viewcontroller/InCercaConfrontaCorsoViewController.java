@@ -78,6 +78,9 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
         // Wrapping per entrambe le colonne "insegnamento"
         setWrappedTextCellFactory(insegnamento);
         setWrappedTextCellFactory(insegnamento1);
+        setWrappedTextCellFactory(curriculum);
+        setWrappedTextCellFactory(curriculum1);
+
     }
 
     private void setWrappedTextCellFactory(TableColumn<InsegnamentoBean, String> column) {

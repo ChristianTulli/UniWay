@@ -30,13 +30,13 @@
          <font><Font size="18.0" /></font>
       </Label>
       <Button fx:id="preferitiButton1" layoutX="659.0" layoutY="229.0" onAction="#aggiungiAiPreferiti1" prefHeight="42.0" prefWidth="135.0" text="Aggiungi ai Preferiti" />
-      <TableView fx:id="tableView1" layoutX="14.0" layoutY="286.0" prefHeight="600.0" prefWidth="780.0">
+      <TableView fx:id="tableView1" fixedCellSize="55.0" layoutX="14.0" layoutY="286.0" prefHeight="600.0" prefWidth="780.0">
          <columns>
-            <TableColumn fx:id="insegnamento" prefWidth="340.0" text="Insegnamento" />
+            <TableColumn fx:id="insegnamento" editable="false" prefWidth="340.0" sortable="false" text="Insegnamento" />
             <TableColumn fx:id="semestre" prefWidth="60.0" text="Semestre" />
             <TableColumn fx:id="anno" prefWidth="60.0" text="Anno" />
             <TableColumn fx:id="cfu" prefWidth="60.0" text="CFU" />
-            <TableColumn fx:id="curriculum" prefWidth="240.0" text="Curriculum" />
+            <TableColumn fx:id="curriculum" editable="false" prefWidth="240.0" sortable="false" text="Curriculum" />
          </columns>
       </TableView>
 
@@ -48,13 +48,13 @@
          <font><Font size="18.0" /></font>
       </Label>
       <Button fx:id="preferitiButton2" layoutX="1451.0" layoutY="229.0" onAction="#aggiungiAiPreferiti2" prefHeight="42.0" prefWidth="135.0" text="Aggiungi ai Preferiti" />
-      <TableView fx:id="tableView2" layoutX="806.0" layoutY="286.0" prefHeight="600.0" prefWidth="780.0">
+      <TableView fx:id="tableView2" fixedCellSize="55.0" layoutX="806.0" layoutY="286.0" prefHeight="600.0" prefWidth="780.0">
          <columns>
-            <TableColumn fx:id="insegnamento1" prefWidth="340.0" text="Insegnamento" />
+            <TableColumn fx:id="insegnamento1" editable="false" prefWidth="340.0" sortable="false" text="Insegnamento" />
             <TableColumn fx:id="semestre1" prefWidth="60.0" text="Semestre" />
             <TableColumn fx:id="anno1" prefWidth="60.0" text="Anno" />
             <TableColumn fx:id="cfu1" prefWidth="60.0" text="CFU" />
-            <TableColumn fx:id="curriculum1" prefWidth="240.0" text="Curriculum" />
+            <TableColumn fx:id="curriculum1" editable="false" prefWidth="240.0" sortable="false" text="Curriculum" />
          </columns>
       </TableView>
    </children>
