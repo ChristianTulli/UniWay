@@ -8,12 +8,12 @@ public class UtenteInCerca extends Utente{
 
     public UtenteInCerca(String username, String password, boolean iscritto) {
         super(username, password, iscritto);
-        this.preferiti =new ArrayList<Integer>();
+        this.preferiti =new ArrayList<>();
     }
 
     public UtenteInCerca(int id, String username, String password, boolean iscritto, List<Integer> preferiti) {
         super(id, username, password, iscritto);
-        this.preferiti = (preferiti != null) ? preferiti : new ArrayList<Integer>();
+        this.preferiti = (preferiti != null) ? preferiti : new ArrayList<>();
     }
 
     public List<Integer> getPreferenze() {

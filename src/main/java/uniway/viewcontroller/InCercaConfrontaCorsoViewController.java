@@ -84,24 +84,25 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
     }
 
     private void setWrappedTextCellFactory(TableColumn<InsegnamentoBean, String> column) {
-        column.setCellFactory(col -> new TableCell<>() {
-            private final Text text = new Text();
-            {
-                text.wrappingWidthProperty().bind(col.widthProperty().subtract(10));
-            }
+        column.setCellFactory(col -> {
+            Text text = new Text();
+            text.wrappingWidthProperty().bind(col.widthProperty().subtract(10));
 
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    text.setText(item);
-                    setGraphic(text);
+            return new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setGraphic(null);
+                    } else {
+                        text.setText(item);
+                        setGraphic(text);
+                    }
                 }
-            }
+            };
         });
     }
+
 
 
     public void impostaSchermata(UtenteBean utenteBean, String corsoStr1, String corsoStr2, List<String> corsiSimil) {
@@ -142,8 +143,8 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaDettaglioCorsoUI.fxml"));
         Parent root = loader.load();
-        InCercaDettaglioCorsoViewController controller = loader.getController();
-        controller.impostaSchermata(utenteBean, corso1 + " - " + ateneo1, corsiSimili);
+        InCercaDettaglioCorsoViewController viewController = loader.getController();
+        viewController.impostaSchermata(utenteBean, corso1 + " - " + ateneo1, corsiSimili);
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -154,8 +155,8 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
     public void goToPreferiti(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaPreferitiUI.fxml"));
         Parent root = loader.load();
-        uniway.viewcontroller.InCercaPreferitiViewController controller = loader.getController();
-        controller.impostaSchermata(utenteBean);
+        InCercaPreferitiViewController viewController = loader.getController();
+        viewController.impostaSchermata(utenteBean);
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);

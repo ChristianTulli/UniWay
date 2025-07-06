@@ -25,7 +25,6 @@ public class InCercaTrovaCorsoViewController implements Initializable {
 
     private Scene scene;
     private Stage stage;
-    private Parent root;
     private final InCercaTrovaCorsoController inCercaTrovaCorsoController = new InCercaTrovaCorsoController();
     private UtenteBean utenteBean;
     private String interfacciaCorso = "/view/InCercaDettaglioCorsoUI.fxml";
@@ -201,7 +200,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
     }
 
     public void logOut(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);

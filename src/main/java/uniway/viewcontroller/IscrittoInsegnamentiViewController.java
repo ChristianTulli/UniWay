@@ -27,8 +27,6 @@ import java.util.logging.Logger;
 
 public class IscrittoInsegnamentiViewController implements Initializable {
     private UtenteBean utenteBean;
-    private String nomeCorso;
-    private String nomeAteneo;
     private IscrittoInsegnamentiController iscrittoInsegnamentiController = new IscrittoInsegnamentiController();
     private static final Logger LOGGER = Logger.getLogger(IscrittoInsegnamentiViewController.class.getName());
 

@@ -1,7 +1,6 @@
 package uniway.viewcontroller;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,13 +15,14 @@ import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaDettaglioCorsoController;
-import uniway.controller.InCercaPreferitiController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class InCercaDettaglioCorsoViewController implements Initializable {
 
@@ -34,6 +34,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     private String nomeCorso;
     private String nomeAteneo;
     private final InCercaDettaglioCorsoController inCercaDettaglioCorsoController = new InCercaDettaglioCorsoController();
+    private static final Logger LOGGER = Logger.getLogger(InCercaDettaglioCorsoViewController.class.getName());
 
     @FXML private Label corsoLabel;
     @FXML private Label ateneoLabel;
@@ -59,26 +60,6 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
 
         setWrappedTextCellFactory(insegnamento);
         setWrappedTextCellFactory(curriculum);
-    }
-
-    private void setWrappedTextCellFactory(TableColumn<InsegnamentoBean, String> column) {
-        column.setCellFactory(col -> new TableCell<>() {
-            private final Text text = new Text();
-            {
-                text.wrappingWidthProperty().bind(col.widthProperty().subtract(10));
-            }
-
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    text.setText(item);
-                    setGraphic(text);
-                }
-            }
-        });
 
         listaCorsiSimili.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
@@ -86,19 +67,40 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
                 if (corsoSimile != null) {
                     try {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaConfrontaCorsoUI.fxml"));
-                        Parent root = loader.load();
+                        root = loader.load();
                         uniway.viewcontroller.InCercaConfrontaCorsoViewController controller = loader.getController();
                         controller.impostaSchermata(utenteBean, corsoCorrente, corsoSimile, corsiSimili);
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage.setScene(new Scene(root));
                         stage.show();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata di confronto", e);
                     }
                 }
             }
         });
     }
+
+    private void setWrappedTextCellFactory(TableColumn<InsegnamentoBean, String> column) {
+        column.setCellFactory(col -> {
+            Text text = new Text();
+            text.wrappingWidthProperty().bind(col.widthProperty().subtract(10));
+
+            return new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setGraphic(null);
+                    } else {
+                        text.setText(item);
+                        setGraphic(text);
+                    }
+                }
+            };
+        });
+    }
+
 
     public void setUtenteBean(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
