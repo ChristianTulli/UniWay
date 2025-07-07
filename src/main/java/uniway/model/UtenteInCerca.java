@@ -19,4 +19,7 @@ public class UtenteInCerca extends Utente{
     public List<Integer> getPreferenze() {
         return preferiti;
     }
+    public void setPreferenze(List<Integer> preferiti) {
+        this.preferiti = (preferiti != null) ? preferiti : new ArrayList<>();
+    }
 }

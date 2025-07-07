@@ -25,5 +25,14 @@ public class InCercaPreferitiController {
 
         return descrizioni;
     }
+
+    public void rimuoviPreferito(String username, String corso) throws IOException {
+        int idCorso = corsoDAO.getIdCorsoByNomeAndAteneo(
+                corso.split(" - ")[1], // nome ateneo
+                corso.split(" - ")[0]  // nome corso
+        );
+        persistenzaController.getUtenteDAO().rimuoviPreferitoUtente(username, idCorso);
+    }
+
 }
 

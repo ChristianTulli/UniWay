@@ -40,14 +40,16 @@ public class InCercaDettaglioCorsoController {
         return insegnamentiBean;
     }
 
-    public void aggiungiAiPreferiti(UtenteBean utenteBean, String corsoSelezionato, String ateneoSelezionato) {
+    public Boolean aggiungiAiPreferiti(UtenteBean utenteBean, String corsoSelezionato, String ateneoSelezionato) {
         Integer idCorso = corsoDAO.getIdCorsoByNomeAndAteneo(ateneoSelezionato, corsoSelezionato);
         try {
-            persistenzaController.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
+            return persistenzaController.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore durante l'inserimento nei preferiti", e);
+            return false;
         }
     }
+
 
     public Integer getIdInsegnamento(String NomeInsegnamento, String corso, String ateneo) {
         return insegnamentoDAO.getIdInsegnamento(NomeInsegnamento, corso, ateneo);

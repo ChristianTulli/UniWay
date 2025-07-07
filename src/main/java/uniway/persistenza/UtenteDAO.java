@@ -13,10 +13,12 @@ public interface UtenteDAO {
 
      void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException;
 
-     void aggiungiPreferitiUtente(String username, Integer idPreferiti) throws IOException;
+     Boolean aggiungiPreferitiUtente(String username, Integer idPreferiti) throws IOException;
 
      List <Integer> getPreferitiUtente(String username) throws IOException;
 
      void aggiungiCurriculumUtente(String username, String curriculum) throws IOException;
+
+     void rimuoviPreferitoUtente(String username, int idCorso) throws IOException;
 
 }

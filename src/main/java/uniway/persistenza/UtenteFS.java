@@ -133,34 +133,52 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiPreferitiUtente(String username, Integer idCorso) throws IOException {
-        List<String> righe = new ArrayList<>();
-        boolean utenteTrovato = false;
+    public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
+        List<Utente> utenti = ottieniUtenti();
+        boolean aggiunto = false;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String nuovaRiga = processaRigaPreferiti(line, username, idCorso);
-                if (nuovaRiga != null) {
-                    utenteTrovato = true;
-                    righe.add(nuovaRiga);
-                } else {
-                    righe.add(line);
+        for (Utente u : utenti) {
+            if (u.getUsername().equals(usernameUtente) && u instanceof UtenteInCerca inCerca) {
+                List<Integer> preferenze = new ArrayList<>(inCerca.getPreferenze());
+                if (!preferenze.contains(idCorso)) {
+                    preferenze.add(idCorso);
+                    inCerca.setPreferenze(preferenze); // aggiorna la lista nell'oggetto
+                    aggiunto = true;
+                }
+                break;
+            }
+        }
+
+        if (aggiunto) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+                for (Utente u : utenti) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(u.getId()).append(",")
+                            .append(u.getUsername()).append(",")
+                            .append(u.getPassword()).append(",")
+                            .append(u.getIscritto()).append(",");
+
+                    if (u instanceof UtenteIscritto iscritto) {
+                        sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
+                        sb.append(",").append(iscritto.getCurriculum() != null ? iscritto.getCurriculum() : "");
+                    } else if (u instanceof UtenteInCerca inCerca) {
+                        sb.append(inCerca.getPreferenze().stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(";")));
+                    }
+
+                    writer.write(sb.toString());
+                    writer.newLine();
                 }
             }
         }
 
-        if (!utenteTrovato) {
-            throw new IOException("Utente non trovato nel file.");
-        }
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-            for (String riga : righe) {
-                writer.write(riga);
-                writer.newLine();
-            }
-        }
+        return aggiunto;
     }
+
+
+
+
 
     @Override
     public void aggiungiCurriculumUtente(String username, String curriculum) throws IOException {
@@ -250,6 +268,47 @@ public class UtenteFS implements UtenteDAO {
             }
         }
         return preferiti;
+    }
+
+    @Override
+    public void rimuoviPreferitoUtente(String username, int idCorso) throws IOException {
+        List<Utente> utenti = ottieniUtenti();
+        boolean rimosso = false;
+
+        for (Utente u : utenti) {
+            if (u.getUsername().equals(username) && u instanceof UtenteInCerca inCerca) {
+                List<Integer> preferenze = new ArrayList<>(inCerca.getPreferenze()); // copia mutabile
+                if (preferenze.remove((Integer) idCorso)) {
+                    inCerca.setPreferenze(preferenze);
+                    rimosso = true;
+                }
+                break;
+            }
+        }
+
+        if (rimosso) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+                for (Utente u : utenti) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(u.getId()).append(",")
+                            .append(u.getUsername()).append(",")
+                            .append(u.getPassword()).append(",")
+                            .append(u.getIscritto()).append(",");
+
+                    if (u instanceof UtenteIscritto iscritto) {
+                        sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
+                        sb.append(",").append(iscritto.getCurriculum() != null ? iscritto.getCurriculum() : "");
+                    } else if (u instanceof UtenteInCerca inCerca) {
+                        sb.append(inCerca.getPreferenze().stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(";")));
+                    }
+
+                    writer.write(sb.toString());
+                    writer.newLine();
+                }
+            }
+        }
     }
 
 }

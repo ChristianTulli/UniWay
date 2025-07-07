@@ -29,12 +29,12 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="curriculumLabel" layoutX="395.0" layoutY="172.0" prefHeight="35.0" prefWidth="780.0" text="CURRICULUM">
+      <Label fx:id="curriculumLabel" layoutX="395.0" layoutY="242.0" prefHeight="35.0" prefWidth="780.0" text="CURRICULUM">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="ateneoLabel" layoutX="395.0" layoutY="212.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
+      <Label fx:id="ateneoLabel" layoutX="395.0" layoutY="172.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
          <font>
             <Font size="18.0" />
          </font>
@@ -68,12 +68,15 @@
             </ImageView>
          </children>
       </VBox>
-      <Label layoutX="1175.0" layoutY="326.0" text="COME VALUTI QUESTO CORSO?">
+      <Label layoutX="1208.0" layoutY="323.0" text="INDICE DI DIFFICOLTA' ?">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <TextArea fx:id="commentoArea" layoutX="209.0" layoutY="326.0" prefHeight="410.0" prefWidth="856.0" />
+      <TextArea fx:id="commentoArea" layoutX="209.0" layoutY="326.0" prefHeight="410.0" prefWidth="856.0" wrapText="true">
+         <font>
+            <Font size="18.0" />
+         </font></TextArea>
       <Label layoutX="435.0" layoutY="288.0" text="LASCIA UN COMMENTO:">
          <font>
             <Font size="24.0" />
@@ -81,7 +84,7 @@
       </Label>
       <Button alignment="CENTER" layoutX="1338.0" layoutY="76.0" mnemonicParsing="false" onAction="#goBack" prefHeight="42.0" prefWidth="109.0" text="Indietro" />
       <Button fx:id="salvaButton" alignment="CENTER" disable="true" layoutX="638.0" layoutY="804.0" mnemonicParsing="false" onAction="#salvaRecensione" prefHeight="42.0" prefWidth="294.0" text="Salva la recensnione" />
-      <Label fx:id="insegnamentoLabel" layoutX="395.0" layoutY="247.0" prefHeight="35.0" prefWidth="780.0" text="INSEGNAMENTO">
+      <Label fx:id="insegnamentoLabel" layoutX="395.0" layoutY="207.0" prefHeight="35.0" prefWidth="780.0" text="INSEGNAMENTO">
          <font>
             <Font size="18.0" />
          </font>

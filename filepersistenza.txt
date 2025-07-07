@@ -1,6 +1,6 @@
-1,christian,123456,true,3198
-2,Marco,Marco05,true,
-3,Flavio,Flavio02,true,
-4,Leonardo,Leonardo02,true,3356
-5,uc,111111,false,2995;3002;3356
+1,christian,123456,true,3198,
+2,Marco,Marco05,true,,
+3,Flavio,Flavio02,true,,
+4,Leonardo,Leonardo02,true,3356,
+5,uc,111111,false,3356;1208
 6,ui,111111,true,2938,Informatica

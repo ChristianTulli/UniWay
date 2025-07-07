@@ -75,19 +75,17 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
         semestre1.setCellValueFactory(new PropertyValueFactory<>("semestre"));
         anno1.setCellValueFactory(new PropertyValueFactory<>("anno"));
 
-        // Wrapping per entrambe le colonne "insegnamento"
+        // Wrapping testo
         setWrappedTextCellFactory(insegnamento);
         setWrappedTextCellFactory(insegnamento1);
         setWrappedTextCellFactory(curriculum);
         setWrappedTextCellFactory(curriculum1);
-
     }
 
     private void setWrappedTextCellFactory(TableColumn<InsegnamentoBean, String> column) {
         column.setCellFactory(col -> {
             Text text = new Text();
             text.wrappingWidthProperty().bind(col.widthProperty().subtract(10));
-
             return new TableCell<>() {
                 @Override
                 protected void updateItem(String item, boolean empty) {
@@ -102,8 +100,6 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
             };
         });
     }
-
-
 
     public void impostaSchermata(UtenteBean utenteBean, String corsoStr1, String corsoStr2, List<String> corsiSimil) {
         this.utenteBean = utenteBean;
@@ -129,14 +125,32 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
 
     @FXML
     public void aggiungiAiPreferiti1(ActionEvent event) {
-        controller.aggiungiAiPreferiti(utenteBean, corso1, ateneo1);
-        preferitiButton1.setDisable(true);
+        Boolean aggiunto = controller.aggiungiAiPreferiti(utenteBean, corso1, ateneo1);
+        if (aggiunto) {
+            preferitiButton1.setDisable(true);
+            mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");
+        } else {
+            mostraPopup("Già nei preferiti", "Hai già aggiunto questo corso ai tuoi preferiti.");
+        }
     }
 
     @FXML
     public void aggiungiAiPreferiti2(ActionEvent event) {
-        controller.aggiungiAiPreferiti(utenteBean, corso2, ateneo2);
-        preferitiButton2.setDisable(true);
+        Boolean aggiunto = controller.aggiungiAiPreferiti(utenteBean, corso2, ateneo2);
+        if (aggiunto) {
+            preferitiButton2.setDisable(true);
+            mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");
+        } else {
+            mostraPopup("Già nei preferiti", "Hai già aggiunto questo corso ai tuoi preferiti.");
+        }
+    }
+
+    private void mostraPopup(String titolo, String messaggio) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titolo);
+        alert.setHeaderText(null);
+        alert.setContentText(messaggio);
+        alert.showAndWait();
     }
 
     @FXML
@@ -172,3 +186,4 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
         stage.show();
     }
 }
+

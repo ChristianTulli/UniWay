@@ -179,10 +179,26 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {
         if (utenteBean != null && nomeCorso != null) {
-            inCercaDettaglioCorsoController.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
-            preferitiButton.setDisable(true);
+            Boolean aggiunto = inCercaDettaglioCorsoController.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
+
+            if (aggiunto) {
+                preferitiButton.setDisable(true);
+                mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");
+            } else {
+                mostraPopup("Corso già nei preferiti", "Hai già aggiunto questo corso ai tuoi preferiti.");
+            }
         }
     }
+
+    private void mostraPopup(String titolo, String messaggio) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titolo);
+        alert.setHeaderText(null);
+        alert.setContentText(messaggio);
+        alert.showAndWait();
+    }
+
+
 
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaTrovaCorsoUI.fxml"));
