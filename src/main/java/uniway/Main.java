@@ -1,27 +1,35 @@
-
 package uniway;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import uniway.viewcontroller.CLIController;
+import uniway.viewcontroller.FXMLController;
 
-public class Main extends Application {
-    //avviammo la schermata iniziale dell'applicazione
-    @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/view/LogInUI.fxml"));
-        Scene scene = new Scene(root, 1600, 900);
-        stage.setScene(scene);
-        stage.setTitle("UniWay");
-        stage.setResizable(false);
-        stage.centerOnScreen();
-        stage.show();
-    }
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
+public class Main {
 
     public static void main(String[] args) {
-        launch();
+        String uiVersion = loadUIVersion();
+
+        if ("cli".equalsIgnoreCase(uiVersion)) {
+            new CLIController().start(); // non dimenticare il .start()
+        } else {
+            Application.launch(FXMLController.class, args);
+        }
+    }
+
+    private static String loadUIVersion() {
+        Properties props = new Properties();
+        try (InputStream input = Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (input != null) {
+                props.load(input);
+                return props.getProperty("ui.version", "fxml");
+            }
+        } catch (IOException e) {
+            System.err.println("Errore durante il caricamento di config.properties: " + e.getMessage());
+        }
+        return "fxml"; // default fallback
     }
 }
