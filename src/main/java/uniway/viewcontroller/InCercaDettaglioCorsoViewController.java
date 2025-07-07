@@ -79,6 +79,46 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
                 }
             }
         });
+
+        tableView.setRowFactory(tv -> {
+            TableRow<InsegnamentoBean> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    InsegnamentoBean insegnamentoSelezionato = row.getItem();
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaRecensioneUI.fxml"));
+                        Parent rootRecensioni = loader.load();
+                        InCercaRecensioneViewController controller = loader.getController();
+
+                        // Recupera l'id dell'insegnamento dal controller applicativo
+                        Integer idInsegnamento = inCercaDettaglioCorsoController.getIdInsegnamento(
+                                insegnamentoSelezionato.getNome(),
+                                nomeCorso,
+                                nomeAteneo
+                        );
+
+                        // Imposta i dati nella schermata recensioni
+                        controller.impostaSchermata(
+                                idInsegnamento,
+                                nomeCorso,
+                                nomeAteneo,
+                                insegnamentoSelezionato.getNome(),
+                                insegnamentoSelezionato.getCurriculum(),
+                                utenteBean,
+                                corsiSimili
+                        );
+
+                        Stage stage = (Stage) tableView.getScene().getWindow();
+                        stage.setScene(new Scene(rootRecensioni));
+                        stage.show();
+                    } catch (IOException e) {
+                        LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata recensioni", e);
+                    }
+                }
+            });
+            return row;
+        });
+
     }
 
     private void setWrappedTextCellFactory(TableColumn<InsegnamentoBean, String> column) {
@@ -139,10 +179,26 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {
         if (utenteBean != null && nomeCorso != null) {
-            inCercaDettaglioCorsoController.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
-            preferitiButton.setDisable(true);
+            Boolean aggiunto = inCercaDettaglioCorsoController.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
+
+            if (aggiunto) {
+                preferitiButton.setDisable(true);
+                mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");
+            } else {
+                mostraPopup("Corso già nei preferiti", "Hai già aggiunto questo corso ai tuoi preferiti.");
+            }
         }
     }
+
+    private void mostraPopup(String titolo, String messaggio) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titolo);
+        alert.setHeaderText(null);
+        alert.setContentText(messaggio);
+        alert.showAndWait();
+    }
+
+
 
     public void goBack(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaTrovaCorsoUI.fxml"));

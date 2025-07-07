@@ -16,6 +16,7 @@ public class InCercaDettaglioCorsoController {
     private CorsoDAO corsoDAO;
     private PersistenzaController persistenzaController = PersistenzaController.getInstance();
     private InsegnamentoDAO insegnamentoDAO;
+    private List<Insegnamento> insegnamenti=new ArrayList<>();
 
     public InCercaDettaglioCorsoController(){
         corsoDAO = new CorsoDAO();
@@ -24,7 +25,6 @@ public class InCercaDettaglioCorsoController {
 
     public List<InsegnamentoBean> getInsegnamenti(String corsoCorrente, String ateneoCorrente) {
         // Implementare la logica per ottenere gli insegnamenti
-        List<Insegnamento> insegnamenti = new ArrayList<>();
         List<InsegnamentoBean> insegnamentiBean = new ArrayList<>();
         insegnamentoDAO.getInsegnamentiFromDB(corsoCorrente, ateneoCorrente, insegnamenti);
         for (Insegnamento ins : insegnamenti) {
@@ -40,13 +40,19 @@ public class InCercaDettaglioCorsoController {
         return insegnamentiBean;
     }
 
-    public void aggiungiAiPreferiti(UtenteBean utenteBean, String corsoSelezionato, String ateneoSelezionato) {
+    public Boolean aggiungiAiPreferiti(UtenteBean utenteBean, String corsoSelezionato, String ateneoSelezionato) {
         Integer idCorso = corsoDAO.getIdCorsoByNomeAndAteneo(ateneoSelezionato, corsoSelezionato);
         try {
-            persistenzaController.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
+            return persistenzaController.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore durante l'inserimento nei preferiti", e);
+            return false;
         }
+    }
+
+
+    public Integer getIdInsegnamento(String NomeInsegnamento, String corso, String ateneo) {
+        return insegnamentoDAO.getIdInsegnamento(NomeInsegnamento, corso, ateneo);
     }
 }
 

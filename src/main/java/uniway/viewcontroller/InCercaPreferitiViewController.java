@@ -7,45 +7,40 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaPreferitiController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class InCercaPreferitiViewController implements Initializable {
+
     private UtenteBean utenteBean;
-    private InCercaPreferitiController inCercaPreferitiController=new InCercaPreferitiController();
+    private final InCercaPreferitiController inCercaPreferitiController = new InCercaPreferitiController();
     private static final Logger LOGGER = Logger.getLogger(InCercaPreferitiViewController.class.getName());
 
     @FXML
     private ListView<String> listView;
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        // Listener per il doppio click su un elemento della ListView
-        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                try {
-                    apriDettaglioCorso(newValue);
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "Errore nell'apertura della visualizzazione del corso", e);
+        listView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                String selectedItem = listView.getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    mostraPopupAzione(selectedItem);
                 }
             }
         });
     }
-    public void impostaSchermata(UtenteBean utenteBean){
-        this.utenteBean=utenteBean;
+
+    public void impostaSchermata(UtenteBean utenteBean) {
+        this.utenteBean = utenteBean;
         try {
             listView.getItems().addAll(inCercaPreferitiController.getPreferiti(utenteBean.getUsername()));
         } catch (IOException e) {
@@ -53,16 +48,50 @@ public class InCercaPreferitiViewController implements Initializable {
         }
     }
 
-    public void apriDettaglioCorso(String corso) throws IOException {
+    private void mostraPopupAzione(String corso) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Corso preferito");
+        alert.setHeaderText("Cosa vuoi fare con il corso selezionato?");
+        alert.setContentText(corso);
+
+        ButtonType visualizza = new ButtonType("Visualizza");
+        ButtonType rimuovi = new ButtonType("Rimuovi");
+        ButtonType annulla = new ButtonType("Annulla", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(visualizza, rimuovi, annulla);
+
+        alert.showAndWait().ifPresent(risposta -> {
+            if (risposta == visualizza) {
+                try {
+                    apriDettaglioCorso(corso);
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Errore nell'apertura del dettaglio", e);
+                }
+            } else if (risposta == rimuovi) {
+                rimuoviCorsoDaiPreferiti(corso);
+            }
+        });
+    }
+
+    private void rimuoviCorsoDaiPreferiti(String corso) {
+        try {
+            inCercaPreferitiController.rimuoviPreferito(utenteBean.getUsername(), corso);
+            listView.getItems().remove(corso);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Errore durante la rimozione del corso dai preferiti", e);
+        }
+    }
+
+    private void apriDettaglioCorso(String corso) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaDettaglioCorsoUI.fxml"));
         Parent newRoot = loader.load();
-        List<String> corsiSimili=new ArrayList<>();
+        List<String> corsiSimili = new ArrayList<>();
+
         InCercaDettaglioCorsoViewController controller = loader.getController();
         controller.impostaSchermata(utenteBean, corso, corsiSimili);
 
-        Stage stage = (Stage) listView.getScene().getWindow(); // usa un nodo qualsiasi
-        Scene scene = new Scene(newRoot);
-        stage.setScene(scene);
+        Stage stage = (Stage) listView.getScene().getWindow();
+        stage.setScene(new Scene(newRoot));
         stage.show();
     }
 
@@ -70,22 +99,19 @@ public class InCercaPreferitiViewController implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaTrovaCorsoUI.fxml"));
         Parent newRoot = loader.load();
 
-        // Passa l'UtenteBean al nuovo controller
         InCercaTrovaCorsoViewController inCercaTrovaCorsoViewController = loader.getController();
-        inCercaTrovaCorsoViewController.impostaSchermata(utenteBean);  // Mantiene l'utente attivo
+        inCercaTrovaCorsoViewController.impostaSchermata(utenteBean);
 
-        // Cambia schermata
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(newRoot);
-        stage.setScene(scene);
+        stage.setScene(new Scene(newRoot));
         stage.show();
     }
 
-    public void logOut (ActionEvent event) throws IOException {
+    public void logOut(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        stage.setScene(new Scene(root));
         stage.show();
     }
 }
+

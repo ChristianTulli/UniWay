@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: linear-gradient(to bottom, #FF00DD, #00BBFF );" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniway.viewcontroller.InCercaRecensioneViewController">
+   <children>
+      <Separator layoutX="-4.0" layoutY="119.0" prefHeight="17.0" prefWidth="1920.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="119.0" />
+      <ImageView fitHeight="108.0" fitWidth="248.0" layoutX="676.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/titolo.png" />
+         </image>
+      </ImageView>
+      <Button alignment="CENTER" layoutX="1477.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
+      <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" onAction="#goToPreferiti" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
+      <Label layoutX="758.0" layoutY="136.0" text="CORSO:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Button alignment="CENTER" layoutX="1217.0" layoutY="66.0" mnemonicParsing="false" onAction="#goBack" prefHeight="42.0" prefWidth="109.0" text="Indietro" />
+      <VBox layoutX="473.0" layoutY="171.0" prefHeight="155.0" prefWidth="655.0">
+         <children>
+            <Label fx:id="corsoLabel" prefHeight="35.0" prefWidth="780.0" text="CORSO">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="ateneoLabel" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="insegnamentoLabel" prefHeight="35.0" prefWidth="780.0" text="INSEGNAMENTO">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="curriculumLabel" prefHeight="35.0" prefWidth="780.0" text="CURRICULUM">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER_LEFT" layoutX="580.0" layoutY="371.0" prefHeight="51.0" prefWidth="396.0">
+         <children>
+            <Label prefHeight="27.0" prefWidth="257.0" text="INDICE DI DIFFICOLTA' MEDIO:">
+               <font>
+                  <Font size="18.0" />
+               </font></Label>
+            <Label fx:id="mediaLabel" layoutX="10.0" layoutY="10.0" prefHeight="35.0" prefWidth="38.0" text="5.0">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.8500000238418579" blue="1.0" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.013422818791946308">
+                           <color>
+                              <Color red="0.8500000238418579" blue="1.0" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.9966442953020134">
+                           <color>
+                              <Color />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill></Label>
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/stella.png" />
+               </image></ImageView>
+         </children>
+      </HBox>
+      <VBox layoutX="412.0" layoutY="503.0" prefHeight="366.0" prefWidth="777.0">
+         <children>
+            <Label text="Recensioni degli studenti:" />
+            <ListView fx:id="listViewRecensioni" prefHeight="349.0" prefWidth="762.0">
+               <items>
+                  <FXCollections fx:factory="observableArrayList" />
+               </items>
+            </ListView>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

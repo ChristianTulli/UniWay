@@ -72,4 +72,32 @@ public class InsegnamentoDAO {
             LOGGER.log(Level.SEVERE, "Errore nel recupero degli insegnamenti per curriculum", e);
         }
     }
+
+    public Integer getIdInsegnamento(String nomeInsegnamento, String nomeCorso, String nomeAteneo) {
+        String query = """
+        SELECT i.id
+        FROM insegnamenti i
+        JOIN corsi c ON i.id_corso = c.id
+        JOIN atenei a ON c.idateneo = a.id
+        WHERE i.nome = ? AND c.nomecorso = ? AND a.nome = ?
+    """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, nomeInsegnamento);
+            stmt.setString(2, nomeCorso);
+            stmt.setString(3, nomeAteneo);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore nel recupero dell'id insegnamento", e);
+        }
+
+        return null; // Nessun insegnamento trovato
+    }
+
 }

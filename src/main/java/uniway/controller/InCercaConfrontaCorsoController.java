@@ -35,12 +35,14 @@ public class InCercaConfrontaCorsoController {
         return beanList;
     }
 
-    public void aggiungiAiPreferiti(UtenteBean utenteBean, String nomeCorso, String nomeAteneo) {
+    public Boolean aggiungiAiPreferiti(UtenteBean utenteBean, String nomeCorso, String nomeAteneo) {
         try {
             Integer idCorso = corsoDAO.getIdCorsoByNomeAndAteneo(nomeAteneo, nomeCorso);
-            persistenzaController.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
+            return persistenzaController.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore durante l'aggiunta ai preferiti", e);
+            return false;
         }
     }
 }
+

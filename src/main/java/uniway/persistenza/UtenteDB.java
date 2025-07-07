@@ -90,7 +90,7 @@ public class UtenteDB implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
+    public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
         String querySelect = "SELECT preferenze FROM utenti WHERE username = ?";
         String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
 
@@ -106,9 +106,10 @@ public class UtenteDB implements UtenteDAO {
                 String preferenzeAttuali = rs.getString(colonnaPreferenze);
                 if (preferenzeAttuali != null && !preferenzeAttuali.isBlank()) {
                     List<String> listaPreferiti = new ArrayList<>(List.of(preferenzeAttuali.split(",")));
-                    if (!listaPreferiti.contains(nuovaLista)) {
-                        listaPreferiti.add(nuovaLista);
+                    if (listaPreferiti.contains(nuovaLista)) {
+                        return false; // già presente
                     }
+                    listaPreferiti.add(nuovaLista);
                     nuovaLista = String.join(",", listaPreferiti);
                 }
             }
@@ -116,11 +117,12 @@ public class UtenteDB implements UtenteDAO {
             stmtUpdate.setString(1, nuovaLista);
             stmtUpdate.setString(2, usernameUtente);
             stmtUpdate.executeUpdate();
-
+            return true;
         } catch (SQLException e) {
             throw new IOException("Errore durante l'aggiornamento dei preferiti", e);
         }
     }
+
 
     @Override
     public void aggiungiCurriculumUtente(String username, String curriculum) throws IOException {
@@ -157,6 +159,38 @@ public class UtenteDB implements UtenteDAO {
         }
 
         return preferiti;
+    }
+
+    @Override
+    public void rimuoviPreferitoUtente(String username, int idCorso) throws IOException {
+        String querySelect = "SELECT preferenze FROM utenti WHERE username = ?";
+        String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
+
+        try (
+                PreparedStatement stmtSelect = conn.prepareStatement(querySelect);
+                PreparedStatement stmtUpdate = conn.prepareStatement(queryUpdate)
+        ) {
+            stmtSelect.setString(1, username);
+            ResultSet rs = stmtSelect.executeQuery();
+
+            if (rs.next()) {
+                String preferenzeStr = rs.getString("preferenze");
+                if (preferenzeStr == null || preferenzeStr.isBlank()) return;
+
+                List<String> idList = new ArrayList<>(Arrays.asList(preferenzeStr.split(",")));
+                boolean removed = idList.removeIf(id -> id.trim().equals(String.valueOf(idCorso)));
+
+                if (removed) {
+                    String nuovoValore = String.join(",", idList);
+                    stmtUpdate.setString(1, nuovoValore);
+                    stmtUpdate.setString(2, username);
+                    stmtUpdate.executeUpdate();
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IOException("Errore durante la rimozione dai preferiti", e);
+        }
     }
 
 }

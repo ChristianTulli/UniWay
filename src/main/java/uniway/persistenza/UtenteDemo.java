@@ -35,17 +35,21 @@ public class UtenteDemo implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiPreferitiUtente(String username, Integer idPreferiti) {
+    public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) {
         for (Utente u : utenti) {
-            if (u.getUsername().equals(username) && u instanceof UtenteInCerca inCerca) {
+            if (u.getUsername().equals(usernameUtente) && u instanceof UtenteInCerca inCerca) {
                 List<Integer> preferenze = inCerca.getPreferenze();
-                if (!preferenze.contains(idPreferiti)) {
-                    preferenze.add(idPreferiti);
+                if (!preferenze.contains(idCorso)) {
+                    preferenze.add(idCorso);
+                    return true;  // Aggiunto con successo
+                } else {
+                    return false; // Già presente
                 }
-                return;
             }
         }
+        return false; // Utente non trovato o non compatibile
     }
+
 
     @Override
     public List<Integer> getPreferitiUtente(String username) {
@@ -66,5 +70,20 @@ public class UtenteDemo implements UtenteDAO {
             }
         }
     }
+
+    @Override
+    public void rimuoviPreferitoUtente(String username, int idCorso) {
+        for (Utente utente : utenti) {
+            if (utente.getUsername().equals(username) && utente instanceof UtenteInCerca inCerca) {
+                List<Integer> preferenze = inCerca.getPreferenze();
+                if (preferenze.contains(idCorso)) {
+                    preferenze.remove((Integer) idCorso);
+                    return;// rimuove l'id specifico
+                }
+            }
+            return;
+        }
+    }
+
 }
 
