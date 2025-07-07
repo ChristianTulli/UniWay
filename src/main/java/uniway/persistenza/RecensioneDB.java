@@ -1,11 +1,15 @@
 package uniway.persistenza;
 
 
+import uniway.model.Recensione;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,5 +58,30 @@ public class RecensioneDB implements RecensioneDAO {
             LOGGER.log(Level.SEVERE, ECCEZIONE, e);
         }
     }
+
+    @Override
+    public List<Recensione> getRecensioniByInsegnamento(Integer idInsegnamento) {
+        List<Recensione> recensioni = new ArrayList<>();
+        String query = "SELECT nome_utente, commento, valutazione_generale FROM recensioni WHERE id_insegnamento = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, idInsegnamento);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Recensione recensione = new Recensione();
+                recensione.setNomeUtente(rs.getString("nome_utente"));
+                recensione.setCommento(rs.getString("commento"));
+                recensione.setValutazione(rs.getInt("valutazione_generale"));
+                recensioni.add(recensione);
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore nel recupero delle recensioni", e);
+        }
+
+        return recensioni;
+    }
+
 }
 
