@@ -125,7 +125,7 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
 
     @FXML
     public void aggiungiAiPreferiti1(ActionEvent event) {
-        Boolean aggiunto = controller.aggiungiAiPreferiti(utenteBean, corso1, ateneo1);
+        boolean aggiunto = controller.aggiungiAiPreferiti(utenteBean, corso1, ateneo1);
         if (aggiunto) {
             preferitiButton1.setDisable(true);
             mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");
@@ -136,7 +136,7 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
 
     @FXML
     public void aggiungiAiPreferiti2(ActionEvent event) {
-        Boolean aggiunto = controller.aggiungiAiPreferiti(utenteBean, corso2, ateneo2);
+        boolean aggiunto = controller.aggiungiAiPreferiti(utenteBean, corso2, ateneo2);
         if (aggiunto) {
             preferitiButton2.setDisable(true);
             mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");

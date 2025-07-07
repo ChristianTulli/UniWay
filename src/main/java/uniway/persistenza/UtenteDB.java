@@ -12,6 +12,7 @@ import java.util.List;
 
 public class UtenteDB implements UtenteDAO {
     private String colonnaPreferenze = "preferenze";
+    private String queryfrequente = "SELECT preferenze FROM utenti WHERE username = ?";
     private final Connection conn;
 
     public UtenteDB(Connection conn) {
@@ -91,7 +92,7 @@ public class UtenteDB implements UtenteDAO {
 
     @Override
     public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
-        String querySelect = "SELECT preferenze FROM utenti WHERE username = ?";
+        String querySelect = queryfrequente;
         String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
 
         try (
@@ -140,14 +141,14 @@ public class UtenteDB implements UtenteDAO {
     @Override
     public List<Integer> getPreferitiUtente(String username) throws IOException {
         List<Integer> preferiti = new ArrayList<>();
-        String query = "SELECT preferenze FROM utenti WHERE username = ?";
+        String query = queryfrequente;
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                String preferenzeStr = rs.getString("preferenze");
+                String preferenzeStr = rs.getString(colonnaPreferenze);
                 if (preferenzeStr != null && !preferenzeStr.isBlank()) {
                     for (String id : preferenzeStr.split(",")) {
                         preferiti.add(Integer.parseInt(id.trim()));
@@ -163,7 +164,7 @@ public class UtenteDB implements UtenteDAO {
 
     @Override
     public void rimuoviPreferitoUtente(String username, int idCorso) throws IOException {
-        String querySelect = "SELECT preferenze FROM utenti WHERE username = ?";
+        String querySelect = queryfrequente;
         String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
 
         try (
@@ -174,7 +175,7 @@ public class UtenteDB implements UtenteDAO {
             ResultSet rs = stmtSelect.executeQuery();
 
             if (rs.next()) {
-                String preferenzeStr = rs.getString("preferenze");
+                String preferenzeStr = rs.getString(colonnaPreferenze);
                 if (preferenzeStr == null || preferenzeStr.isBlank()) return;
 
                 List<String> idList = new ArrayList<>(Arrays.asList(preferenzeStr.split(",")));

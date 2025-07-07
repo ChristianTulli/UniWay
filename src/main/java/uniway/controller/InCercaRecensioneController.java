@@ -1,9 +1,6 @@
 package uniway.controller;
 
-import uniway.beans.InsegnamentoBean;
 import uniway.beans.RecensioneBean;
-import uniway.controller.PersistenzaController;
-import uniway.model.Insegnamento;
 import uniway.model.Recensione;
 import uniway.persistenza.RecensioneDAO;
 
@@ -15,7 +12,6 @@ import java.util.logging.Logger;
 public class InCercaRecensioneController {
     private static final Logger LOGGER = Logger.getLogger(InCercaRecensioneController.class.getName());
     private final RecensioneDAO recensioneDAO;
-    private List<Recensione> recensioni=new ArrayList<>();
 
     public InCercaRecensioneController() {
         this.recensioneDAO = PersistenzaController.getInstance().getRecensioneDAO();
@@ -24,7 +20,7 @@ public class InCercaRecensioneController {
     public List<RecensioneBean> getRecensioni(int idInsegnamento) {
         try {
             List<RecensioneBean> recensioniBean= new ArrayList<>();
-            recensioni= recensioneDAO.getRecensioniByInsegnamento(idInsegnamento);
+            List<Recensione> recensioni= recensioneDAO.getRecensioniByInsegnamento(idInsegnamento);
             for (Recensione rec : recensioni) {
                 RecensioneBean bean = new RecensioneBean();
                 bean.setNome(rec.getNomeUtente());

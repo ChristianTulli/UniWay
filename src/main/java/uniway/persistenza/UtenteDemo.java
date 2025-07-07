@@ -29,7 +29,6 @@ public class UtenteDemo implements UtenteDAO {
         for (Utente u : utenti) {
             if (u.getUsername().equals(username) && u instanceof UtenteIscritto iscritto) {
                 iscritto.setIdCorso(idCorso);
-                return;
             }
         }
     }
@@ -66,7 +65,6 @@ public class UtenteDemo implements UtenteDAO {
         for (Utente u : utenti) {
             if (u.getUsername().equals(username) && u instanceof UtenteIscritto iscritto) {
                 iscritto.setCurriculum(curriculum);
-                return;
             }
         }
     }
@@ -77,11 +75,9 @@ public class UtenteDemo implements UtenteDAO {
             if (utente.getUsername().equals(username) && utente instanceof UtenteInCerca inCerca) {
                 List<Integer> preferenze = inCerca.getPreferenze();
                 if (preferenze.contains(idCorso)) {
-                    preferenze.remove((Integer) idCorso);
-                    return;// rimuove l'id specifico
+                    preferenze.remove((Integer) idCorso);// rimuove l'id specifico
                 }
             }
-            return;
         }
     }
 

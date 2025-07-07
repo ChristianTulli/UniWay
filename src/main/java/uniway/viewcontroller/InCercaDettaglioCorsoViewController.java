@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
@@ -52,6 +53,12 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        inizializzaColonneTabella();
+        configuraListaCorsiSimili();
+        configuraRowFactoryTableView();
+    }
+
+    private void inizializzaColonneTabella() {
         insegnamento.setCellValueFactory(new PropertyValueFactory<>("nome"));
         curriculum.setCellValueFactory(new PropertyValueFactory<>("curriculum"));
         cfu.setCellValueFactory(new PropertyValueFactory<>("cfu"));
@@ -60,66 +67,74 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
 
         setWrappedTextCellFactory(insegnamento);
         setWrappedTextCellFactory(curriculum);
+    }
 
+    private void configuraListaCorsiSimili() {
         listaCorsiSimili.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 String corsoSimile = listaCorsiSimili.getSelectionModel().getSelectedItem();
                 if (corsoSimile != null) {
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaConfrontaCorsoUI.fxml"));
-                        root = loader.load();
-                        uniway.viewcontroller.InCercaConfrontaCorsoViewController controller = loader.getController();
-                        controller.impostaSchermata(utenteBean, corsoCorrente, corsoSimile, corsiSimili);
-                        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.setScene(new Scene(root));
-                        stage.show();
-                    } catch (IOException e) {
-                        LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata di confronto", e);
-                    }
+                    apriSchermataConfronto(event, corsoSimile);
                 }
             }
         });
+    }
 
+    private void apriSchermataConfronto(MouseEvent event, String corsoSimile) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaConfrontaCorsoUI.fxml"));
+            root = loader.load();
+            uniway.viewcontroller.InCercaConfrontaCorsoViewController controller = loader.getController();
+            controller.impostaSchermata(utenteBean, corsoCorrente, corsoSimile, corsiSimili);
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata di confronto", e);
+        }
+    }
+
+    private void configuraRowFactoryTableView() {
         tableView.setRowFactory(tv -> {
             TableRow<InsegnamentoBean> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     InsegnamentoBean insegnamentoSelezionato = row.getItem();
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaRecensioneUI.fxml"));
-                        Parent rootRecensioni = loader.load();
-                        InCercaRecensioneViewController controller = loader.getController();
-
-                        // Recupera l'id dell'insegnamento dal controller applicativo
-                        Integer idInsegnamento = inCercaDettaglioCorsoController.getIdInsegnamento(
-                                insegnamentoSelezionato.getNome(),
-                                nomeCorso,
-                                nomeAteneo
-                        );
-
-                        // Imposta i dati nella schermata recensioni
-                        controller.impostaSchermata(
-                                idInsegnamento,
-                                nomeCorso,
-                                nomeAteneo,
-                                insegnamentoSelezionato.getNome(),
-                                insegnamentoSelezionato.getCurriculum(),
-                                utenteBean,
-                                corsiSimili
-                        );
-
-                        Stage stage = (Stage) tableView.getScene().getWindow();
-                        stage.setScene(new Scene(rootRecensioni));
-                        stage.show();
-                    } catch (IOException e) {
-                        LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata recensioni", e);
-                    }
+                    apriSchermataRecensioni(insegnamentoSelezionato);
                 }
             });
             return row;
         });
-
     }
+
+    private void apriSchermataRecensioni(InsegnamentoBean insegnamentoSelezionato) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaRecensioneUI.fxml"));
+            Parent rootRecensioni = loader.load();
+            InCercaRecensioneViewController controller = loader.getController();
+
+            Integer idInsegnamento = inCercaDettaglioCorsoController.getIdInsegnamento(
+                    insegnamentoSelezionato.getNome(), nomeCorso, nomeAteneo
+            );
+
+            controller.impostaSchermata(
+                    idInsegnamento,
+                    nomeCorso,
+                    nomeAteneo,
+                    insegnamentoSelezionato.getNome(),
+                    insegnamentoSelezionato.getCurriculum(),
+                    utenteBean,
+                    corsiSimili
+            );
+
+            stage = (Stage) tableView.getScene().getWindow();
+            stage.setScene(new Scene(rootRecensioni));
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata recensioni", e);
+        }
+    }
+
 
     private void setWrappedTextCellFactory(TableColumn<InsegnamentoBean, String> column) {
         column.setCellFactory(col -> {
@@ -179,7 +194,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {
         if (utenteBean != null && nomeCorso != null) {
-            Boolean aggiunto = inCercaDettaglioCorsoController.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
+            boolean aggiunto = inCercaDettaglioCorsoController.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
 
             if (aggiunto) {
                 preferitiButton.setDisable(true);

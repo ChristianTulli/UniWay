@@ -133,47 +133,33 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
-        List<Utente> utenti = ottieniUtenti();
-        boolean aggiunto = false;
+    public Boolean aggiungiPreferitiUtente(String username, Integer idCorso) throws IOException {
+        List<String> righe = new ArrayList<>();
+        boolean preferitoAggiunto = false;
 
-        for (Utente u : utenti) {
-            if (u.getUsername().equals(usernameUtente) && u instanceof UtenteInCerca inCerca) {
-                List<Integer> preferenze = new ArrayList<>(inCerca.getPreferenze());
-                if (!preferenze.contains(idCorso)) {
-                    preferenze.add(idCorso);
-                    inCerca.setPreferenze(preferenze); // aggiorna la lista nell'oggetto
-                    aggiunto = true;
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String nuovaRiga = processaRigaPreferiti(line, username, idCorso);
+                if (nuovaRiga != null) {
+                    preferitoAggiunto = true;
+                    righe.add(nuovaRiga);
+                } else {
+                    righe.add(line);
                 }
-                break;
             }
         }
 
-        if (aggiunto) {
+        if (preferitoAggiunto) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-                for (Utente u : utenti) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(u.getId()).append(",")
-                            .append(u.getUsername()).append(",")
-                            .append(u.getPassword()).append(",")
-                            .append(u.getIscritto()).append(",");
-
-                    if (u instanceof UtenteIscritto iscritto) {
-                        sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
-                        sb.append(",").append(iscritto.getCurriculum() != null ? iscritto.getCurriculum() : "");
-                    } else if (u instanceof UtenteInCerca inCerca) {
-                        sb.append(inCerca.getPreferenze().stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.joining(";")));
-                    }
-
-                    writer.write(sb.toString());
+                for (String riga : righe) {
+                    writer.write(riga);
                     writer.newLine();
                 }
             }
         }
 
-        return aggiunto;
+        return preferitoAggiunto;
     }
 
 
@@ -231,20 +217,22 @@ public class UtenteFS implements UtenteDAO {
             if (!split[4].isEmpty()) {
                 preferiti = Arrays.stream(split[4].split(";"))
                         .map(Integer::parseInt)
-                        .toList();
+                        .collect(Collectors.toList());
             }
 
-            if (!preferiti.contains(idCorso)) {
-                preferiti = new ArrayList<>(preferiti);
-                preferiti.add(idCorso);
+            // Se il corso è già nei preferiti, NON fare nulla
+            if (preferiti.contains(idCorso)) {
+                return null; // Nessuna modifica -> preferito già presente
             }
 
+            // Altrimenti, aggiungilo e aggiorna la riga
+            preferiti.add(idCorso);
             split[4] = preferiti.stream()
                     .map(String::valueOf)
                     .collect(Collectors.joining(";"));
-
             return String.join(",", split);
         }
+
         return null; // Nessuna modifica alla riga
     }
 
@@ -272,41 +260,50 @@ public class UtenteFS implements UtenteDAO {
 
     @Override
     public void rimuoviPreferitoUtente(String username, int idCorso) throws IOException {
-        List<Utente> utenti = ottieniUtenti();
-        boolean rimosso = false;
+        List<String> righe = new ArrayList<>();
+        boolean utenteTrovato = false;
 
-        for (Utente u : utenti) {
-            if (u.getUsername().equals(username) && u instanceof UtenteInCerca inCerca) {
-                List<Integer> preferenze = new ArrayList<>(inCerca.getPreferenze()); // copia mutabile
-                if (preferenze.remove((Integer) idCorso)) {
-                    inCerca.setPreferenze(preferenze);
-                    rimosso = true;
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] split = line.split(",");
+                if (split.length >= 4 && split[1].equals(username) && split[3].equals("false")) {
+                    utenteTrovato = true;
+
+                    // Estendi array se necessario
+                    if (split.length < 5) {
+                        split = Arrays.copyOf(split, 5);
+                        split[4] = "";
+                    }
+
+                    List<Integer> preferiti = new ArrayList<>();
+                    if (!split[4].isEmpty()) {
+                        preferiti = Arrays.stream(split[4].split(";"))
+                                .map(Integer::parseInt)
+                                .collect(Collectors.toList());
+                    }
+
+                    // Rimuovi il preferito se presente
+                    if (preferiti.remove((Integer) idCorso)) {
+                        split[4] = preferiti.stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(";"));
+                        line = String.join(",", split);
+                    }
                 }
-                break;
+
+                righe.add(line);
             }
         }
 
-        if (rimosso) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-                for (Utente u : utenti) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(u.getId()).append(",")
-                            .append(u.getUsername()).append(",")
-                            .append(u.getPassword()).append(",")
-                            .append(u.getIscritto()).append(",");
+        if (!utenteTrovato) {
+            throw new IOException("Utente in cerca non trovato nel file.");
+        }
 
-                    if (u instanceof UtenteIscritto iscritto) {
-                        sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
-                        sb.append(",").append(iscritto.getCurriculum() != null ? iscritto.getCurriculum() : "");
-                    } else if (u instanceof UtenteInCerca inCerca) {
-                        sb.append(inCerca.getPreferenze().stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.joining(";")));
-                    }
-
-                    writer.write(sb.toString());
-                    writer.newLine();
-                }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+            for (String riga : righe) {
+                writer.write(riga);
+                writer.newLine();
             }
         }
     }

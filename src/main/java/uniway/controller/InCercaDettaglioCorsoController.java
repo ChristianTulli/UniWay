@@ -51,8 +51,8 @@ public class InCercaDettaglioCorsoController {
     }
 
 
-    public Integer getIdInsegnamento(String NomeInsegnamento, String corso, String ateneo) {
-        return insegnamentoDAO.getIdInsegnamento(NomeInsegnamento, corso, ateneo);
+    public Integer getIdInsegnamento(String nomeInsegnamento, String corso, String ateneo) {
+        return insegnamentoDAO.getIdInsegnamento(nomeInsegnamento, corso, ateneo);
     }
 }
 

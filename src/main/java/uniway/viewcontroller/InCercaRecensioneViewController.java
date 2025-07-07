@@ -11,8 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import uniway.beans.RecensioneBean;
@@ -21,7 +19,6 @@ import uniway.controller.InCercaRecensioneController;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -67,13 +64,16 @@ public class InCercaRecensioneViewController implements Initializable {
 
         listViewRecensioni.getItems().setAll(recensioni);
 
-        listViewRecensioni.setCellFactory(lv -> new ListCell<>() {
+        listViewRecensioni.setCellFactory(lv -> new RecensioneListCell());
+    }
+
+        public class RecensioneListCell extends ListCell<RecensioneBean> {
             private final VBox content;
             private final Label nomeUtente;
             private final Label stelle;
             private final TextArea commento;
 
-            {
+            public RecensioneListCell() {
                 nomeUtente = new Label();
                 stelle = new Label();
                 commento = new TextArea();
@@ -97,10 +97,10 @@ public class InCercaRecensioneViewController implements Initializable {
                     setGraphic(content);
                 }
             }
-        });
-    }
+        }
 
-    @Override
+
+        @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // niente da inizializzare in anticipo
     }
