@@ -4,7 +4,7 @@ import uniway.beans.UtenteBean;
 import uniway.controller.InCercaPreferitiController;
 import uniway.eccezioni.EsciException;
 import uniway.eccezioni.TornaAlLoginException;
-import uniway.viewcontroller.CLIUtils;
+import uniway.utils.CLIUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;

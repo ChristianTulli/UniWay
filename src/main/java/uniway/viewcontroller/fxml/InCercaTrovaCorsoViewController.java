@@ -34,16 +34,16 @@ public class InCercaTrovaCorsoViewController implements Initializable {
         this.utenteBean = utenteBean;
     }
 
-    // 🔵 COLONNA 1: Tipologia di Ateneo
+    //COLONNA 1: Tipologia di Ateneo
     @FXML private ComboBox<String> statale;
     @FXML private ComboBox<String> tipologia;
 
-    // 🔵 COLONNA 2: Ubicazione
+    //COLONNA 2: Ubicazione
     @FXML private ComboBox<String> regione;
     @FXML private ComboBox<String> provincia;
     @FXML private ComboBox<String> comune;
 
-    // 🔵 COLONNA 3: Caratteristiche del Corso
+    //COLONNA 3: Caratteristiche del Corso
     @FXML private ComboBox<String> durata;
     @FXML private ComboBox<String> gruppoDisciplina;
     @FXML private ComboBox<String> classeCorso;
@@ -97,7 +97,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
     }
 
 
-    // 🔵 COLONNA 1: TIPOLOGIA ATENEO
+    // COLONNA 1: TIPOLOGIA ATENEO
     @FXML
     public void handleStataleSelection(ActionEvent event) {
         resetComboBoxes(tipologia);
@@ -111,7 +111,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
         inCercaTrovaCorsoController.setTipologia(tipologia.getValue());
     }
 
-    // 🔵 COLONNA 2: UBICAZIONE
+    //COLONNA 2: UBICAZIONE
     @FXML
     public void handleRegioneSelection(ActionEvent event) {
         resetComboBoxes(provincia, comune);
@@ -131,7 +131,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
         inCercaTrovaCorsoController.setComune(comune.getValue());
     }
 
-    // 🔵 COLONNA 3: CARATTERISTICHE CORSO
+    //COLONNA 3: CARATTERISTICHE CORSO
     @FXML
     public void handleDurataSelection(ActionEvent event) {
         resetComboBoxes(gruppoDisciplina, classeCorso);
@@ -151,7 +151,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
         inCercaTrovaCorsoController.setClasseCorso(classeCorso.getValue());
     }
 
-    // 🔵 CERCA RISULTATI
+    //CERCA RISULTATI
     @FXML
     public void handleCercaSelection(ActionEvent event) {
         resetComboBoxes();
@@ -163,7 +163,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
         }
     }
 
-    // 🔹 Metodo per aprire la schermata del dettaglio del corso
+    //Metodo per aprire la schermata del dettaglio del corso
     private void apriDettaglioCorso(String corsoSelezionato) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(interfacciaCorso));

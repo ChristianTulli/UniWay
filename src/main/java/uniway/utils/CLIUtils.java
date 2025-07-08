@@ -1,4 +1,4 @@
-package uniway.viewcontroller;
+package uniway.utils;
 
 import uniway.eccezioni.EsciException;
 import uniway.eccezioni.TornaAlLoginException;

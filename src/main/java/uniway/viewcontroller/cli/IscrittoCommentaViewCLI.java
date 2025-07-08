@@ -6,7 +6,7 @@ import uniway.controller.IscrittoCommentaController;
 import uniway.controller.IscrittoInsegnamentiController;
 import uniway.eccezioni.EsciException;
 import uniway.eccezioni.TornaAlLoginException;
-import uniway.viewcontroller.CLIUtils;
+import uniway.utils.CLIUtils;
 
 import java.util.Scanner;
 

@@ -4,7 +4,7 @@ import uniway.beans.UtenteBean;
 import uniway.controller.IscrittoSelezionaCorsoController;
 import uniway.eccezioni.EsciException;
 import uniway.eccezioni.TornaAlLoginException;
-import uniway.viewcontroller.CLIUtils;
+import uniway.utils.CLIUtils;
 
 import java.util.List;
 import java.util.Scanner;
