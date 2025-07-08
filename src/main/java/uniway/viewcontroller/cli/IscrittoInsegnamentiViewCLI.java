@@ -1,8 +1,11 @@
-package uniway.viewcontroller;
+package uniway.viewcontroller.cli;
 
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.IscrittoInsegnamentiController;
+import uniway.eccezioni.EsciException;
+import uniway.eccezioni.TornaAlLoginException;
+import uniway.viewcontroller.CLIUtils;
 
 import java.util.List;
 import java.util.Scanner;
@@ -15,7 +18,7 @@ public class IscrittoInsegnamentiViewCLI {
     public void show(UtenteBean utenteBean) {
         System.out.println("\n=== Insegnamenti del Corso ===");
 
-        // Stampa dettagli corso
+        // Mostra i dati principali del corso selezionato
         String nomeCorso = controller.getCorso(utenteBean.getIdCorso());
         String nomeAteneo = controller.getAteneo(utenteBean.getIdCorso());
 
@@ -24,18 +27,20 @@ public class IscrittoInsegnamentiViewCLI {
         System.out.println("Ateneo:    " + nomeAteneo);
         System.out.println("--------------------------------------");
 
-        // Ottiene e mostra insegnamenti
+        // Recupera gli insegnamenti associati all'utente
         List<InsegnamentoBean> insegnamenti = controller.getInsegnamenti(
                 utenteBean.getIdCorso(),
                 utenteBean.getCurriculum(),
                 utenteBean.getUsername()
         );
 
+        // Se non ci sono insegnamenti, avvisa e termina
         if (insegnamenti == null || insegnamenti.isEmpty()) {
-            System.out.println("⚠ Nessun insegnamento disponibile.");
+            System.out.println("Nessun insegnamento disponibile.");
             return;
         }
 
+        // Stampa elenco numerato di insegnamenti
         int index = 1;
         for (InsegnamentoBean bean : insegnamenti) {
             System.out.printf("%d. %-40s | Anno: %d | Sem: %d | CFU: %d | Valutazione: %s\n",
@@ -48,9 +53,14 @@ public class IscrittoInsegnamentiViewCLI {
             );
         }
 
-        System.out.println("\nSeleziona un insegnamento per lasciare una recensione (numero): ");
+        // Chiede all'utente quale insegnamento recensire
+        System.out.println("\nSeleziona un insegnamento per lasciare una recensione.");
+        System.out.println("Digita il numero corrispondente oppure 'login' o 'esci':");
+
         try {
-            int scelta = Integer.parseInt(scanner.nextLine());
+            String input = CLIUtils.leggiInput(scanner, "Scelta: ");
+            int scelta = Integer.parseInt(input);
+
             if (scelta < 1 || scelta > insegnamenti.size()) {
                 System.out.println("Scelta non valida.");
                 return;
@@ -59,21 +69,24 @@ public class IscrittoInsegnamentiViewCLI {
             InsegnamentoBean selezionato = insegnamenti.get(scelta - 1);
 
             if (selezionato.getValutazione() != null) {
-                System.out.println("⚠ Hai già recensito questo insegnamento.");
+                System.out.println("Hai già recensito questo insegnamento.");
                 return;
             }
 
-            // Passa al commento
+            // Passa alla schermata di inserimento recensione
             new IscrittoCommentaViewCLI().show(
                     utenteBean,
-                    controller.getCorso(utenteBean.getIdCorso()),
-                    controller.getAteneo(utenteBean.getIdCorso()),
+                    nomeCorso,
+                    nomeAteneo,
                     selezionato,
                     controller
             );
 
         } catch (NumberFormatException e) {
-            System.out.println("Input non valido.");
+            System.out.println("Input non valido. Inserisci un numero.");
+        } catch (TornaAlLoginException | EsciException e) {
+            // Propaga l'eccezione ai livelli superiori (LoginViewControllerCLI la gestirà)
+            throw e;
         }
     }
 }

@@ -1,4 +1,4 @@
-package uniway.viewcontroller;
+package uniway.viewcontroller.fxml;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -84,7 +84,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaConfrontaCorsoUI.fxml"));
             root = loader.load();
-            uniway.viewcontroller.InCercaConfrontaCorsoViewController controller = loader.getController();
+            InCercaConfrontaCorsoViewController controller = loader.getController();
             controller.impostaSchermata(utenteBean, corsoCorrente, corsoSimile, corsiSimili);
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));

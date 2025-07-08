@@ -1,7 +1,10 @@
-package uniway.viewcontroller;
+package uniway.viewcontroller.cli;
 
 import uniway.beans.UtenteBean;
 import uniway.controller.LogInController;
+import uniway.eccezioni.EsciException;
+import uniway.eccezioni.TornaAlLoginException;
+import uniway.viewcontroller.CLIUtils;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -17,24 +20,39 @@ public class LoginViewControllerCLI {
         this.loginController = new LogInController();
     }
 
+    // Metodo principale che mostra il menu iniziale
     public void show() {
-        System.out.println("=== Benvenuto in UniWay (CLI) ===");
-        System.out.println("1. Accedi");
-        System.out.println("2. Registrati");
-        System.out.print("Scegli un'opzione: ");
-        String scelta = scanner.nextLine();
+        while (true) {
+            try {
+                System.out.println("=== Benvenuto in UniWay (CLI) ===");
+                System.out.println("1. Accedi");
+                System.out.println("2. Registrati");
+                System.out.println("Scrivi 'login' per tornare qui da ogni schermata, oppure 'esci' per uscire.");
+                String scelta = CLIUtils.leggiInput(scanner, "Scegli un'opzione: ");
 
-        switch (scelta) {
-            case "1" -> accedi();
-            case "2" -> registrati();
-            default -> System.out.println("Scelta non valida.");
+                switch (scelta) {
+                    case "1" -> accedi();
+                    case "2" -> registrati();
+                    default -> System.out.println("Scelta non valida.");
+                }
+            } catch (TornaAlLoginException e) {
+                // Lanciare questa eccezione qui non ha effetto: siamo già al login
+                System.out.println("Sei già nel menu di login.");
+            } catch (EsciException e) {
+                // Uscita globale dal programma
+                System.out.println("Chiusura dell'applicazione...");
+                return;
+            }
         }
     }
 
+    // Metodo per l'autenticazione dell'utente
     private void accedi() {
         System.out.println("--- Login ---");
-        String username = chiedi("Username");
-        String password = chiedi("Password");
+
+        // Richiesta credenziali con possibilità di digitare 'login' o 'esci'
+        String username = CLIUtils.leggiInput(scanner, "Username: ");
+        String password = CLIUtils.leggiInput(scanner, "Password: ");
 
         try {
             Optional<UtenteBean> utenteOpt = loginController.autenticazione(username, password);
@@ -42,16 +60,18 @@ public class LoginViewControllerCLI {
                 UtenteBean utente = utenteOpt.get();
                 System.out.println("Login effettuato con successo!");
 
+                // Se utente è iscritto con corso già selezionato
                 if (utente.getIscritto()) {
                     if (utente.getIdCorso() != null && utente.getCurriculum() != null) {
-                        System.out.println("→ Utente iscritto con corso selezionato");
+                        System.out.println("Utente iscritto con corso selezionato");
                         new IscrittoInsegnamentiViewCLI().show(utente);
                     } else {
-                        System.out.println("→ Utente iscritto ma senza corso selezionato");
+                        System.out.println("Utente iscritto ma senza corso selezionato");
                         new IscrittoSelezionaCorsoViewCLI().show(utente);
                     }
                 } else {
-                    System.out.println("→ Utente in cerca");
+                    // Utente in cerca
+                    System.out.println("Utente in cerca");
                     new InCercaTrovaCorsoViewCLI().show(utente);
                 }
 
@@ -63,11 +83,12 @@ public class LoginViewControllerCLI {
         }
     }
 
+    // Metodo per la registrazione di un nuovo utente
     private void registrati() {
         System.out.println("--- Registrazione ---");
 
-        String username = chiedi("Scegli uno username");
-        String password = chiedi("Scegli una password (min 6 caratteri)");
+        String username = CLIUtils.leggiInput(scanner, "Scegli uno username: ");
+        String password = CLIUtils.leggiInput(scanner, "Scegli una password (min 6 caratteri): ");
 
         if (password.length() < 6) {
             System.out.println("Errore: la password deve contenere almeno 6 caratteri.");
@@ -77,7 +98,8 @@ public class LoginViewControllerCLI {
         System.out.println("Sei:");
         System.out.println("1. Iscritto");
         System.out.println("2. In cerca");
-        String ruolo = scanner.nextLine();
+
+        String ruolo = CLIUtils.leggiInput(scanner, "Scelta: ");
         boolean iscritto = "1".equals(ruolo);
 
         UtenteBean utenteBean = new UtenteBean(username, password, iscritto);
@@ -86,13 +108,15 @@ public class LoginViewControllerCLI {
             boolean success = loginController.registrazione(utenteBean);
             if (success) {
                 System.out.println("Registrazione completata!");
+
                 if (iscritto) {
                     new IscrittoSelezionaCorsoViewCLI().show(utenteBean);
-                    System.out.println("→ Continua come utente iscritto");
+                    System.out.println("Continua come utente iscritto");
                 } else {
                     new InCercaTrovaCorsoViewCLI().show(utenteBean);
-                    System.out.println("→ Continua come utente in cerca");
+                    System.out.println("Continua come utente in cerca");
                 }
+
             } else {
                 System.out.println("Errore: username esistente o dati non validi.");
             }
@@ -100,9 +124,5 @@ public class LoginViewControllerCLI {
             System.out.println("Errore durante la registrazione: " + e.getMessage());
         }
     }
-
-    private String chiedi(String campo) {
-        System.out.print(campo + ": ");
-        return scanner.nextLine();
-    }
 }
+

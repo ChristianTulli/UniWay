@@ -1,9 +1,11 @@
-package uniway.viewcontroller;
+package uniway.viewcontroller.cli;
 
 import uniway.beans.UtenteBean;
 import uniway.controller.IscrittoSelezionaCorsoController;
+import uniway.eccezioni.EsciException;
+import uniway.eccezioni.TornaAlLoginException;
+import uniway.viewcontroller.CLIUtils;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,9 +14,13 @@ public class IscrittoSelezionaCorsoViewCLI {
     private final Scanner scanner = new Scanner(System.in);
     private final IscrittoSelezionaCorsoController controller = new IscrittoSelezionaCorsoController();
 
-    public void show(UtenteBean utenteBean) {
+
+    //Mostra la schermata CLI per la selezione del corso da parte dell'utente iscritto.
+
+    public void show(UtenteBean utenteBean) throws TornaAlLoginException, EsciException {
         System.out.println("\n=== Seleziona il tuo corso di laurea ===");
 
+        // Selezione dei filtri geografici e didattici
         String regione = selezionaDaLista("Regione", controller.getRegioni());
         if (regione == null) return;
 
@@ -36,24 +42,26 @@ public class IscrittoSelezionaCorsoViewCLI {
         String classe = selezionaDaLista("Corso", controller.getCorsi(tipologia));
         if (classe == null) return;
 
+        // Recupero dei corsi effettivi
         List<String> risultati = controller.getRisultati(classe);
         if (risultati == null || risultati.isEmpty()) {
-            System.out.println("⚠ Nessun corso trovato con i filtri selezionati.");
+            System.out.println("Nessun corso trovato con i filtri selezionati.");
             return;
         }
 
         String corsoSelezionato = selezionaDaLista("Corso di Laurea", risultati);
         if (corsoSelezionato == null) return;
 
-        List<String> curriculumDisponibili = controller.getCurriculumPerCorso(corsoSelezionato);
-
+        // Imposta il corso selezionato all'utente
         controller.setCorsoUtente(utenteBean, corsoSelezionato);
 
+        // Selezione del curriculum se necessario
+        List<String> curriculumDisponibili = controller.getCurriculumPerCorso(corsoSelezionato);
         if (curriculumDisponibili != null && !curriculumDisponibili.isEmpty()) {
             String curriculum;
             if (curriculumDisponibili.size() == 1) {
                 curriculum = curriculumDisponibili.get(0);
-                System.out.println("→ Curriculum assegnato automaticamente: " + curriculum);
+                System.out.println("Curriculum assegnato automaticamente: " + curriculum);
             } else {
                 curriculum = selezionaDaLista("Curriculum", curriculumDisponibili);
                 if (curriculum == null) return;
@@ -61,19 +69,21 @@ public class IscrittoSelezionaCorsoViewCLI {
             controller.setCurriculumUtente(utenteBean, curriculum);
         }
 
-        System.out.println("\n✅ Corso selezionato: " + corsoSelezionato);
+        // Conferma della selezione
+        System.out.println("\nCorso selezionato: " + corsoSelezionato);
         if (utenteBean.getCurriculum() != null) {
-            System.out.println("📘 Curriculum: " + utenteBean.getCurriculum());
+            System.out.println("Curriculum: " + utenteBean.getCurriculum());
         }
 
-        // Prosegui alla prossima schermata CLI
+        // Passaggio alla schermata degli insegnamenti
         new IscrittoInsegnamentiViewCLI().show(utenteBean);
-        System.out.println("\n→ Passaggio alla schermata insegnamenti");
+        System.out.println("Passaggio alla schermata insegnamenti...");
     }
 
-    private String selezionaDaLista(String tipo, List<String> opzioni) {
+    //Metodo ausiliario per selezionare un elemento da una lista
+    private String selezionaDaLista(String tipo, List<String> opzioni) throws TornaAlLoginException, EsciException {
         if (opzioni == null || opzioni.isEmpty()) {
-            System.out.println("⚠ Nessuna " + tipo.toLowerCase() + " disponibile.");
+            System.out.println("Nessuna " + tipo.toLowerCase() + " disponibile.");
             return null;
         }
 
@@ -82,16 +92,19 @@ public class IscrittoSelezionaCorsoViewCLI {
             System.out.println((i + 1) + ". " + opzioni.get(i));
         }
 
-        System.out.print("Scelta (" + tipo + "): ");
+        String input = CLIUtils.leggiInput(scanner, "Scelta (" + tipo + "): ");
         try {
-            int scelta = Integer.parseInt(scanner.nextLine());
+            int scelta = Integer.parseInt(input);
             if (scelta >= 1 && scelta <= opzioni.size()) {
                 return opzioni.get(scelta - 1);
             }
-        } catch (NumberFormatException ignored) {}
+        } catch (NumberFormatException ignored) {
+            // La validazione viene gestita sotto
+        }
 
         System.out.println("Scelta non valida.");
         return null;
     }
 }
+
 

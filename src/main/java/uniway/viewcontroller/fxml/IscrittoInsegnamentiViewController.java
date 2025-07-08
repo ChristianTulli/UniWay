@@ -1,4 +1,4 @@
-package uniway.viewcontroller;
+package uniway.viewcontroller.fxml;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

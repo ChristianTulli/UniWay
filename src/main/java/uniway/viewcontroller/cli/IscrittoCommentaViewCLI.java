@@ -1,9 +1,12 @@
-package uniway.viewcontroller;
+package uniway.viewcontroller.cli;
 
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.IscrittoCommentaController;
 import uniway.controller.IscrittoInsegnamentiController;
+import uniway.eccezioni.EsciException;
+import uniway.eccezioni.TornaAlLoginException;
+import uniway.viewcontroller.CLIUtils;
 
 import java.util.Scanner;
 
@@ -18,29 +21,34 @@ public class IscrittoCommentaViewCLI {
                      InsegnamentoBean insegnamentoBean,
                      IscrittoInsegnamentiController iscrittoInsegnamentiController) {
 
+        // Salva il controller per gestire il salvataggio della recensione
         commentaController.setIscrittoVisualizzaInsegnamentiController(iscrittoInsegnamentiController);
 
+        // Intestazione schermata
         System.out.println("\n=== Recensione Insegnamento ===");
         System.out.println("Corso:       " + nomeCorso);
         System.out.println("Curriculum:  " + utenteBean.getCurriculum());
         System.out.println("Ateneo:      " + nomeAteneo);
         System.out.println("Insegnamento:" + insegnamentoBean.getNome());
 
+        // Chiede la valutazione (da 1 a 5)
         int valutazione = chiediValutazione();
         if (valutazione == -1) return;
 
+        // Chiede il commento dell'utente
         String commento = chiediCommento();
         if (commento.isBlank()) {
-            System.out.println("⚠ Commento non valido.");
+            System.out.println("Commento non valido.");
             return;
         }
 
+        // Salva la recensione
         commentaController.salvaRecensione(utenteBean, insegnamentoBean, commento, valutazione);
 
-        System.out.println("\n✅ Recensione salvata con successo!");
-        System.out.println("→ Torno alla lista degli insegnamenti...\n");
+        // Conferma e torna alla schermata precedente
+        System.out.println("\nRecensione salvata con successo.");
+        System.out.println("Torno alla lista degli insegnamenti...\n");
 
-        // Torna alla schermata CLI precedente
         new IscrittoInsegnamentiViewCLI().show(utenteBean);
     }
 
@@ -52,20 +60,26 @@ public class IscrittoCommentaViewCLI {
         System.out.println("[4] ★★★★☆");
         System.out.println("[5] ★★★★★");
 
-        System.out.print("Valutazione: ");
         try {
-            int valutazione = Integer.parseInt(scanner.nextLine());
+            String input = CLIUtils.leggiInput(scanner, "Valutazione: ");
+            int valutazione = Integer.parseInt(input);
             if (valutazione >= 1 && valutazione <= 5) {
                 return valutazione;
             }
-        } catch (NumberFormatException ignored) {}
+        } catch (NumberFormatException e) {
+            System.out.println("Valutazione non valida.");
+        } catch (TornaAlLoginException | EsciException e) {
+            throw e; // Propaga l'eccezione
+        }
 
-        System.out.println("⚠ Valutazione non valida.");
         return -1;
     }
 
     private String chiediCommento() {
-        System.out.println("\nLascia un commento sull'insegnamento:");
-        return scanner.nextLine().trim();
+        try {
+            return CLIUtils.leggiInput(scanner, "\nLascia un commento sull'insegnamento:\nCommento: ");
+        } catch (TornaAlLoginException | EsciException e) {
+            throw e; // Propaga l'eccezione
+        }
     }
 }

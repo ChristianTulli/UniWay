@@ -1,5 +1,7 @@
 package uniway.viewcontroller;
 
+import uniway.viewcontroller.cli.LoginViewControllerCLI;
+
 public class CLIController {
 
     public void start() {

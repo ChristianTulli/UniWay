@@ -1,6 +1,7 @@
-1,christian,123456,true,3198,
+1,christian,123456,true,3198,Sistemi software e Web
 2,Marco,Marco05,true,3198,Robotica e Automazione
-3,Flavio,Flavio02,true,,
-4,Leonardo,Leonardo02,true,3356,
-5,uc,111111,false,3356;3198;2938
+3,Flavio,Flavio02,true,3198,Robotica e Automazione
+4,Leonardo,Leonardo02,true,3356,Sistemi informatici
+5,uc,111111,false,3198;2938
 6,ui,111111,true,2938,Informatica
+7,mirko,mirketto,true,3198,Robotica e Automazione
