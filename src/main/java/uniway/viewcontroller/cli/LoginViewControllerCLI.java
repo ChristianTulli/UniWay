@@ -27,12 +27,14 @@ public class LoginViewControllerCLI {
                 System.out.println("=== Benvenuto in UniWay (CLI) ===");
                 System.out.println("1. Accedi");
                 System.out.println("2. Registrati");
+                System.out.println("3. Esci");
                 System.out.println("Scrivi 'login' per tornare qui da ogni schermata, oppure 'esci' per uscire.");
                 String scelta = CLIUtils.leggiInput(scanner, "Scegli un'opzione: ");
 
                 switch (scelta) {
                     case "1" -> accedi();
                     case "2" -> registrati();
+                    case "3" -> throw new TornaAlLoginException();
                     default -> System.out.println("Scelta non valida.");
                 }
             } catch (TornaAlLoginException e) {

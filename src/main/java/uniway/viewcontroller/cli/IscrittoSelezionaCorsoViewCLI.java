@@ -14,70 +14,72 @@ public class IscrittoSelezionaCorsoViewCLI {
     private final Scanner scanner = new Scanner(System.in);
     private final IscrittoSelezionaCorsoController controller = new IscrittoSelezionaCorsoController();
 
-
-    //Mostra la schermata CLI per la selezione del corso da parte dell'utente iscritto.
-
+    // Mostra la schermata CLI per la selezione del corso da parte dell'utente iscritto.
     public void show(UtenteBean utenteBean) throws TornaAlLoginException, EsciException {
         System.out.println("\n=== Seleziona il tuo corso di laurea ===");
 
-        // Selezione dei filtri geografici e didattici
-        String regione = selezionaDaLista("Regione", controller.getRegioni());
+        String regione = filtra("Regione", controller.getRegioni());
         if (regione == null) return;
 
-        String provincia = selezionaDaLista("Provincia", controller.getProvince(regione));
+        String provincia = filtra("Provincia", controller.getProvince(regione));
         if (provincia == null) return;
 
-        String comune = selezionaDaLista("Comune", controller.getComuni(provincia));
+        String comune = filtra("Comune", controller.getComuni(provincia));
         if (comune == null) return;
 
-        String ateneo = selezionaDaLista("Ateneo", controller.getAtenei(comune));
+        String ateneo = filtra("Ateneo", controller.getAtenei(comune));
         if (ateneo == null) return;
 
-        String disciplina = selezionaDaLista("Disciplina", controller.getDiscipline(ateneo));
+        String disciplina = filtra("Disciplina", controller.getDiscipline(ateneo));
         if (disciplina == null) return;
 
-        String tipologia = selezionaDaLista("Tipologia", controller.getTipologie(disciplina));
+        String tipologia = filtra("Tipologia", controller.getTipologie(disciplina));
         if (tipologia == null) return;
 
-        String classe = selezionaDaLista("Corso", controller.getCorsi(tipologia));
+        String classe = filtra("Corso", controller.getCorsi(tipologia));
         if (classe == null) return;
 
-        // Recupero dei corsi effettivi
         List<String> risultati = controller.getRisultati(classe);
         if (risultati == null || risultati.isEmpty()) {
             System.out.println("Nessun corso trovato con i filtri selezionati.");
             return;
         }
 
-        String corsoSelezionato = selezionaDaLista("Corso di Laurea", risultati);
+        String corsoSelezionato = filtra("Corso di Laurea", risultati);
         if (corsoSelezionato == null) return;
 
-        // Imposta il corso selezionato all'utente
         controller.setCorsoUtente(utenteBean, corsoSelezionato);
 
-        // Selezione del curriculum se necessario
-        List<String> curriculumDisponibili = controller.getCurriculumPerCorso(corsoSelezionato);
-        if (curriculumDisponibili != null && !curriculumDisponibili.isEmpty()) {
-            String curriculum;
-            if (curriculumDisponibili.size() == 1) {
-                curriculum = curriculumDisponibili.get(0);
-                System.out.println("Curriculum assegnato automaticamente: " + curriculum);
-            } else {
-                curriculum = selezionaDaLista("Curriculum", curriculumDisponibili);
-                if (curriculum == null) return;
-            }
-            controller.setCurriculumUtente(utenteBean, curriculum);
-        }
+        gestisciCurriculum(corsoSelezionato, utenteBean);
 
-        // Conferma della selezione
         System.out.println("\nCorso selezionato: " + corsoSelezionato);
         if (utenteBean.getCurriculum() != null) {
             System.out.println("Curriculum: " + utenteBean.getCurriculum());
         }
 
-        // Passaggio alla schermata degli insegnamenti
         new IscrittoInsegnamentiViewCLI().show(utenteBean);
-        System.out.println("Passaggio alla schermata insegnamenti...");
+    }
+
+    // Riduce duplicazione nella selezione di un'opzione
+    private String filtra(String etichetta, List<String> opzioni) throws TornaAlLoginException, EsciException {
+        return selezionaDaLista(etichetta, opzioni);
+    }
+
+    // Gestisce logica selezione curriculum separatamente
+    private void gestisciCurriculum(String corsoSelezionato, UtenteBean utenteBean) throws TornaAlLoginException, EsciException {
+        List<String> curriculumDisponibili = controller.getCurriculumPerCorso(corsoSelezionato);
+        if (curriculumDisponibili == null || curriculumDisponibili.isEmpty()) return;
+
+        String curriculum;
+        if (curriculumDisponibili.size() == 1) {
+            curriculum = curriculumDisponibili.get(0);
+            System.out.println("Curriculum assegnato automaticamente: " + curriculum);
+        } else {
+            curriculum = selezionaDaLista("Curriculum", curriculumDisponibili);
+            if (curriculum == null) return;
+        }
+
+        controller.setCurriculumUtente(utenteBean, curriculum);
     }
 
     //Metodo ausiliario per selezionare un elemento da una lista

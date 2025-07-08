@@ -13,6 +13,7 @@ public class InCercaTrovaCorsoViewCLI {
 
     private final Scanner scanner = new Scanner(System.in);
     private final InCercaTrovaCorsoController controller = new InCercaTrovaCorsoController();
+    private String sceltaNonValida="sceltaNonValida.";
 
     public void show(UtenteBean utenteBean) {
         while (true) {
@@ -20,6 +21,7 @@ public class InCercaTrovaCorsoViewCLI {
                 System.out.println("\n=== Benvenuto nella Ricerca Corsi ===");
                 System.out.println("1. Ricerca Corso di Laurea");
                 System.out.println("2. Vai alla lista Preferiti");
+                System.out.println("3. Esci");
                 System.out.println("Scrivi 'login' per tornare al login, oppure 'esci' per uscire.");
 
                 String scelta = CLIUtils.leggiInput(scanner, "Scegli un'opzione: ");
@@ -27,7 +29,8 @@ public class InCercaTrovaCorsoViewCLI {
                 switch (scelta) {
                     case "1" -> avviaRicerca(utenteBean);
                     case "2" -> new InCercaPreferitiViewCLI().show(utenteBean);
-                    default -> System.out.println("Scelta non valida.");
+                    case "3" -> throw new TornaAlLoginException();
+                    default -> System.out.println(sceltaNonValida);
                 }
             } catch (TornaAlLoginException e) {
                 // Torna al login
@@ -92,7 +95,7 @@ public class InCercaTrovaCorsoViewCLI {
             String scelta = CLIUtils.leggiInput(scanner, "Seleziona un corso per visualizzare i dettagli (numero): ");
             int sceltaNum = Integer.parseInt(scelta);
             if (sceltaNum < 1 || sceltaNum > risultati.size()) {
-                System.out.println("Scelta non valida.");
+                System.out.println(sceltaNonValida);
                 return;
             }
 
@@ -124,7 +127,7 @@ public class InCercaTrovaCorsoViewCLI {
                 return opzioni.get(scelta - 1);
             }
         } catch (NumberFormatException e) {
-            System.out.println("Scelta non valida.");
+            System.out.println(sceltaNonValida);
         } catch (TornaAlLoginException | EsciException e) {
             throw e; // Propaga per la gestione globale
         }
