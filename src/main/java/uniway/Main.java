@@ -7,9 +7,11 @@ import uniway.viewcontroller.FXMLController;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main {
-
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
         String uiVersion = loadUIVersion();
 
@@ -28,7 +30,7 @@ public class Main {
                 return props.getProperty("ui.version", "fxml");
             }
         } catch (IOException e) {
-            System.err.println("Errore durante il caricamento di config.properties: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "errore nell'avvio della UI", e);
         }
         return "fxml"; // default fallback
     }

@@ -6,6 +6,9 @@ import uniway.eccezioni.TornaAlLoginException;
 import java.util.Scanner;
 
 public class CLIUtils {
+    private CLIUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static String leggiInput(Scanner scanner, String prompt) {
         System.out.print(prompt);
