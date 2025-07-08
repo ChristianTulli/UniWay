@@ -3,8 +3,6 @@ package uniway.viewcontroller.cli;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaConfrontaCorsoController;
-import uniway.eccezioni.EsciException;
-import uniway.eccezioni.TornaAlLoginException;
 import uniway.utils.CLIUtils;
 
 import java.util.List;
@@ -55,7 +53,7 @@ public class InCercaConfrontaCorsoViewCLI {
 
         int i = 1;
         for (InsegnamentoBean ins : lista) {
-            System.out.printf("%d. %s | CFU: %d | Anno: %d | Semestre: %d\n", i++,
+            System.out.printf("%d. %s | CFU: %d | Anno: %d | Semestre: %d%n", i++,
                     ins.getNome(), ins.getCfu(), ins.getAnno(), ins.getSemestre());
             System.out.println("   Curriculum: " + ins.getCurriculum());
             System.out.println("--------------------------------------------------");
@@ -65,37 +63,34 @@ public class InCercaConfrontaCorsoViewCLI {
     // Menu per azioni sui preferiti o ritorno al dettaglio
     private void menuPreferiti(UtenteBean utenteBean, String corso1, String ateneo1,
                                String corso2, String ateneo2, String corsoPrincipale, List<String> corsiSimili) {
-        try {
-            System.out.println("\nAzioni disponibili:");
-            System.out.println("1. Aggiungi Corso 1 ai preferiti");
-            System.out.println("2. Aggiungi Corso 2 ai preferiti");
-            System.out.println("3. Torna al dettaglio corso principale");
-            System.out.println("4. Torna alla Ricerca");
 
-            String scelta = CLIUtils.leggiInput(scanner, "Scelta: ");
+        System.out.println("\nAzioni disponibili:");
+        System.out.println("1. Aggiungi Corso 1 ai preferiti");
+        System.out.println("2. Aggiungi Corso 2 ai preferiti");
+        System.out.println("3. Torna al dettaglio corso principale");
+        System.out.println("4. Torna alla Ricerca");
 
-            switch (scelta) {
-                case "1" -> {
-                    boolean ok = controller.aggiungiAiPreferiti(utenteBean, corso1, ateneo1);
-                    System.out.println(ok ? "Corso 1 aggiunto ai preferiti." : "Corso 1 già nei preferiti.");
-                    menuPreferiti(utenteBean, corso1, ateneo1, corso2, ateneo2, corsoPrincipale, corsiSimili);
-                }
-                case "2" -> {
-                    boolean ok = controller.aggiungiAiPreferiti(utenteBean, corso2, ateneo2);
-                    System.out.println(ok ? "Corso 2 aggiunto ai preferiti." : "Corso 2 già nei preferiti.");
-                    menuPreferiti(utenteBean, corso1, ateneo1, corso2, ateneo2, corsoPrincipale, corsiSimili);
-                }
-                case "3" -> new InCercaDettaglioCorsoViewCLI().show(utenteBean, corsoPrincipale, corsiSimili);
-                case "4" -> System.out.println("Uscita dal confronto.");
-                default -> {
-                    System.out.println("Scelta non valida.");
-                    menuPreferiti(utenteBean, corso1, ateneo1, corso2, ateneo2, corsoPrincipale, corsiSimili);
-                }
+        String scelta = CLIUtils.leggiInput(scanner, "Scelta: ");
+
+        switch (scelta) {
+            case "1" -> {
+                boolean ok = controller.aggiungiAiPreferiti(utenteBean, corso1, ateneo1);
+                System.out.println(ok ? "Corso 1 aggiunto ai preferiti." : "Corso 1 già nei preferiti.");
+                menuPreferiti(utenteBean, corso1, ateneo1, corso2, ateneo2, corsoPrincipale, corsiSimili);
             }
-
-        } catch (TornaAlLoginException | EsciException e) {
-            throw e;
+            case "2" -> {
+                boolean ok = controller.aggiungiAiPreferiti(utenteBean, corso2, ateneo2);
+                System.out.println(ok ? "Corso 2 aggiunto ai preferiti." : "Corso 2 già nei preferiti.");
+                menuPreferiti(utenteBean, corso1, ateneo1, corso2, ateneo2, corsoPrincipale, corsiSimili);
+            }
+            case "3" -> new InCercaDettaglioCorsoViewCLI().show(utenteBean, corsoPrincipale, corsiSimili);
+            case "4" -> System.out.println("Uscita dal confronto.");
+            default -> {
+                System.out.println("Scelta non valida.");
+                menuPreferiti(utenteBean, corso1, ateneo1, corso2, ateneo2, corsoPrincipale, corsiSimili);
+            }
         }
+
     }
 }
 

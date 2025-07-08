@@ -62,35 +62,30 @@ public class InCercaPreferitiViewCLI {
 
     // Mostra il menu di azioni per un singolo corso preferito
     private void mostraMenuAzione(UtenteBean utenteBean, String corso) {
-        try {
-            System.out.println("\nCorso selezionato: " + corso);
-            System.out.println("1. Visualizza dettagli");
-            System.out.println("2. Rimuovi dai preferiti");
-            System.out.println("3. Annulla");
+        System.out.println("\nCorso selezionato: " + corso);
+        System.out.println("1. Visualizza dettagli");
+        System.out.println("2. Rimuovi dai preferiti");
+        System.out.println("3. Annulla");
 
-            String scelta = CLIUtils.leggiInput(scanner, "Scelta: ");
+        String scelta = CLIUtils.leggiInput(scanner, "Scelta: ");
 
-            switch (scelta) {
-                case "1" -> {
-                    new InCercaDettaglioCorsoViewCLI().show(utenteBean, corso, new ArrayList<>());
+        switch (scelta) {
+            case "1" ->
+                new InCercaDettaglioCorsoViewCLI().show(utenteBean, corso, new ArrayList<>());
+            case "2" -> {
+                try {
+                    controller.rimuoviPreferito(utenteBean.getUsername(), corso);
+                    System.out.println("Corso rimosso dai preferiti.");
+                } catch (IOException e) {
+                    System.out.println("Errore durante la rimozione.");
                 }
-                case "2" -> {
-                    try {
-                        controller.rimuoviPreferito(utenteBean.getUsername(), corso);
-                        System.out.println("Corso rimosso dai preferiti.");
-                    } catch (IOException e) {
-                        System.out.println("Errore durante la rimozione.");
-                    }
-                    show(utenteBean); // Ricarica la lista aggiornata
-                }
-                case "3" -> show(utenteBean); // Ritorna alla lista senza fare nulla
-                default -> {
-                    System.out.println("Scelta non valida.");
-                    mostraMenuAzione(utenteBean, corso); // Ripete il menu
-                }
+                show(utenteBean); // Ricarica la lista aggiornata
             }
-        } catch (TornaAlLoginException | EsciException e) {
-            throw e;
+            case "3" -> show(utenteBean); // Ritorna alla lista senza fare nulla
+            default -> {
+                System.out.println("Scelta non valida.");
+                mostraMenuAzione(utenteBean, corso); // Ripete il menu
+            }
         }
     }
 }

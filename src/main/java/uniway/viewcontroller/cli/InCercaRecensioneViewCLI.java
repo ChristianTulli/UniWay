@@ -3,8 +3,6 @@ package uniway.viewcontroller.cli;
 import uniway.beans.RecensioneBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaRecensioneController;
-import uniway.eccezioni.EsciException;
-import uniway.eccezioni.TornaAlLoginException;
 import uniway.utils.CLIUtils;
 
 import java.util.List;
@@ -33,7 +31,7 @@ public class InCercaRecensioneViewCLI {
         // Recupera recensioni e calcola media
         List<RecensioneBean> recensioni = controller.getRecensioni(idInsegnamento);
         double media = controller.getMediaValutazioni(recensioni);
-        System.out.printf("Media difficoltà:  %.1f / 5\n", media);
+        System.out.printf("Media difficoltà:  %.1f / 5%n", media);
 
         // Stampa recensioni se presenti
         if (recensioni.isEmpty()) {
@@ -43,7 +41,7 @@ public class InCercaRecensioneViewCLI {
 
             int i = 1;
             for (RecensioneBean r : recensioni) {
-                System.out.printf("%d. Utente: %s | ★ %d/5\n", i++, r.getNome(), r.getValutazione());
+                System.out.printf("%d. Utente: %s | ★ %d/5%n", i++, r.getNome(), r.getValutazione());
                 System.out.println("   Commento: " + r.getCommento());
                 System.out.println("   Data:     " + r.getData());
                 System.out.println("--------------------------------------------------");
@@ -51,12 +49,8 @@ public class InCercaRecensioneViewCLI {
         }
 
         // Attendi conferma per tornare alla schermata precedente
-        try {
             CLIUtils.leggiInput(scanner, "\nPremi INVIO per tornare alla schermata del corso...");
             new InCercaDettaglioCorsoViewCLI().show(utenteBean, nomeCorso + " - " + nomeAteneo, corsiSimili);
-        } catch (TornaAlLoginException | EsciException e) {
-            throw e; // Propaga al chiamante
-        }
     }
 }
 

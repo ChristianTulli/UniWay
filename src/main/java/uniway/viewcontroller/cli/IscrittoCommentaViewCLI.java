@@ -75,11 +75,7 @@ public class IscrittoCommentaViewCLI {
         return -1;
     }
 
-    private String chiediCommento() {
-        try {
-            return CLIUtils.leggiInput(scanner, "\nLascia un commento sull'insegnamento:\nCommento: ");
-        } catch (TornaAlLoginException | EsciException e) {
-            throw e; // Propaga l'eccezione
-        }
+    private String chiediCommento() throws TornaAlLoginException, EsciException{
+         return CLIUtils.leggiInput(scanner, "\nLascia un commento sull'insegnamento:\nCommento: ");
     }
 }

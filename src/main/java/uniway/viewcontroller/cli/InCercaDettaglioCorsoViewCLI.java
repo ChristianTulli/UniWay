@@ -3,8 +3,6 @@ package uniway.viewcontroller.cli;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaDettaglioCorsoController;
-import uniway.eccezioni.EsciException;
-import uniway.eccezioni.TornaAlLoginException;
 import uniway.utils.CLIUtils;
 
 import java.util.List;
@@ -44,7 +42,7 @@ public class InCercaDettaglioCorsoViewCLI {
         System.out.println("\nInsegnamenti:");
         int index = 1;
         for (InsegnamentoBean ins : listaInsegnamenti) {
-            System.out.printf("%d. %-40s | Anno: %d | Sem: %d | CFU: %d | Curr: %s\n",
+            System.out.printf("%d. %-40s | Anno: %d | Sem: %d | CFU: %d | Curr: %s%n",
                     index++, ins.getNome(), ins.getAnno(), ins.getSemestre(), ins.getCfu(), ins.getCurriculum());
         }
     }
@@ -68,16 +66,12 @@ public class InCercaDettaglioCorsoViewCLI {
     }
 
     private void gestisciAggiuntaPreferiti(String nomeCorso, String nomeAteneo, UtenteBean utenteBean) {
-        try {
-            String risposta = CLIUtils.leggiInput(scanner, "\n→ Aggiungere questo corso ai preferiti? [s/N]: ").toLowerCase();
-            if (risposta.equals("s")) {
-                boolean esito = controller.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
-                System.out.println(esito
-                        ? "Corso aggiunto ai preferiti con successo."
-                        : "Corso già presente nei preferiti.");
-            }
-        } catch (TornaAlLoginException | EsciException e) {
-            throw e;
+        String risposta = CLIUtils.leggiInput(scanner, "\n→ Aggiungere questo corso ai preferiti? [s/N]: ").toLowerCase();
+        if (risposta.equals("s")) {
+            boolean esito = controller.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
+            System.out.println(esito
+                    ? "Corso aggiunto ai preferiti con successo."
+                    : "Corso già presente nei preferiti.");
         }
     }
 

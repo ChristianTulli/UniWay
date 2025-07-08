@@ -43,7 +43,7 @@ public class IscrittoInsegnamentiViewCLI {
         // Stampa elenco numerato di insegnamenti
         int index = 1;
         for (InsegnamentoBean bean : insegnamenti) {
-            System.out.printf("%d. %-40s | Anno: %d | Sem: %d | CFU: %d | Valutazione: %s\n",
+            System.out.printf("%d. %-40s | Anno: %d | Sem: %d | CFU: %d | Valutazione: %s%n",
                     index++,
                     bean.getNome(),
                     bean.getAnno(),
