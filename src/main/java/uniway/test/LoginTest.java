@@ -14,16 +14,16 @@ public class LoginTest {
     @Test
     public void testLoginPasswordErrata() {
         LogInController controller = new LogInController();
-        final String username = "ui";//utente esistente
-        final String passwordCorretta = "111111";
-        final String passwordErrata = "passwordSbagliata";
+        String ui = "ui";//utente esistente
+        String pc = "111111";
+        String pe = "blabla";
 
-        UtenteBean utente = new UtenteBean(username, passwordCorretta, true);
+        UtenteBean utente = new UtenteBean(ui, pc, true);
 
         try {
             controller.registrazione(utente);
 
-            Optional<UtenteBean> result = controller.autenticazione(username, passwordErrata);
+            Optional<UtenteBean> result = controller.autenticazione(ui, pe);
 
             assertFalse("Il login non dovrebbe riuscire con password errata", result.isPresent());
 
@@ -35,21 +35,21 @@ public class LoginTest {
     @Test
     public void testLoginUtenteInCerca() {
         LogInController controller = new LogInController();
-        final String username = "uc";//utente registrato come in cerca
-        final String password = "111111";
+        final String uc = "uc";//utente registrato come in cerca
+        final String p = "111111";
 
-        UtenteBean utente = new UtenteBean(username, password, false);
+        UtenteBean utente = new UtenteBean(uc, p, false);
 
         try {
             controller.registrazione(utente);
 
-            Optional<UtenteBean> result = controller.autenticazione(username, password);
+            Optional<UtenteBean> result = controller.autenticazione(uc, p);
 
             assertTrue("Login fallito per utente in cerca", result.isPresent());
             UtenteBean loggato = result.get();
 
-            assertEquals(username, loggato.getUsername());
-            assertEquals(password, loggato.getPassword());
+            assertEquals(uc, loggato.getUsername());
+            assertEquals(p, loggato.getPassword());
             assertFalse("L'utente non dovrebbe essere iscritto", loggato.getIscritto());
 
         } catch (Exception e) {
@@ -60,11 +60,11 @@ public class LoginTest {
     @Test
     public void testLoginUsernameInesistente() {
         LogInController controller = new LogInController();
-        final String usernameNonRegistrato = "non_registrato";//username non registrato
-        final String password = "qualcosa";
+        final String un = "non_registrato";//username non registrato
+        final String p = "blabla";
 
         try {
-            Optional<UtenteBean> result = controller.autenticazione(usernameNonRegistrato, password);
+            Optional<UtenteBean> result = controller.autenticazione(un, p);
             assertFalse("Il login non dovrebbe riuscire con un username inesistente", result.isPresent());
         } catch (Exception e) {
             fail("Eccezione non prevista: " + e.getMessage());

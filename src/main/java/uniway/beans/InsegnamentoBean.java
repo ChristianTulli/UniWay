@@ -7,7 +7,7 @@ public class InsegnamentoBean {
     private String curriculum;
     private Integer cfu;
     private Integer valutazione;
-    private Integer Id;
+    private Integer id;
 
     public String getNome() {
         return nome;
@@ -56,10 +56,10 @@ public class InsegnamentoBean {
         this.valutazione = valutazione;
     }
     public Integer getId() {
-        return Id;
+        return id;
     }
     public void setId(Integer id) {
-        Id = id;
+        this.id = id;
     }
 }
 

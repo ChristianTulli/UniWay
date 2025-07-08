@@ -8,7 +8,7 @@ public class Recensione {
     private Integer idInsegnamento;
     private String data;
 
-    public Recensione(){};
+    public Recensione(){}
 
     public Recensione(String testo, Integer valutazione, String username, Integer idInsegnamento) {
         this.commento = testo;
