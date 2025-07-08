@@ -24,7 +24,7 @@ public class InCercaTrovaCorsoController {
             ateneoDAO = new AteneoDAO();
     }
 
-    // 🔵 COLONNA 1: TIPOLOGIA ATENEO
+    //COLONNA 1: TIPOLOGIA ATENEO
     public List<String> getTipiAteneo() {
         return ateneoDAO.getAllTipiAteneo();
     }
@@ -38,7 +38,7 @@ public class InCercaTrovaCorsoController {
         this.tipologia = tipologiaSelezionata;
     }
 
-    // 🔵 COLONNA 2: UBICAZIONE
+    //COLONNA 2: UBICAZIONE
     public List<String> getRegioni() {
         return corsoDAO.getAllRegioni();
     }
@@ -57,7 +57,7 @@ public class InCercaTrovaCorsoController {
         this.comune = comuneSelezionato;
     }
 
-    // 🔵 COLONNA 3: CARATTERISTICHE CORSO
+    //COLONNA 3: CARATTERISTICHE CORSO
     public List<String> getDurate() {
         return corsoDAO.getAllDurate();
     }
@@ -76,7 +76,7 @@ public class InCercaTrovaCorsoController {
         this.classeCorso = classeSelezionata;
     }
 
-    // 🔵 CERCA RISULTATI
+    //CERCA RISULTATI
     public List<String> getRisultati() {
         List<String> filtri = new ArrayList<>();
         filtri.add(statale != null ? statale : "");

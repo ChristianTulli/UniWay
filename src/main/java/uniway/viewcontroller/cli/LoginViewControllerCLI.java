@@ -22,7 +22,9 @@ public class LoginViewControllerCLI {
 
     // Metodo principale che mostra il menu iniziale
     public void show() {
-        while (true) {
+        boolean continua = true;
+
+        while (continua) {
             try {
                 System.out.println("=== Benvenuto in UniWay (CLI) ===");
                 System.out.println("1. Accedi");
@@ -34,18 +36,18 @@ public class LoginViewControllerCLI {
                 switch (scelta) {
                     case "1" -> accedi();
                     case "2" -> registrati();
-                    case "3" -> throw new TornaAlLoginException();
+                    case "3" -> continua = false; // termina il ciclo e chiude l'app
                     default -> System.out.println("Scelta non valida.");
                 }
+
             } catch (TornaAlLoginException e) {
-                // Lanciare questa eccezione qui non ha effetto: siamo già al login
                 System.out.println("Sei già nel menu di login.");
             } catch (EsciException e) {
-                // Uscita globale dal programma
                 System.out.println("Chiusura dell'applicazione...");
-                return;
+                continua = false;
             }
         }
+
     }
 
     // Metodo per l'autenticazione dell'utente
