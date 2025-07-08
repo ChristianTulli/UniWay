@@ -14,9 +14,9 @@ public class LoginTest {
     @Test
     public void testLoginPasswordErrata() {
         LogInController controller = new LogInController();
-        String username = "ui";//utente esistente
-        String passwordCorretta = "111111";
-        String passwordErrata = "passwordSbagliata";
+        final String username = "ui";//utente esistente
+        final String passwordCorretta = "111111";
+        final String passwordErrata = "passwordSbagliata";
 
         UtenteBean utente = new UtenteBean(username, passwordCorretta, true);
 
@@ -35,8 +35,8 @@ public class LoginTest {
     @Test
     public void testLoginUtenteInCerca() {
         LogInController controller = new LogInController();
-        String username = "uc";//utente registrato come in cerca
-        String password = "111111";
+        final String username = "uc";//utente registrato come in cerca
+        final String password = "111111";
 
         UtenteBean utente = new UtenteBean(username, password, false);
 
@@ -60,8 +60,8 @@ public class LoginTest {
     @Test
     public void testLoginUsernameInesistente() {
         LogInController controller = new LogInController();
-        String usernameNonRegistrato = "non_registrato";//username non registrato
-        String password = "qualcosa";
+        final String usernameNonRegistrato = "non_registrato";//username non registrato
+        final String password = "qualcosa";
 
         try {
             Optional<UtenteBean> result = controller.autenticazione(usernameNonRegistrato, password);
