@@ -8,6 +8,15 @@ public class Recensione {
     private Integer idInsegnamento;
     private String data;
 
+    public Recensione(){};
+
+    public Recensione(String testo, Integer valutazione, String username, Integer idInsegnamento) {
+        this.commento = testo;
+        this.valutazione = valutazione;
+        this.nomeUtente = username;
+        this.idInsegnamento = idInsegnamento;
+    }
+
     public Integer getId() {
         return id;
     }

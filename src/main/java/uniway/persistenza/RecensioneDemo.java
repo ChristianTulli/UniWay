@@ -19,16 +19,10 @@ public class RecensioneDemo implements RecensioneDAO {
     }
 
     @Override
-    public void setRecesnione(String testo, Integer valutazione, String nomeUtente, Integer idInsegnamento) {
-        Recensione rec = new Recensione();
-        rec.setCommento(testo);
-        rec.setValutazione(valutazione);
-        rec.setNomeUtente(nomeUtente);
-        rec.setIdInsegnamento(idInsegnamento);
-
+    public void setRecesnione(Recensione recensione) {
         recensioni
-                .computeIfAbsent(idInsegnamento, k -> new HashMap<>())
-                .put(nomeUtente, rec);
+                .computeIfAbsent(recensione.getIdInsegnamento(), k -> new HashMap<>())
+                .put(recensione.getNomeUtente(), recensione);
     }
 
     @Override

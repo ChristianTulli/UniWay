@@ -3,6 +3,7 @@ package uniway.controller;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.model.Insegnamento;
+import uniway.model.Recensione;
 import uniway.persistenza.RecensioneDAO;
 
 public class IscrittoCommentaController {
@@ -20,7 +21,8 @@ public class IscrittoCommentaController {
 
     public void salvaRecensione(UtenteBean utenteBean, InsegnamentoBean insegnamentoBean, String testo, Integer valutazione){
         Insegnamento insegnamento = iscrittoInsegnamentiController.passaInsegnamento(insegnamentoBean);
-        recensioneDAO.setRecesnione(testo, valutazione, utenteBean.getUsername(), insegnamento.getId());
+        Recensione recensione= new Recensione(testo, valutazione, utenteBean.getUsername(), insegnamento.getId());
+        recensioneDAO.setRecesnione(recensione);
 
     }
 }

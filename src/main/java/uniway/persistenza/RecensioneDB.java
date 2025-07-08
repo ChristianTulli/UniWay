@@ -40,14 +40,14 @@ public class RecensioneDB implements RecensioneDAO {
         return null; // Nessuna recensione trovata
     }
 
-    public void setRecesnione(String testo, Integer valutazione, String nomeUtente, Integer idInsegnamento) {
+    public void setRecesnione(Recensione recensione) {
         String query = "INSERT INTO recensioni (commento, valutazione_generale, nome_utente, id_insegnamento) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, testo);
-            stmt.setInt(2, valutazione);
-            stmt.setString(3, nomeUtente);
-            stmt.setInt(4, idInsegnamento);
+            stmt.setString(1, recensione.getCommento());
+            stmt.setInt(2, recensione.getValutazione());
+            stmt.setString(3, recensione.getNomeUtente());
+            stmt.setInt(4, recensione.getIdInsegnamento());
 
             int rowsAffected = stmt.executeUpdate();
 
