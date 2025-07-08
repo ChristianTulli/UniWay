@@ -29,7 +29,7 @@
             <TableColumn fx:id="semestre" minWidth="0.0" prefWidth="60.0" text="Semestre" />
             <TableColumn fx:id="anno" minWidth="0.0" prefWidth="60.0" text="Anno" />
             <TableColumn fx:id="cfu" minWidth="0.0" prefWidth="60.0" text="CFU" />
-            <TableColumn fx:id="valutazione" minWidth="0.0" prefWidth="100.0" text="Valutazione /5" />
+            <TableColumn fx:id="valutazione" minWidth="0.0" prefWidth="100.0" text="difficolta' /5" />
          </columns>
       </TableView>
       <Button alignment="CENTER" layoutX="1476.0" layoutY="76.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
