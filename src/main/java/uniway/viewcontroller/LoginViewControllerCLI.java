@@ -45,14 +45,14 @@ public class LoginViewControllerCLI {
                 if (utente.getIscritto()) {
                     if (utente.getIdCorso() != null && utente.getCurriculum() != null) {
                         System.out.println("→ Utente iscritto con corso selezionato");
-                        // Qui potresti chiamare: new IscrittoInsegnamentiViewCLI().show(utente);
+                        new IscrittoInsegnamentiViewCLI().show(utente);
                     } else {
                         System.out.println("→ Utente iscritto ma senza corso selezionato");
-                        // new IscrittoSelezionaCorsoViewCLI().show(utente);
+                        new IscrittoSelezionaCorsoViewCLI().show(utente);
                     }
                 } else {
                     System.out.println("→ Utente in cerca");
-                    // new InCercaTrovaCorsoViewCLI().show(utente);
+                    new InCercaTrovaCorsoViewCLI().show(utente);
                 }
 
             } else {
@@ -87,11 +87,11 @@ public class LoginViewControllerCLI {
             if (success) {
                 System.out.println("Registrazione completata!");
                 if (iscritto) {
-                    // new IscrittoSelezionaCorsoViewCLI().show(utenteBean);
-                    System.out.println("→ Continua come utente iscritto (interfaccia non ancora implementata)");
+                    new IscrittoSelezionaCorsoViewCLI().show(utenteBean);
+                    System.out.println("→ Continua come utente iscritto");
                 } else {
-                    // new InCercaTrovaCorsoViewCLI().show(utenteBean);
-                    System.out.println("→ Continua come utente in cerca (interfaccia non ancora implementata)");
+                    new InCercaTrovaCorsoViewCLI().show(utenteBean);
+                    System.out.println("→ Continua come utente in cerca");
                 }
             } else {
                 System.out.println("Errore: username esistente o dati non validi.");
