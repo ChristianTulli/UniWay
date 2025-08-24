@@ -34,7 +34,7 @@ public class InCercaTest {
 
     @Test
     @DisplayName("Ricerca corsi con filtri: Statale/LAZIO/ROMA/ROMA + LT + Ingegneria dell'informazione")
-    void ricercaCorsi_filtriRichiesti_realeDB() {
+    void ricercaCorsiFiltriRichiesti() {
         InCercaTrovaCorsoController c = new InCercaTrovaCorsoController();
 
         // COLONNA 1: TIPOLOGIA ATENEO
