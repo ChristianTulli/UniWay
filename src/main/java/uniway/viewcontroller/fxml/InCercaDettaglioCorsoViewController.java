@@ -166,9 +166,9 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
         this.corsiSimili = corsiSimili;
         String[] dettagli = corso.split(" - ");
 
-        corsoLabel.setText("Corso: " + dettagli[0]);
+        corsoLabel.setText(dettagli[0]);
         nomeCorso = dettagli[0];
-        ateneoLabel.setText("Ateneo: " + dettagli[1]);
+        ateneoLabel.setText(dettagli[1]);
         nomeAteneo = dettagli[1];
 
         listaCorsiSimili.getItems().clear();

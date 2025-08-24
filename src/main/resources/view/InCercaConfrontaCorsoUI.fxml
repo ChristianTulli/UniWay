@@ -12,49 +12,64 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" style="-fx-background-color: linear-gradient(to bottom, #FF00DD, #00BBFF);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniway.viewcontroller.fxml.InCercaConfrontaCorsoViewController">
    <children>
-      <Separator layoutX="-4.0" layoutY="119.0" prefHeight="17.0" prefWidth="1920.0" />
+      <Separator layoutX="-4.0" layoutY="119.0" prefHeight="17.0" prefWidth="1606.0" />
       <ImageView fitHeight="108.0" fitWidth="248.0" layoutX="676.0" layoutY="14.0" preserveRatio="true">
          <image>
             <Image url="@../image/titolo.png" />
          </image>
       </ImageView>
 
-      <Button layoutX="1477.0" layoutY="66.0" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
-      <Button layoutX="1348.0" layoutY="66.0" onAction="#goToPreferiti" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
-      <Button layoutX="1217.0" layoutY="66.0" onAction="#goBack" prefHeight="42.0" prefWidth="109.0" text="Indietro" />
+      <Button layoutX="1445.0" layoutY="65.0" onAction="#logOut" prefHeight="50.0" prefWidth="145.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Esci">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <Button layoutX="1290.0" layoutY="65.0" onAction="#goToPreferiti" prefHeight="50.0" prefWidth="145.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Preferiti">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <Button layoutX="1135.0" layoutY="65.0" onAction="#goBack" prefHeight="50.0" prefWidth="145.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Indietro">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
 
-      <Label fx:id="corsoLabel1" layoutX="14.0" layoutY="154.0" prefHeight="35.0" prefWidth="780.0" text="NOME">
-         <font><Font size="18.0" /></font>
+      <Label fx:id="corsoLabel1" alignment="CENTER" layoutX="14.0" layoutY="172.0" prefHeight="35.0" prefWidth="780.0" text="NOME" textAlignment="CENTER">
+         <font><Font name="System Bold" size="30.0" /></font>
       </Label>
-      <Label fx:id="ateneoLabel1" layoutX="14.0" layoutY="194.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
-         <font><Font size="18.0" /></font>
+      <Label fx:id="ateneoLabel1" alignment="CENTER" layoutX="14.0" layoutY="136.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO" textAlignment="CENTER">
+         <font><Font name="System Bold" size="22.0" /></font>
       </Label>
-      <Button fx:id="preferitiButton1" layoutX="659.0" layoutY="229.0" onAction="#aggiungiAiPreferiti1" prefHeight="42.0" prefWidth="135.0" text="Aggiungi ai Preferiti" />
-      <TableView fx:id="tableView1" fixedCellSize="55.0" layoutX="14.0" layoutY="286.0" prefHeight="600.0" prefWidth="780.0">
+      <Button fx:id="preferitiButton1" layoutX="569.0" layoutY="229.0" onAction="#aggiungiAiPreferiti1" prefHeight="50.0" prefWidth="225.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Aggiungi ai Preferiti">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <TableView fx:id="tableView1" fixedCellSize="75.0" layoutX="14.0" layoutY="286.0" prefHeight="600.0" prefWidth="780.0" style="-fx-border-width: 2px; -fx-border-color: black; -fx-font-size: 13;">
          <columns>
-            <TableColumn fx:id="insegnamento" prefWidth="340.0" sortable="false" text="Insegnamento" />
-            <TableColumn fx:id="semestre" prefWidth="60.0" text="Semestre" />
-            <TableColumn fx:id="anno" prefWidth="60.0" text="Anno" />
-            <TableColumn fx:id="cfu" prefWidth="60.0" text="CFU" />
-            <TableColumn fx:id="curriculum" prefWidth="240.0" sortable="false" text="Curriculum" />
+            <TableColumn fx:id="insegnamento" prefWidth="370.0" sortable="false" text="Insegnamento" />
+            <TableColumn fx:id="semestre" prefWidth="61.0" text="Semestre" />
+            <TableColumn fx:id="anno" prefWidth="37.0" text="Anno" />
+            <TableColumn fx:id="cfu" prefWidth="29.0" text="CFU" />
+            <TableColumn fx:id="curriculum" prefWidth="260.0" sortable="false" text="Curriculum" />
          </columns>
       </TableView>
 
       <!-- Colonna destra -->
-      <Label fx:id="corsoLabel2" layoutX="806.0" layoutY="152.0" prefHeight="35.0" prefWidth="780.0" text="NOME">
-         <font><Font size="18.0" /></font>
+      <Label fx:id="corsoLabel2" alignment="CENTER" layoutX="806.0" layoutY="172.0" prefHeight="35.0" prefWidth="780.0" text="NOME" textAlignment="CENTER">
+         <font><Font name="System Bold" size="30.0" /></font>
       </Label>
-      <Label fx:id="ateneoLabel2" layoutX="806.0" layoutY="192.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
-         <font><Font size="18.0" /></font>
+      <Label fx:id="ateneoLabel2" alignment="CENTER" layoutX="806.0" layoutY="136.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO" textAlignment="CENTER">
+         <font><Font name="System Bold" size="22.0" /></font>
       </Label>
-      <Button fx:id="preferitiButton2" layoutX="1451.0" layoutY="229.0" onAction="#aggiungiAiPreferiti2" prefHeight="42.0" prefWidth="135.0" text="Aggiungi ai Preferiti" />
-      <TableView fx:id="tableView2" fixedCellSize="55.0" layoutX="806.0" layoutY="286.0" prefHeight="600.0" prefWidth="780.0">
+      <Button fx:id="preferitiButton2" layoutX="1361.0" layoutY="229.0" onAction="#aggiungiAiPreferiti2" prefHeight="50.0" prefWidth="225.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Aggiungi ai Preferiti">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <TableView fx:id="tableView2" fixedCellSize="75.0" layoutX="806.0" layoutY="286.0" prefHeight="600.0" prefWidth="780.0" style="-fx-border-width: 2px; -fx-border-color: black; -fx-font-size: 13;">
          <columns>
-            <TableColumn fx:id="insegnamento1" prefWidth="340.0" sortable="false" text="Insegnamento" />
-            <TableColumn fx:id="semestre1" prefWidth="60.0" text="Semestre" />
-            <TableColumn fx:id="anno1" prefWidth="60.0" text="Anno" />
-            <TableColumn fx:id="cfu1" prefWidth="60.0" text="CFU" />
-            <TableColumn fx:id="curriculum1" prefWidth="240.0" sortable="false" text="Curriculum" />
+            <TableColumn fx:id="insegnamento1" prefWidth="370.0" sortable="false" text="Insegnamento" />
+            <TableColumn fx:id="semestre1" prefWidth="61.0" text="Semestre" />
+            <TableColumn fx:id="anno1" prefWidth="37.0" text="Anno" />
+            <TableColumn fx:id="cfu1" prefWidth="29.0" text="CFU" />
+            <TableColumn fx:id="curriculum1" prefWidth="260.0" sortable="false" text="Curriculum" />
          </columns>
       </TableView>
    </children>

@@ -19,17 +19,23 @@
             <Image url="@../image/titolo.png" />
          </image>
       </ImageView>
-      <Button alignment="CENTER" layoutX="1477.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
-      <Button fx:id="cerca" disable="true" layoutX="688.0" layoutY="332.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="225.0" text="Cerca Corso di Laurea" />
+      <Button alignment="CENTER" layoutX="1445.0" layoutY="65.0" mnemonicParsing="false" onAction="#logOut" prefHeight="50.0" prefWidth="145.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: #000000;" text="Esci">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <Button fx:id="cerca" disable="true" layoutX="651.0" layoutY="281.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: #000000;" text="Cerca Corso di Laurea">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
       <ButtonBar layoutX="435.0" layoutY="203.0" prefHeight="78.0" prefWidth="731.0">
          <buttons>
-            <ComboBox fx:id="regione" prefWidth="150.0" promptText="Regione" />
-            <ComboBox fx:id="provincia" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Provincia" />
-            <ComboBox fx:id="comune" disable="true" layoutX="145.0" layoutY="37.0" prefWidth="150.0" promptText="Comune" />
-            <ComboBox fx:id="ateneo" disable="true" layoutX="83.0" layoutY="37.0" prefWidth="150.0" promptText="Ateneo" />
-            <ComboBox fx:id="disciplina" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Disciplina" />
-            <ComboBox fx:id="tipologia" disable="true" prefWidth="150.0" promptText="Tipologia" />
-            <ComboBox fx:id="classe" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Corso" />
+            <ComboBox fx:id="regione" prefWidth="150.0" promptText="Regione" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="provincia" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Provincia" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="comune" disable="true" layoutX="145.0" layoutY="37.0" prefWidth="150.0" promptText="Comune" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="ateneo" disable="true" layoutX="83.0" layoutY="37.0" prefWidth="150.0" promptText="Ateneo" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="disciplina" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Disciplina" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="tipologia" disable="true" prefWidth="150.0" promptText="Tipologia" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="classe" disable="true" layoutX="563.0" layoutY="37.0" prefWidth="150.0" promptText="Corso" style="-fx-background-radius: 12px;" />
          </buttons>
       </ButtonBar>
       <Label layoutX="751.0" layoutY="136.0" text="ISCRITTO">
@@ -37,8 +43,8 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <ListView fx:id="listView" layoutX="435.0" layoutY="456.0" prefHeight="361.0" prefWidth="731.0" />
-      <Label layoutX="637.0" layoutY="429.0" text="Seleziona il Corso di Laurea che frequenti">
+      <ListView fx:id="listView" layoutX="425.0" layoutY="394.0" prefHeight="490.0" prefWidth="750.0" style="-fx-border-width: 2px; -fx-border-color: black;" />
+      <Label layoutX="601.0" layoutY="361.0" text="SELEZIONA IL CORSO DI LAUREA CHE FREQUENTI" textFill="WHITE" underline="true">
          <font>
             <Font size="18.0" />
          </font>

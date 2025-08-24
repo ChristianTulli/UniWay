@@ -19,22 +19,31 @@
             <Image url="@../image/titolo.png" />
          </image>
       </ImageView>
-      <Button alignment="CENTER" layoutX="1477.0" layoutY="66.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
-      <Button fx:id="cerca" disable="true" layoutX="688.0" layoutY="389.0" mnemonicParsing="false" onAction="#handleCercaSelection" prefHeight="45.0" prefWidth="225.0" text="Cerca Corso di Laurea" />
+      <Button alignment="CENTER" layoutX="1445.0" layoutY="65.0" mnemonicParsing="false" onAction="#logOut" prefHeight="50.0" prefWidth="145.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Esci">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <Button fx:id="cerca" disable="true" layoutX="651.0" layoutY="382.0" mnemonicParsing="false" onAction="#handleCercaSelection" prefHeight="50.0" prefWidth="300.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Cerca Corso di Laurea">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
       <Pane layoutX="426.0" layoutY="194.0" prefHeight="176.0" prefWidth="749.0">
          <children>
-            <ComboBox fx:id="regione" layoutX="300.0" layoutY="14.0" prefWidth="150.0" promptText="Regione" />
-            <ComboBox fx:id="provincia" disable="true" layoutX="300.0" layoutY="76.0" prefWidth="150.0" promptText="Provincia" />
-            <ComboBox fx:id="comune" disable="true" layoutX="300.0" layoutY="137.0" prefWidth="150.0" promptText="Comune" />
-            <ComboBox fx:id="statale" layoutX="14.0" layoutY="14.0" prefWidth="150.0" promptText="Statale" />
-            <ComboBox fx:id="tipologia" disable="true" layoutX="14.0" layoutY="76.0" prefWidth="150.0" promptText="Tipologia" />
-            <ComboBox fx:id="durata" layoutX="585.0" layoutY="14.0" prefWidth="150.0" promptText="Durata" />
-            <ComboBox fx:id="gruppoDisciplina" disable="true" layoutX="585.0" layoutY="76.0" prefWidth="150.0" promptText="Gruppo Disciplina" />
-            <ComboBox fx:id="classeCorso" disable="true" layoutX="585.0" layoutY="137.0" prefWidth="150.0" promptText="Classe del corso" />
+            <ComboBox fx:id="regione" layoutX="300.0" layoutY="14.0" prefWidth="150.0" promptText="Regione" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="provincia" disable="true" layoutX="300.0" layoutY="76.0" prefWidth="150.0" promptText="Provincia" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="comune" disable="true" layoutX="300.0" layoutY="137.0" prefWidth="150.0" promptText="Comune" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="statale" layoutX="14.0" layoutY="14.0" prefWidth="150.0" promptText="Statale" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="tipologia" disable="true" layoutX="14.0" layoutY="76.0" prefWidth="150.0" promptText="Tipologia" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="durata" layoutX="585.0" layoutY="14.0" prefWidth="150.0" promptText="Durata" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="gruppoDisciplina" disable="true" layoutX="585.0" layoutY="76.0" prefWidth="150.0" promptText="Gruppo Disciplina" style="-fx-background-radius: 12px;" />
+            <ComboBox fx:id="classeCorso" disable="true" layoutX="585.0" layoutY="137.0" prefWidth="150.0" promptText="Classe del corso" style="-fx-background-radius: 12px;" />
          </children>
       </Pane>
-      <ListView fx:id="listView" layoutX="405.0" layoutY="450.0" prefHeight="418.0" prefWidth="791.0" />
-      <Button alignment="CENTER" layoutX="1348.0" layoutY="66.0" mnemonicParsing="false" onAction="#goToPreferiti" prefHeight="42.0" prefWidth="109.0" text="Preferiti" />
+      <ListView fx:id="listView" layoutX="405.0" layoutY="450.0" prefHeight="418.0" prefWidth="791.0" style="-fx-border-width: 2px; -fx-border-color: black; -fx-font-size: 15;" />
+      <Button alignment="CENTER" layoutX="1290.0" layoutY="65.0" mnemonicParsing="false" onAction="#goToPreferiti" prefHeight="50.0" prefWidth="145.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Preferiti">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
       <Label layoutX="749.0" layoutY="148.0" text="IN CERCA">
          <font>
             <Font size="24.0" />

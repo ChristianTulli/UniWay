@@ -18,25 +18,23 @@
             <Image url="@../image/titolo.png" />
          </image>
       </ImageView>
-      <Button alignment="CENTER" layoutX="1476.0" layoutY="76.0" mnemonicParsing="false" onAction="#logOut" prefHeight="42.0" prefWidth="109.0" text="Esci" />
-      <Label layoutX="287.0" layoutY="137.0" text="CORSO:">
+      <Button alignment="CENTER" layoutX="1445.0" layoutY="65.0" mnemonicParsing="false" onAction="#logOut" prefHeight="50.0" prefWidth="145.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Esci">
          <font>
-            <Font size="24.0" />
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <Label fx:id="corsoLabel" alignment="CENTER" layoutX="395.0" layoutY="171.0" prefHeight="35.0" prefWidth="780.0" text="NOME" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="30.0" />
          </font>
       </Label>
-      <Label fx:id="corsoLabel" layoutX="395.0" layoutY="137.0" prefHeight="35.0" prefWidth="780.0" text="NOME">
+      <Label fx:id="curriculumLabel" alignment="CENTER" layoutX="395.0" layoutY="216.0" prefHeight="35.0" prefWidth="780.0" text="CURRICULUM" textAlignment="CENTER">
          <font>
-            <Font size="18.0" />
+            <Font name="System Bold" size="20.0" />
          </font>
       </Label>
-      <Label fx:id="curriculumLabel" layoutX="395.0" layoutY="242.0" prefHeight="35.0" prefWidth="780.0" text="CURRICULUM">
+      <Label fx:id="ateneoLabel" alignment="CENTER" layoutX="395.0" layoutY="136.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO" textAlignment="CENTER">
          <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="ateneoLabel" layoutX="395.0" layoutY="172.0" prefHeight="35.0" prefWidth="780.0" text="ATENEO">
-         <font>
-            <Font size="18.0" />
+            <Font name="System Bold" size="22.0" />
          </font>
       </Label>
       <VBox layoutX="1302.0" layoutY="384.0" prefHeight="257.0" prefWidth="59.0">
@@ -68,25 +66,31 @@
             </ImageView>
          </children>
       </VBox>
-      <Label layoutX="1208.0" layoutY="323.0" text="INDICE DI DIFFICOLTA' ?">
+      <Label layoutX="1208.0" layoutY="323.0" text="INDICE DI DIFFICOLTA' ?" underline="true">
          <font>
-            <Font size="24.0" />
+            <Font name="System Bold" size="22.0" />
          </font>
       </Label>
-      <TextArea fx:id="commentoArea" layoutX="209.0" layoutY="326.0" prefHeight="410.0" prefWidth="856.0" wrapText="true">
+      <TextArea fx:id="commentoArea" layoutX="209.0" layoutY="326.0" prefHeight="410.0" prefWidth="856.0" style="-fx-font-size: 18; -fx-border-width: 2px; -fx-border-color: black;" wrapText="true">
          <font>
             <Font size="18.0" />
          </font></TextArea>
-      <Label layoutX="435.0" layoutY="288.0" text="LASCIA UN COMMENTO:">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Label>
-      <Button alignment="CENTER" layoutX="1338.0" layoutY="76.0" mnemonicParsing="false" onAction="#goBack" prefHeight="42.0" prefWidth="109.0" text="Indietro" />
-      <Button fx:id="salvaButton" alignment="CENTER" disable="true" layoutX="638.0" layoutY="804.0" mnemonicParsing="false" onAction="#salvaRecensione" prefHeight="42.0" prefWidth="294.0" text="Salva la recensnione" />
-      <Label fx:id="insegnamentoLabel" layoutX="395.0" layoutY="207.0" prefHeight="35.0" prefWidth="780.0" text="INSEGNAMENTO">
+      <Label layoutX="539.0" layoutY="296.0" text="LASCIA UN COMMENTO" textFill="WHITE" underline="true">
          <font>
             <Font size="18.0" />
+         </font>
+      </Label>
+      <Button alignment="CENTER" layoutX="1290.0" layoutY="65.0" mnemonicParsing="false" onAction="#goBack" prefHeight="50.0" prefWidth="145.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Indietro">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <Button fx:id="salvaButton" alignment="CENTER" disable="true" layoutX="638.0" layoutY="804.0" mnemonicParsing="false" onAction="#salvaRecensione" prefHeight="50.0" prefWidth="300.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Salva la recensnione">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
+      <Label fx:id="insegnamentoLabel" alignment="CENTER" layoutX="247.0" layoutY="261.0" prefHeight="35.0" prefWidth="780.0" text="INSEGNAMENTO">
+         <font>
+            <Font name="System Bold" size="22.0" />
          </font>
       </Label>
       <VBox layoutX="1363.0" layoutY="384.0" prefHeight="257.0" prefWidth="59.0">

@@ -48,10 +48,10 @@ public class InCercaRecensioneViewController implements Initializable {
         this.ateneo = nomeAteneo;
         this.utente = utenteBean;
         this.corsiSimili = corsisimili;
-        corsoLabel.setText("Corso: " + corso);
-        ateneoLabel.setText("Ateneo: " + ateneo);
-        insegnamentoLabel.setText("Insegnamento: " + nomeInsegnamento);
-        curriculumLabel.setText("Curriculum: " + curriculum);
+        corsoLabel.setText(corso);
+        ateneoLabel.setText(ateneo);
+        insegnamentoLabel.setText(nomeInsegnamento);
+        curriculumLabel.setText(curriculum);
 
         caricaRecensioni();
     }
@@ -71,18 +71,29 @@ public class InCercaRecensioneViewController implements Initializable {
             private final VBox content;
             private final Label nomeUtente;
             private final Label stelle;
-            private final TextArea commento;
+            private final Label commento;
 
             public RecensioneListCell() {
                 nomeUtente = new Label();
                 stelle = new Label();
-                commento = new TextArea();
+                commento = new Label();
                 commento.setWrapText(true);
-                commento.setEditable(false);
-                commento.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
-                commento.setPrefRowCount(3);
+                commento.setMaxWidth(740);
+
+                // STILI
+                nomeUtente.setStyle("-fx-font-weight: bold; -fx-font-size: 20px;");
+                stelle.setStyle("-fx-text-fill: purple; -fx-font-weight: bold; -fx-font-size: 15px;");
+                commento.setStyle(
+                        "-fx-background-color: #ffffff;" +
+                                "-fx-font-size: 15px;" +
+                                "-fx-border-color: black;" +
+                                "-fx-border-radius: 12px;" +
+                                "-fx-background-radius: 12px;" +
+                                "-fx-padding: 12px;" +
+                                "-fx-control-inner-background: #ffffff;"
+                );
+
                 content = new VBox(nomeUtente, stelle, commento);
-                content.setSpacing(5);
             }
 
             @Override

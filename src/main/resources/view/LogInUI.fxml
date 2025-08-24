@@ -26,14 +26,14 @@
                   <Font size="25.0" />
                </font>
             </Text>
-            <Button fx:id="loginButton" layoutX="195.0" layoutY="262.0" mnemonicParsing="false" onAction="#logIn" prefHeight="65.0" prefWidth="166.0" text="Accedi">
+            <Button fx:id="loginButton" layoutX="195.0" layoutY="262.0" mnemonicParsing="false" onAction="#logIn" prefHeight="65.0" prefWidth="166.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: #000000;" text="Accedi">
                <font>
-                  <Font size="30.0" />
+                  <Font size="28.0" />
                </font>
             </Button>
-            <Button fx:id="registratiButton" layoutX="18.0" layoutY="262.0" mnemonicParsing="false" onAction="#onRegisratiButtonClick" prefWidth="166.0" text="Registrati">
+            <Button fx:id="registratiButton" layoutX="18.0" layoutY="261.0" mnemonicParsing="false" onAction="#onRegisratiButtonClick" prefHeight="65.0" prefWidth="166.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: #000000;" text="Registrati">
                <font>
-                  <Font size="30.0" />
+                  <Font size="28.0" />
                </font>
             </Button>
             <TextField fx:id="usernameField" layoutX="46.0" layoutY="96.0" prefHeight="36.0" prefWidth="275.0">
@@ -58,12 +58,12 @@
             </Label>
          </children>
       </AnchorPane>
-      <Button fx:id="iscrittoButton" disable="true" layoutX="628.0" layoutY="542.0" mnemonicParsing="false" onAction="#onIscrittoButtonClick" prefWidth="166.0" text="Iscritto" visible="false">
+      <Button fx:id="iscrittoButton" disable="true" layoutX="628.0" layoutY="542.0" mnemonicParsing="false" onAction="#onIscrittoButtonClick" prefWidth="166.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="Iscritto" visible="false">
          <font>
             <Font size="30.0" />
          </font>
       </Button>
-      <Button fx:id="ricercaButton" disable="true" layoutX="806.0" layoutY="542.0" mnemonicParsing="false" onAction="#onRicercaButtonClick" prefWidth="166.0" text="In Cerca" visible="false">
+      <Button fx:id="ricercaButton" disable="true" layoutX="806.0" layoutY="542.0" mnemonicParsing="false" onAction="#onRicercaButtonClick" prefWidth="166.0" style="-fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 2px; -fx-border-color: black;" text="In Cerca" visible="false">
          <font>
             <Font size="30.0" />
          </font>
