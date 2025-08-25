@@ -2,6 +2,7 @@ package uniway.test;
 
 
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import uniway.beans.UtenteBean;
 import uniway.controller.LogInController;
 
@@ -11,7 +12,10 @@ import static org.junit.Assert.*;
 
 public class LoginTest {
 
+    //ESEGUIRE TEST IN MODALITA' FULL
+
     @Test
+    @DisplayName("password errata")
     public void testLoginPasswordErrata() {
         LogInController controller = new LogInController();
         String ui = "ui";//utente esistente
@@ -33,6 +37,7 @@ public class LoginTest {
     }
 
     @Test
+    @DisplayName("log in utente in cerca")
     public void testLoginUtenteInCerca() {
         LogInController controller = new LogInController();
         final String uc = "uc";//utente registrato come in cerca
@@ -58,6 +63,7 @@ public class LoginTest {
     }
 
     @Test
+    @DisplayName("Username inesistente")
     public void testLoginUsernameInesistente() {
         LogInController controller = new LogInController();
         final String un = "non_registrato";//username non registrato

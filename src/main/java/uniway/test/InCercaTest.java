@@ -12,6 +12,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//ESEGUIRE IL TEST IN MODALITA' FULL
+
 public class InCercaTest {
 
     @Test
@@ -33,12 +35,16 @@ public class InCercaTest {
     }
 
     @Test
-    @DisplayName("Ricerca corsi con filtri: Statale/LAZIO/ROMA/ROMA + LT + Ingegneria dell'informazione")
+    @DisplayName("Ricerca corsi con filtri")
     void ricercaCorsiFiltriRichiesti() {
         InCercaTrovaCorsoController c = new InCercaTrovaCorsoController();
 
         // COLONNA 1: TIPOLOGIA ATENEO
         // 1) Tipo ateneo Statale -> Tipologia Universita'
+        List<String> statale = c.getTipiAteneo();
+        assertNotNull(statale, "getTipiAteneo ha restituito null");
+        assertTrue(statale.contains("Statale   "), "Statale non trovata tra " + statale);
+
         List<String> tipologie = c.getTipologie("Statale   ");
         assertNotNull(tipologie, "getTipologie('Statale') ha restituito null");
         assertTrue(tipologie.contains("Universita'"), "Universita' non trovata tra " + tipologie);
@@ -47,6 +53,10 @@ public class InCercaTest {
 
         // COLONNA 2: UBICAZIONE
         // 2) Regione LAZIO -> Provincia ROMA -> Comune ROMA
+        List<String> regioni =c.getRegioni();
+        assertNotNull(regioni, "Regioni è null");
+        assertTrue(regioni.contains("LAZIO"), "Regione LAZIO non trovata tra " + regioni);
+
         List<String> province = c.getProvince("LAZIO");
         assertNotNull(province, "Province per LAZIO è null");
         assertTrue(province.contains("ROMA"), "Provincia ROMA non trovata tra " + province);
@@ -58,6 +68,10 @@ public class InCercaTest {
 
         // COLONNA 3: CARATTERISTICHE CORSO
         // 3) Durata: Laurea triennale
+        List<String> durate =c.getDurate();
+        assertNotNull(durate, "durate è null");
+        assertTrue(durate.contains("Laurea triennale"), "Laurea triennale non trovata tra " + durate);
+
         List<String> discipline = c.getDiscipline("Laurea triennale");
         assertNotNull(discipline, "Discipline per 'Laurea triennale' è null");
         assertTrue(
@@ -79,9 +93,7 @@ public class InCercaTest {
         assertNotNull(risultati, "getRisultati() ha restituito null");
         assertFalse(risultati.isEmpty(), "Nessun risultato trovato con i filtri richiesti");
 
-        // (Facoltativo) Piccolo controllo di coerenza stringhe risultato
-        // In molti progetti la stringa corso mostrata è del tipo "NomeCorso - NomeAteneo" o simile
-        // Qui ci limitiamo a verificare che non siano stringhe vuote e stampiamo per debug.
+        // stampiamo i risultati
         for (String r : risultati) {
             assertNotNull(r);
             assertFalse(r.isBlank(), "Trovato un risultato vuoto");

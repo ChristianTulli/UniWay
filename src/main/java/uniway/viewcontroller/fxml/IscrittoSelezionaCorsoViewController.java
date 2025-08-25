@@ -120,50 +120,97 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
 
     @FXML
     public void handleCercaSelection(ActionEvent event) {
+        reimpostaUI();
+
+        List<String> risultati = iscrittoSelezionaCorsoController.getRisultati(classe.getValue());
+        popolaRisultatiONotifica(risultati);
+
+        agganciaListenerUnaVolta();
+    }
+
+    private void reimpostaUI() {
         listView.getItems().clear();
         label.setText("");
+    }
 
-        List<String> risultato = iscrittoSelezionaCorsoController.getRisultati(classe.getValue());
-        if (risultato != null && !risultato.isEmpty()) {
-            listView.getItems().addAll(risultato);
-        } else {
-            label.setText("Nessun risultato, controlla i filtri");
+    private void popolaRisultatiONotifica(List<String> risultati) {
+        if (risultati != null && !risultati.isEmpty()) {
+            listView.getItems().addAll(risultati);
+            return;
+        }
+        label.setText("Nessun risultato, controlla i filtri");
+    }
+
+    private void agganciaListenerUnaVolta() {
+        if (listenerAgganciato) return;
+
+        listenerAgganciato = true;
+        listView.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((obs, vecchio, selezionato) -> quandoCorsoSelezionato(selezionato));
+    }
+
+    private void quandoCorsoSelezionato(String corsoSelezionatoNuovo) {
+        if (corsoSelezionatoNuovo == null) return;
+
+        List<String> curricula = iscrittoSelezionaCorsoController.getCurriculumPerCorso(corsoSelezionatoNuovo);
+
+        if (curricula == null || curricula.isEmpty()) {
+            impostaSoloCorso(corsoSelezionatoNuovo);
+            aggiornaLabelSoloCorso(corsoSelezionatoNuovo);
+            vaiAInterfacciaCommenti();
+            return;
         }
 
-        if (!listenerAgganciato) {
-            listenerAgganciato = true;
-            listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null) {
-                    List<String> curriculumDisponibili = iscrittoSelezionaCorsoController.getCurriculumPerCorso(newValue);
+        if (curricula.size() == 1) {
+            String unico = curricula.get(0);
+            impostaCorsoECurriculum(corsoSelezionatoNuovo, unico);
+            aggiornaLabelCorsoECurriculum(corsoSelezionatoNuovo, unico);
+            vaiAInterfacciaCommenti();
+            return;
+        }
 
-                    if (curriculumDisponibili != null && curriculumDisponibili.size() > 1) {
-                        ChoiceDialog<String> dialog = new ChoiceDialog<>(curriculumDisponibili.get(0), curriculumDisponibili);
-                        dialog.setTitle("Seleziona curriculum");
-                        dialog.setHeaderText("Curriculum disponibili per il corso selezionato:");
-                        dialog.setContentText("Scegli curriculum:");
+        chiediCurriculumEProcedi(corsoSelezionatoNuovo, curricula);
+    }
 
-                        dialog.showAndWait().ifPresent(curr -> {
-                            iscrittoSelezionaCorsoController.setCorsoUtente(utenteBean, newValue);
-                            iscrittoSelezionaCorsoController.setCurriculumUtente(utenteBean, curr);
-                            label.setText(corsoSelezionato + newValue + "\ncurriculum: " + curr);
-                            try { caricaInterfacciaCommenti(); } catch (IOException e) { e.printStackTrace(); }
-                        });
+    private void chiediCurriculumEProcedi(String corso, List<String> curricula) {
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(curricula.get(0), curricula);
+        dialog.setTitle("Seleziona curriculum");
+        dialog.setHeaderText("Curriculum disponibili per il corso selezionato:");
+        dialog.setContentText("Scegli curriculum:");
 
-                    } else if (curriculumDisponibili != null && curriculumDisponibili.size() == 1) {
-                        iscrittoSelezionaCorsoController.setCorsoUtente(utenteBean, newValue);
-                        iscrittoSelezionaCorsoController.setCurriculumUtente(utenteBean, curriculumDisponibili.get(0));
-                        label.setText(corsoSelezionato + newValue + "\ncurriculum: " + curriculumDisponibili.get(0));
-                        try { caricaInterfacciaCommenti(); } catch (IOException e) { e.printStackTrace(); }
+        dialog.showAndWait().ifPresent(curr -> {
+            impostaCorsoECurriculum(corso, curr);
+            aggiornaLabelCorsoECurriculum(corso, curr);
+            vaiAInterfacciaCommenti();
+        });
+    }
 
-                    } else {
-                        iscrittoSelezionaCorsoController.setCorsoUtente(utenteBean, newValue);
-                        label.setText(corsoSelezionato + newValue);
-                        try { caricaInterfacciaCommenti(); } catch (IOException e) { e.printStackTrace(); }
-                    }
-                }
-            });
+    private void impostaSoloCorso(String corso) {
+        iscrittoSelezionaCorsoController.setCorsoUtente(utenteBean, corso);
+    }
+
+    private void impostaCorsoECurriculum(String corso, String curriculum) {
+        iscrittoSelezionaCorsoController.setCorsoUtente(utenteBean, corso);
+        iscrittoSelezionaCorsoController.setCurriculumUtente(utenteBean, curriculum);
+    }
+
+    private void aggiornaLabelSoloCorso(String corso) {
+        label.setText(corsoSelezionato + corso);
+    }
+
+    private void aggiornaLabelCorsoECurriculum(String corso, String curriculum) {
+        label.setText(corsoSelezionato + corso + "\ncurriculum: " + curriculum);
+    }
+
+    private void vaiAInterfacciaCommenti() {
+        try {
+            caricaInterfacciaCommenti();
+        } catch (IOException e) {
+            e.printStackTrace(); // sostituisci con logging se preferisci
         }
     }
+
 
     public void logOut(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
