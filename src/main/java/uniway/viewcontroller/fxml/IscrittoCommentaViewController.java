@@ -98,8 +98,8 @@ public class IscrittoCommentaViewController implements Initializable {
 
     private void aggiornaStelle(int valore) {
         valutazioneSelezionata = valore;
-        Image piena = new Image(getClass().getResourceAsStream("/image/stella.png"));
-        Image vuota = new Image(getClass().getResourceAsStream("/image/stella-vuota.png"));
+        Image piena = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/image/stella.png")));
+        Image vuota = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/image/stella-vuota.png")));
 
         star1.setImage(valore >= 1 ? piena : vuota);
         star2.setImage(valore >= 2 ? piena : vuota);

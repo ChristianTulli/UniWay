@@ -18,12 +18,15 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IscrittoSelezionaCorsoViewController implements Initializable {
 
-    private final IscrittoSelezionaCorsoController iscrittoSelezionaCorsoController = new IscrittoSelezionaCorsoController();
+    private IscrittoSelezionaCorsoController iscrittoSelezionaCorsoController = new IscrittoSelezionaCorsoController();
     private UtenteBean utenteBean;
     private String corsoSelezionato = "Corso selezionato: ";
+    private static final Logger LOGGER = Logger.getLogger(IscrittoSelezionaCorsoViewController.class.getName());
 
     public void impostaSchermata(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
@@ -163,7 +166,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
         }
 
         if (curricula.size() == 1) {
-            String unico = curricula.get(0);
+            String unico = curricula.getFirst();
             impostaCorsoECurriculum(corsoSelezionatoNuovo, unico);
             aggiornaLabelCorsoECurriculum(corsoSelezionatoNuovo, unico);
             vaiAInterfacciaCommenti();
@@ -174,7 +177,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     }
 
     private void chiediCurriculumEProcedi(String corso, List<String> curricula) {
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(curricula.get(0), curricula);
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(curricula.getFirst(), curricula);
         dialog.setTitle("Seleziona curriculum");
         dialog.setHeaderText("Curriculum disponibili per il corso selezionato:");
         dialog.setContentText("Scegli curriculum:");
@@ -207,7 +210,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
         try {
             caricaInterfacciaCommenti();
         } catch (IOException e) {
-            e.printStackTrace(); // sostituisci con logging se preferisci
+            LOGGER.log(Level.SEVERE, "Errore nel caricamento dell'interfaccia dei commenti", e);
         }
     }
 
