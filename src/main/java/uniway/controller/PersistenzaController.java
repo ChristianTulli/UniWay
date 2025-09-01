@@ -42,7 +42,7 @@ public class PersistenzaController {
                     utenteDAO = new UtenteDB(connessione);
                 }
 
-                recensioneDAO=new RecensioneDB(connessione);
+                recensioneDAO = new RecensioneDB(connessione);
 
             } else if ("demo".equals(isFullMode)) {
                 utenteDAO = new UtenteDemo();
@@ -56,15 +56,9 @@ public class PersistenzaController {
         }
     }
 
-    public static PersistenzaController getInstance() {
-        try {
-            if (instance == null) {
-                synchronized (PersistenzaController.class) {  // Blocco sincronizzato
-                    instance = new PersistenzaController();
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            LOGGER.log(Level.SEVERE, "errore", e);
+    public static synchronized PersistenzaController getInstance() {
+        if (instance == null) {
+            instance = new PersistenzaController();
         }
         return instance;
     }
