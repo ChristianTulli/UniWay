@@ -2,49 +2,29 @@ package uniway.viewcontroller.fxml;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
 import uniway.controller.LogInController;
+import uniway.utils.NavigationManager;
 
 import java.io.IOException;
 import java.util.Optional;
 
-
 public class LogInViewController {
-    private String interfacciaIscritto = "/view/IscrittoSelezionaCorsoUI.fxml";
-    private String interfacciaRicerca = "/view/InCercaTrovaCorsoUI.fxml";
-    private String interfacciaCorsoIscritto = "/view/IscrittoInsegnamentiUI.fxml";// fare interfaccia per iscritto con corso selezionato, per poter commentare gli insegnamenti
 
+    private static final String FXML_ISCRITTO = "/view/IscrittoSelezionaCorsoUI.fxml";
+    private static final String FXML_RICERCA  = "/view/InCercaTrovaCorsoUI.fxml";
+    private static final String FXML_CORSO_ISCRITTO = "/view/IscrittoInsegnamentiUI.fxml";
 
-    @FXML
-    private Label errorLabel;
+    @FXML private Label errorLabel;
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private Button registratiButton;
+    @FXML private Button iscrittoButton;
+    @FXML private Button ricercaButton;
 
-    @FXML
-    private TextField usernameField;
+    private final LogInController loginController = new LogInController();
 
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Button registratiButton;
-
-    @FXML
-    private Button iscrittoButton;
-
-    @FXML
-    private Button ricercaButton;
-
-    private LogInController loginController = new LogInController();
-
-    //fa apparire i tasti in cerca e iscritto se ho cliccato su registrati
     public void onRegisratiButtonClick() {
         registratiButton.setDisable(true);
         iscrittoButton.setVisible(true);
@@ -53,72 +33,64 @@ public class LogInViewController {
         ricercaButton.setDisable(false);
     }
 
-
-    boolean registra(UtenteBean utenteBean) throws IOException {
+    private boolean registra(UtenteBean utenteBean) throws IOException {
         if (loginController.registrazione(utenteBean)) {
             errorLabel.setText("Utente registrato con successo");
             return true;
         } else {
-            errorLabel.setText("username o password non valide");
+            errorLabel.setText("Username o password non valide");
             return false;
         }
     }
 
-    private void caricaInterfaccia(ActionEvent event, String percorsoFXML, UtenteBean utenteBean) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(percorsoFXML));
-        Parent newRoot = loader.load();
-
-        // Ottieni il controller della nuova interfaccia
-        Object controller = loader.getController();
-
-        // Passa l'utente al nuovo controller, verificando il tipo
-        if (controller instanceof IscrittoSelezionaCorsoViewController iscrittoSelezionaCorsoViewController) {
-            iscrittoSelezionaCorsoViewController.impostaSchermata(utenteBean);
-        } else if (controller instanceof InCercaTrovaCorsoViewController inCercaTrovaCorsoViewController) {
-            inCercaTrovaCorsoViewController.impostaSchermata(utenteBean);
-        } else if (controller instanceof IscrittoInsegnamentiViewController iscrittoInsegnamentiViewController) {
-            iscrittoInsegnamentiViewController.impostaSchermata(utenteBean);
-        }
-        // Mostra la nuova schermata
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(newRoot));
-        stage.show();
-    }
-
-    //mi sto registrando come Iscritto
+    // REGISTRAZIONE come ISCRITTO
     public void onIscrittoButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), true);
         if (registra(utenteBean)) {
-            caricaInterfaccia(event, interfacciaIscritto, utenteBean);
+            NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)",
+                    IscrittoSelezionaCorsoViewController.class,
+                    c -> c.impostaSchermata(utenteBean));
         }
     }
 
-    //mi sto registrando come In Cerca
+    // REGISTRAZIONE come IN CERCA
     public void onRicercaButtonClick(ActionEvent event) throws IOException {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), false);
         if (registra(utenteBean)) {
-            caricaInterfaccia(event, interfacciaRicerca, utenteBean);
+            NavigationManager.switchScene(event, FXML_RICERCA, "UniWay - Trova corso",
+                    InCercaTrovaCorsoViewController.class,
+                    c -> c.impostaSchermata(utenteBean));
         }
     }
 
-    //sto facendo LogIn
+    // LOGIN
     public void logIn(ActionEvent event) throws IOException {
         Optional<UtenteBean> utenteOpt = loginController.autenticazione(usernameField.getText(), passwordField.getText());
 
-        if (utenteOpt.isPresent()) {
-            UtenteBean utenteBean = utenteOpt.get();
+        if (utenteOpt.isEmpty()) {
+            errorLabel.setText("Nessun utente o password corrispondente");
+            return;
+        }
 
-            if (utenteBean.getIscritto()) {
-                if (utenteBean.getIdCorso() != null && utenteBean.getCurriculum() != null) {
-                    caricaInterfaccia(event, interfacciaCorsoIscritto, utenteBean);
-                } else {
-                    caricaInterfaccia(event, interfacciaIscritto, utenteBean);
-                }
+        UtenteBean utenteBean = utenteOpt.get();
+
+        if (utenteBean.getIscritto()) {
+            // Ha già corso/curriculum ⇒ vai alla schermata insegnamenti
+            if (utenteBean.getIdCorso() != null && utenteBean.getCurriculum() != null) {
+                NavigationManager.switchScene(event, FXML_CORSO_ISCRITTO, "UniWay - Insegnamenti",
+                        IscrittoInsegnamentiViewController.class,
+                        c -> c.impostaSchermata(utenteBean));
             } else {
-                caricaInterfaccia(event, interfacciaRicerca, utenteBean);
+                // Deve selezionare il corso
+                NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)",
+                        IscrittoSelezionaCorsoViewController.class,
+                        c -> c.impostaSchermata(utenteBean));
             }
         } else {
-            errorLabel.setText("Nessun utente o password corrispondente");
+            // Utente in cerca
+            NavigationManager.switchScene(event, FXML_RICERCA, "UniWay - Trova corso",
+                    InCercaTrovaCorsoViewController.class,
+                    c -> c.impostaSchermata(utenteBean));
         }
     }
-} 
+}

@@ -2,24 +2,16 @@ package uniway.viewcontroller.fxml;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.IscrittoCommentaController;
 import uniway.controller.IscrittoInsegnamentiController;
+import uniway.utils.NavigationManager;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -30,34 +22,27 @@ public class IscrittoCommentaViewController implements Initializable {
 
     private UtenteBean utenteBean;
     private InsegnamentoBean insegnamentoBean;
-    private IscrittoCommentaController iscrittoCommentaController = new IscrittoCommentaController();
+    private final IscrittoCommentaController iscrittoCommentaController = new IscrittoCommentaController();
     private int valutazioneSelezionata = 0;
     private static final Logger LOGGER = Logger.getLogger(IscrittoCommentaViewController.class.getName());
 
-    @FXML
-    private Label corsoLabel;
+    private static final String FXML_INSEGNAMENTI = "/view/IscrittoInsegnamentiUI.fxml";
+    private static final String FXML_LOGIN         = "/view/LogInUI.fxml";
+    private static final String TITOLO_INSEGNAMENTI = "UniWay - Insegnamenti (Iscritto)";
+    private static final String TITOLO_LOGIN        = "UniWay - Login";
 
-    @FXML
-    private Label curriculumLabel;
-
-    @FXML
-    private Label ateneoLabel;
-
-    @FXML
-    private Label insegnamentoLabel;
+    @FXML private Label corsoLabel;
+    @FXML private Label curriculumLabel;
+    @FXML private Label ateneoLabel;
+    @FXML private Label insegnamentoLabel;
 
     @FXML private TextArea commentoArea;
-
     @FXML private Button salvaButton;
 
     @FXML private ImageView star1;
-
     @FXML private ImageView star2;
-
     @FXML private ImageView star3;
-
     @FXML private ImageView star4;
-
     @FXML private ImageView star5;
 
     @Override
@@ -73,7 +58,6 @@ public class IscrittoCommentaViewController implements Initializable {
     public void setUtenteBean(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
         curriculumLabel.setText(utenteBean.getCurriculum());
-
     }
 
     public void setCorso(String nomeCorso, String nomeAteneo){
@@ -89,7 +73,10 @@ public class IscrittoCommentaViewController implements Initializable {
     public void setIscrittoVisualizzaInsegnamentiController(IscrittoInsegnamentiController iscrittoInsegnamentiController){
         iscrittoCommentaController.setIscrittoVisualizzaInsegnamentiController(iscrittoInsegnamentiController);
     }
-    public void impostaSchermata(UtenteBean utenteBean, String nomeCorso, String nomeAteneo, InsegnamentoBean insegnamentoBean, IscrittoInsegnamentiController iscrittoInsegnamentiController){
+
+    public void impostaSchermata(UtenteBean utenteBean, String nomeCorso, String nomeAteneo,
+                                 InsegnamentoBean insegnamentoBean,
+                                 IscrittoInsegnamentiController iscrittoInsegnamentiController){
         setUtenteBean(utenteBean);
         setCorso(nomeCorso,nomeAteneo);
         setInsegnamentoBean(insegnamentoBean);
@@ -118,35 +105,34 @@ public class IscrittoCommentaViewController implements Initializable {
     @FXML
     private void salvaRecensione(ActionEvent event) {
         iscrittoCommentaController.salvaRecensione(utenteBean, insegnamentoBean, commentoArea.getText(), valutazioneSelezionata);
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Recensione salvata");
         alert.setHeaderText(null);
         alert.setContentText("La tua recensione è stata registrata con successo!");
         alert.showAndWait();
-        goBack();
+
+        goBack(); // torna alla lista insegnamenti
     }
 
+    /** Torna alla schermata degli insegnamenti passando l'utente */
     public void goBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IscrittoInsegnamentiUI.fxml"));
-            Parent newRoot = loader.load();
-
-            IscrittoInsegnamentiViewController controller = loader.getController();
-            controller.impostaSchermata(utenteBean);
-
-            Stage stage = (Stage) commentoArea.getScene().getWindow(); // usa un nodo qualsiasi
-            Scene scene = new Scene(newRoot);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata della lista die corsi", e);
+            var stage = (javafx.stage.Stage) commentoArea.getScene().getWindow();
+            NavigationManager.switchScene(
+                    stage,
+                    FXML_INSEGNAMENTI,
+                    TITOLO_INSEGNAMENTI,
+                    IscrittoInsegnamentiViewController.class,
+                    c -> c.impostaSchermata(utenteBean)
+            );
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata della lista dei corsi", e);
         }
     }
-    public void logOut (ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+
+    public void logOut(ActionEvent event) {
+        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
+

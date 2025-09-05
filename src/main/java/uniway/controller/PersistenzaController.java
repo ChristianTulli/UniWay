@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class PersistenzaController {
     private static final Logger LOGGER = Logger.getLogger(PersistenzaController.class.getName());
-    private static PersistenzaController instance;
+    private static PersistenzaController instance = null;
     private final Properties properties = new Properties();
     private Connection connessione;
     private String isFullMode;

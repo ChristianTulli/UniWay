@@ -3,47 +3,47 @@ package uniway.viewcontroller.fxml;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaTrovaCorsoController;
+import uniway.utils.NavigationManager;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class InCercaTrovaCorsoViewController implements Initializable {
 
-    private Scene scene;
-    private Stage stage;
     private final InCercaTrovaCorsoController inCercaTrovaCorsoController = new InCercaTrovaCorsoController();
     private UtenteBean utenteBean;
-    private String interfacciaCorso = "/view/InCercaDettaglioCorsoUI.fxml";
+
     private static final Logger LOGGER = Logger.getLogger(InCercaTrovaCorsoViewController.class.getName());
+
+    // destinazioni
+    private static final String FXML_DETTAGLIO   = "/view/InCercaDettaglioCorsoUI.fxml";
+    private static final String FXML_PREFERITI   = "/view/InCercaPreferitiUI.fxml";
+    private static final String FXML_LOGIN       = "/view/LogInUI.fxml";
+    private static final String TITOLO_DETTAGLIO = "UniWay - Dettaglio corso";
+    private static final String TITOLO_PREFERITI = "UniWay - Preferiti";
+    private static final String TITOLO_LOGIN     = "UniWay - Login";
 
     public void impostaSchermata(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
     }
 
-    //COLONNA 1: Tipologia di Ateneo
+    // COLONNA 1: Tipologia di Ateneo
     @FXML private ComboBox<String> statale;
     @FXML private ComboBox<String> tipologia;
 
-    //COLONNA 2: Ubicazione
+    // COLONNA 2: Ubicazione
     @FXML private ComboBox<String> regione;
     @FXML private ComboBox<String> provincia;
     @FXML private ComboBox<String> comune;
 
-    //COLONNA 3: Caratteristiche del Corso
+    // COLONNA 3: Caratteristiche del Corso
     @FXML private ComboBox<String> durata;
     @FXML private ComboBox<String> gruppoDisciplina;
     @FXML private ComboBox<String> classeCorso;
@@ -57,13 +57,13 @@ public class InCercaTrovaCorsoViewController implements Initializable {
         setupComboBox(statale, inCercaTrovaCorsoController.getTipiAteneo(), this::handleStataleSelection);
         setupComboBox(regione, inCercaTrovaCorsoController.getRegioni(), this::handleRegioneSelection);
         setupComboBox(durata, inCercaTrovaCorsoController.getDurate(), this::handleDurataSelection);
-        cerca.setDisable(true); // Disattiva il tasto "Cerca" all'inizio
+        cerca.setDisable(true);
 
-        // Listener per il doppio click su un elemento della ListView
-        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                label.setText("Corso selezionato: " + newValue);
-                apriDettaglioCorso(newValue);
+        // Selezione dalla lista → apri dettaglio
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldV, newV) -> {
+            if (newV != null) {
+                label.setText("Corso selezionato: " + newV);
+                apriDettaglioCorso(newV);
             }
         });
     }
@@ -71,9 +71,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
     private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> eventHandler) {
         comboBox.getItems().setAll(items);
         comboBox.setDisable(items.isEmpty());
-        comboBox.setOnAction(event -> {
-            if (eventHandler != null) eventHandler.handle(event);
-        });
+        comboBox.setOnAction(event -> { if (eventHandler != null) eventHandler.handle(event); });
     }
 
     private void resetComboBoxes(ComboBox<?>... comboBoxes) {
@@ -88,70 +86,56 @@ public class InCercaTrovaCorsoViewController implements Initializable {
     private void checkCercaEnabled() {
         boolean stataleSelezionato = statale.getValue() != null && !statale.getValue().isEmpty();
         boolean regioneSelezionata = regione.getValue() != null && !regione.getValue().isEmpty();
-        boolean durataSelezionata = durata.getValue() != null && !durata.getValue().isEmpty();
-
-        // Il tasto cerca si attiva solo quando tutti e tre i filtri principali sono stati selezionati
-        boolean tuttiPrincipaliSelezionati = stataleSelezionato && regioneSelezionata && durataSelezionata;
-
-        cerca.setDisable(!tuttiPrincipaliSelezionati);
+        boolean durataSelezionata  = durata.getValue()  != null && !durata.getValue().isEmpty();
+        cerca.setDisable(!(stataleSelezionato && regioneSelezionata && durataSelezionata));
     }
 
+    // --- FILTRI ---
 
-    // COLONNA 1: TIPOLOGIA ATENEO
-    @FXML
-    public void handleStataleSelection(ActionEvent event) {
+    @FXML public void handleStataleSelection(ActionEvent event) {
         resetComboBoxes(tipologia);
         setupComboBox(tipologia, inCercaTrovaCorsoController.getTipologie(statale.getValue()), this::handleTipologiaSelection);
         checkCercaEnabled();
     }
 
-    @FXML
-    public void handleTipologiaSelection(ActionEvent event) {
+    @FXML public void handleTipologiaSelection(ActionEvent event) {
         resetComboBoxes();
         inCercaTrovaCorsoController.setTipologia(tipologia.getValue());
     }
 
-    //COLONNA 2: UBICAZIONE
-    @FXML
-    public void handleRegioneSelection(ActionEvent event) {
+    @FXML public void handleRegioneSelection(ActionEvent event) {
         resetComboBoxes(provincia, comune);
         setupComboBox(provincia, inCercaTrovaCorsoController.getProvince(regione.getValue()), this::handleProvinciaSelection);
         checkCercaEnabled();
     }
 
-    @FXML
-    public void handleProvinciaSelection(ActionEvent event) {
+    @FXML public void handleProvinciaSelection(ActionEvent event) {
         resetComboBoxes(comune);
         setupComboBox(comune, inCercaTrovaCorsoController.getComuni(provincia.getValue()), this::handleComuneSelection);
     }
 
-    @FXML
-    public void handleComuneSelection(ActionEvent event) {
+    @FXML public void handleComuneSelection(ActionEvent event) {
         resetComboBoxes();
         inCercaTrovaCorsoController.setComune(comune.getValue());
     }
 
-    //COLONNA 3: CARATTERISTICHE CORSO
-    @FXML
-    public void handleDurataSelection(ActionEvent event) {
+    @FXML public void handleDurataSelection(ActionEvent event) {
         resetComboBoxes(gruppoDisciplina, classeCorso);
         setupComboBox(gruppoDisciplina, inCercaTrovaCorsoController.getDiscipline(durata.getValue()), this::handleGruppoSelection);
         checkCercaEnabled();
     }
 
-    @FXML
-    public void handleGruppoSelection(ActionEvent event) {
+    @FXML public void handleGruppoSelection(ActionEvent event) {
         resetComboBoxes(classeCorso);
         setupComboBox(classeCorso, inCercaTrovaCorsoController.getClassi(gruppoDisciplina.getValue()), this::handleClasseSelection);
     }
 
-    @FXML
-    public void handleClasseSelection(ActionEvent event) {
+    @FXML public void handleClasseSelection(ActionEvent event) {
         resetComboBoxes();
         inCercaTrovaCorsoController.setClasseCorso(classeCorso.getValue());
     }
 
-    //CERCA RISULTATI
+    // --- CERCA ---
     @FXML
     public void handleCercaSelection(ActionEvent event) {
         resetComboBoxes();
@@ -163,48 +147,35 @@ public class InCercaTrovaCorsoViewController implements Initializable {
         }
     }
 
-    //Metodo per aprire la schermata del dettaglio del corso
+    // --- NAVIGAZIONE ---
+
     private void apriDettaglioCorso(String corsoSelezionato) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(interfacciaCorso));
-            Parent newRoot = loader.load();
-
-            // Ottieni il controller della nuova interfaccia
-            InCercaDettaglioCorsoViewController inCercaDettaglioCorsoViewController = loader.getController();
-            inCercaDettaglioCorsoViewController.impostaSchermata(utenteBean, corsoSelezionato, listView.getItems());
-
-            // Cambia la schermata attuale
-            stage = (Stage) listView.getScene().getWindow();
-            scene = new Scene(newRoot);
-            stage.setScene(scene);
-            stage.show();
-
-        } catch (IOException e) {
+            var stage = (javafx.stage.Stage) listView.getScene().getWindow();
+            NavigationManager.switchScene(
+                    stage,
+                    FXML_DETTAGLIO,
+                    TITOLO_DETTAGLIO,
+                    InCercaDettaglioCorsoViewController.class,
+                    c -> c.impostaSchermata(utenteBean, corsoSelezionato, listView.getItems())
+            );
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nell'apertura della visualizzazione del corso", e);
         }
     }
 
-    public void goToPreferiti(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaPreferitiUI.fxml"));
-        Parent newRoot = loader.load();
-
-        // Passa l'UtenteBean al nuovo controller
-        InCercaPreferitiViewController inCercaPreferitiViewController = loader.getController();
-        inCercaPreferitiViewController.impostaSchermata(utenteBean);  // Mantiene l'utente attivo
-
-        // Cambia schermata
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(newRoot);
-        stage.setScene(scene);
-        stage.show();
+    public void goToPreferiti(ActionEvent event) {
+        NavigationManager.switchScene(
+                event,
+                FXML_PREFERITI,
+                TITOLO_PREFERITI,
+                InCercaPreferitiViewController.class,
+                c -> c.impostaSchermata(utenteBean)
+        );
     }
 
-    public void logOut(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    public void logOut(ActionEvent event) {
+        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 

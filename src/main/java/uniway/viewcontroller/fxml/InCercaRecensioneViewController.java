@@ -2,24 +2,18 @@ package uniway.viewcontroller.fxml;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import uniway.beans.RecensioneBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaRecensioneController;
+import uniway.utils.NavigationManager;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class InCercaRecensioneViewController implements Initializable {
@@ -35,18 +29,32 @@ public class InCercaRecensioneViewController implements Initializable {
     private int idInsegnamento;
 
     private List<String> corsiSimili;
-    private Stage stage;
-    private Scene scene;
     private String corso;
     private String ateneo;
     private UtenteBean utente;
 
-    public void impostaSchermata(Integer idInsegnamento, String nomeCorso, String nomeAteneo, String nomeInsegnamento, String curriculum, UtenteBean utenteBean, List<String> corsisimili) {
+    // destinazioni
+    private static final String FXML_DETTAGLIO  = "/view/InCercaDettaglioCorsoUI.fxml";
+    private static final String FXML_PREFERITI  = "/view/InCercaPreferitiUI.fxml";
+    private static final String FXML_LOGIN      = "/view/LogInUI.fxml";
+    private static final String TITOLO_DETTAGLIO = "UniWay - Dettaglio corso";
+    private static final String TITOLO_PREFERITI = "UniWay - Preferiti";
+    private static final String TITOLO_LOGIN     = "UniWay - Login";
+
+    public void impostaSchermata(Integer idInsegnamento,
+                                 String nomeCorso,
+                                 String nomeAteneo,
+                                 String nomeInsegnamento,
+                                 String curriculum,
+                                 UtenteBean utenteBean,
+                                 List<String> corsisimili) {
+
         this.idInsegnamento = idInsegnamento;
         this.corso = nomeCorso;
         this.ateneo = nomeAteneo;
         this.utente = utenteBean;
         this.corsiSimili = corsisimili;
+
         corsoLabel.setText(corso);
         ateneoLabel.setText(ateneo);
         insegnamentoLabel.setText(nomeInsegnamento);
@@ -60,93 +68,83 @@ public class InCercaRecensioneViewController implements Initializable {
         double media = controller.getMediaValutazioni(recensioni);
 
         mediaLabel.setText(String.format("%.1f", media));
-
         listViewRecensioni.getItems().setAll(recensioni);
-
         listViewRecensioni.setCellFactory(lv -> new RecensioneListCell());
     }
 
-        public class RecensioneListCell extends ListCell<RecensioneBean> {
-            private final VBox content;
-            private final Label nomeUtente;
-            private final Label stelle;
-            private final Label commento;
+    public static class RecensioneListCell extends ListCell<RecensioneBean> {
+        private final VBox content;
+        private final Label nomeUtente = new Label();
+        private final Label stelle = new Label();
+        private final Label commento = new Label();
 
-            public RecensioneListCell() {
-                nomeUtente = new Label();
-                stelle = new Label();
-                commento = new Label();
-                commento.setWrapText(true);
-                commento.setMaxWidth(740);
+        public RecensioneListCell() {
+            commento.setWrapText(true);
+            commento.setMaxWidth(740);
 
-                // STILI
-                nomeUtente.setStyle("-fx-font-weight: bold; -fx-font-size: 20px;");
-                stelle.setStyle("-fx-text-fill: purple; -fx-font-weight: bold; -fx-font-size: 15px;");
-                commento.setStyle(
-                        "-fx-background-color: #ffffff;" +
-                                "-fx-font-size: 15px;" +
-                                "-fx-border-color: black;" +
-                                "-fx-border-radius: 12px;" +
-                                "-fx-background-radius: 12px;" +
-                                "-fx-padding: 12px;" +
-                                "-fx-control-inner-background: #ffffff;"
-                );
-
-                content = new VBox(nomeUtente, stelle, commento);
-            }
-
-            @Override
-            protected void updateItem(RecensioneBean item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    nomeUtente.setText(item.getNome());
-                    stelle.setText("⭐".repeat(item.getValutazione()) + "  (" + item.getValutazione() + "/5)");
-                    commento.setText(item.getCommento());
-                    setGraphic(content);
-                }
-            }
+            // STILI
+            nomeUtente.setStyle("-fx-font-weight: bold; -fx-font-size: 20px;");
+            stelle.setStyle("-fx-text-fill: purple; -fx-font-weight: bold; -fx-font-size: 15px;");
+            commento.setStyle(
+                    "-fx-background-color: #ffffff;" +
+                            "-fx-font-size: 15px;" +
+                            "-fx-border-color: black;" +
+                            "-fx-border-radius: 12px;" +
+                            "-fx-background-radius: 12px;" +
+                            "-fx-padding: 12px;" +
+                            "-fx-control-inner-background: #ffffff;"
+            );
+            content = new VBox(nomeUtente, stelle, commento);
         }
 
-
         @Override
+        protected void updateItem(RecensioneBean item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setGraphic(null);
+            } else {
+                nomeUtente.setText(item.getNome());
+                stelle.setText("⭐".repeat(item.getValutazione()) + "  (" + item.getValutazione() + "/5)");
+                commento.setText(item.getCommento());
+                setGraphic(content);
+            }
+        }
+    }
+
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // niente da inizializzare in anticipo
+        // nessuna init anticipata
+    }
+
+    // ===== NAVIGAZIONE con NavigationManager =====
+
+    @FXML
+    public void goBack(ActionEvent event) {
+        // Torna al dettaglio corso, passando di nuovo i dati
+        NavigationManager.switchScene(
+                event,
+                FXML_DETTAGLIO,
+                TITOLO_DETTAGLIO,
+                InCercaDettaglioCorsoViewController.class,
+                c -> c.impostaSchermata(utente, corso + " - " + ateneo, corsiSimili)
+        );
     }
 
     @FXML
-    public void goBack(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaDettaglioCorsoUI.fxml"));
-        Parent root = loader.load();
-        InCercaDettaglioCorsoViewController viewController = loader.getController();
-        viewController.impostaSchermata(utente, corso + " - " + ateneo, corsiSimili);
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    public void goToPreferiti(ActionEvent event) {
+        NavigationManager.switchScene(
+                event,
+                FXML_PREFERITI,
+                TITOLO_PREFERITI,
+                InCercaPreferitiViewController.class,
+                c -> c.impostaSchermata(utente)
+        );
     }
 
     @FXML
-    public void goToPreferiti(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaPreferitiUI.fxml"));
-        Parent root = loader.load();
-        InCercaPreferitiViewController viewController = loader.getController();
-        viewController.impostaSchermata(utente);
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    public void logOut(ActionEvent event) {
+        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
-
-    @FXML
-    public void logOut(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
 }
+
 

@@ -3,30 +3,34 @@ package uniway.viewcontroller.fxml;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import uniway.beans.UtenteBean;
 import uniway.controller.IscrittoSelezionaCorsoController;
+import uniway.utils.NavigationManager;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class IscrittoSelezionaCorsoViewController implements Initializable {
 
-    private IscrittoSelezionaCorsoController iscrittoSelezionaCorsoController = new IscrittoSelezionaCorsoController();
+    private final IscrittoSelezionaCorsoController iscrittoSelezionaCorsoController =
+            new IscrittoSelezionaCorsoController();
+
     private UtenteBean utenteBean;
-    private String corsoSelezionato = "Corso selezionato: ";
-    private static final Logger LOGGER = Logger.getLogger(IscrittoSelezionaCorsoViewController.class.getName());
+
+    // destinazioni
+    private static final String FXML_INSEGNAMENTI = "/view/IscrittoInsegnamentiUI.fxml";
+    private static final String FXML_LOGIN        = "/view/LogInUI.fxml";
+
+    private static final String TITOLO_INSEGNAMENTI = "UniWay - Insegnamenti (Iscritto)";
+    private static final String TITOLO_LOGIN        = "UniWay - Login";
+
+    private static final Logger LOGGER =
+            Logger.getLogger(IscrittoSelezionaCorsoViewController.class.getName());
 
     public void impostaSchermata(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
@@ -50,10 +54,10 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
         setupComboBox(regione, iscrittoSelezionaCorsoController.getRegioni(), this::handleRegioneSelection);
     }
 
-    private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> eventHandler) {
+    private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> handler) {
         comboBox.getItems().setAll(items);
         comboBox.setDisable(items.isEmpty());
-        comboBox.setOnAction(eventHandler);
+        comboBox.setOnAction(handler);
     }
 
     private void resetComboBoxes(ComboBox<?>... comboBoxes) {
@@ -109,18 +113,6 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
         cerca.setOnAction(this::handleCercaSelection);
     }
 
-    private void caricaInterfacciaCommenti() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IscrittoInsegnamentiUI.fxml"));
-        Parent newRoot = loader.load();
-
-        IscrittoInsegnamentiViewController controller = loader.getController();
-        controller.impostaSchermata(utenteBean);
-
-        Stage current = (Stage) listView.getScene().getWindow();
-        current.setScene(new Scene(newRoot));
-        current.show();
-    }
-
     @FXML
     public void handleCercaSelection(ActionEvent event) {
         reimpostaUI();
@@ -161,7 +153,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
         if (curricula == null || curricula.isEmpty()) {
             impostaSoloCorso(corsoSelezionatoNuovo);
             aggiornaLabelSoloCorso(corsoSelezionatoNuovo);
-            vaiAInterfacciaCommenti();
+            vaiAInterfacciaCommenti(); // navigazione centralizzata
             return;
         }
 
@@ -199,27 +191,38 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     }
 
     private void aggiornaLabelSoloCorso(String corso) {
-        label.setText(corsoSelezionato + corso);
+        label.setText("Corso selezionato: " + corso);
     }
 
     private void aggiornaLabelCorsoECurriculum(String corso, String curriculum) {
-        label.setText(corsoSelezionato + corso + "\ncurriculum: " + curriculum);
+        label.setText("Corso selezionato: " + corso + "\ncurriculum: " + curriculum);
     }
 
+    /** Navigazione verso la schermata degli insegnamenti (passa UtenteBean) */
     private void vaiAInterfacciaCommenti() {
         try {
-            caricaInterfacciaCommenti();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Errore nel caricamento dell'interfaccia dei commenti", e);
+            // ottieni lo Stage dalla view
+            javafx.stage.Stage stage = (javafx.stage.Stage) listView.getScene().getWindow();
+
+            // naviga passando l'UtenteBean al controller successivo
+            uniway.utils.NavigationManager.switchScene(
+                    stage,
+                    FXML_INSEGNAMENTI,
+                    TITOLO_INSEGNAMENTI,
+                    uniway.viewcontroller.fxml.IscrittoInsegnamentiViewController.class,
+                    c -> c.impostaSchermata(utenteBean)
+            );
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Errore nel passaggio alla schermata Insegnamenti", e);
         }
     }
 
 
-    public void logOut(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
-        Stage current = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        current.setScene(new Scene(root));
-        current.show();
+    /** Logout → torna al login con NavigationManager */
+    @FXML
+    public void logOut(ActionEvent event) {
+        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
+
 

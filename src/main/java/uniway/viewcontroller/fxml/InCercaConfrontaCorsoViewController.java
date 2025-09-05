@@ -3,23 +3,17 @@ package uniway.viewcontroller.fxml;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaConfrontaCorsoController;
+import uniway.utils.NavigationManager;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class InCercaConfrontaCorsoViewController implements Initializable {
@@ -27,14 +21,19 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
     private UtenteBean utenteBean;
     private String corso1;
     private String corso2;
-
     private String ateneo1;
     private String ateneo2;
 
     private final InCercaConfrontaCorsoController controller = new InCercaConfrontaCorsoController();
     private List<String> corsiSimili;
-    private Stage stage;
-    private Scene scene;
+
+    // destinazioni
+    private static final String FXML_DETTAGLIO  = "/view/InCercaDettaglioCorsoUI.fxml";
+    private static final String FXML_PREFERITI  = "/view/InCercaPreferitiUI.fxml";
+    private static final String FXML_LOGIN      = "/view/LogInUI.fxml";
+    private static final String TITOLO_DETTAGLIO = "UniWay - Dettaglio corso";
+    private static final String TITOLO_PREFERITI = "UniWay - Preferiti";
+    private static final String TITOLO_LOGIN     = "UniWay - Login";
 
     @FXML private Label corsoLabel1;
     @FXML private Label ateneoLabel1;
@@ -105,17 +104,14 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
         this.utenteBean = utenteBean;
         this.corsiSimili = corsiSimil;
 
-        String[] dettagli1 = corsoStr1.split(" - ");
-        corso1 = dettagli1[0];
-        ateneo1 = dettagli1[1];
+        String[] d1 = corsoStr1.split(" - ");
+        corso1 = d1[0]; ateneo1 = d1[1];
 
-        String[] dettagli2 = corsoStr2.split(" - ");
-        corso2 = dettagli2[0];
-        ateneo2 = dettagli2[1];
+        String[] d2 = corsoStr2.split(" - ");
+        corso2 = d2[0]; ateneo2 = d2[1];
 
         corsoLabel1.setText(corso1);
         ateneoLabel1.setText(ateneo1);
-
         corsoLabel2.setText(corso2);
         ateneoLabel2.setText(ateneo2);
 
@@ -153,37 +149,34 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
         alert.showAndWait();
     }
 
+    // ===== NAVIGAZIONE con NavigationManager =====
+
     @FXML
-    public void goBack(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaDettaglioCorsoUI.fxml"));
-        Parent root = loader.load();
-        InCercaDettaglioCorsoViewController viewController = loader.getController();
-        viewController.impostaSchermata(utenteBean, corso1 + " - " + ateneo1, corsiSimili);
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    public void goBack(ActionEvent event) {
+        NavigationManager.switchScene(
+                event,
+                FXML_DETTAGLIO,
+                TITOLO_DETTAGLIO,
+                InCercaDettaglioCorsoViewController.class,
+                c -> c.impostaSchermata(utenteBean, corso1 + " - " + ateneo1, corsiSimili)
+        );
     }
 
     @FXML
-    public void goToPreferiti(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/InCercaPreferitiUI.fxml"));
-        Parent root = loader.load();
-        InCercaPreferitiViewController viewController = loader.getController();
-        viewController.impostaSchermata(utenteBean);
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    public void goToPreferiti(ActionEvent event) {
+        NavigationManager.switchScene(
+                event,
+                FXML_PREFERITI,
+                TITOLO_PREFERITI,
+                InCercaPreferitiViewController.class,
+                c -> c.impostaSchermata(utenteBean)
+        );
     }
 
     @FXML
-    public void logOut(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LogInUI.fxml")));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    public void logOut(ActionEvent event) {
+        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
+
 
