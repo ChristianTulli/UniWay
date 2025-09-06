@@ -18,7 +18,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public void salvaUtente(Utente utente) throws IOException {
+    public void salvaUtente(Utente utente) {
         List<Utente> utenti = ottieniUtenti();
         int nuovoId = utenti.isEmpty() ? 1 : utenti.get(utenti.size() - 1).getId() + 1;
 
@@ -43,7 +43,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public List<Utente> ottieniUtenti() throws IOException {
+    public List<Utente> ottieniUtenti() {
         List<Utente> utenti = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
@@ -75,7 +75,7 @@ public class UtenteFS implements UtenteDAO {
     private UtenteIscritto creaUtenteIscritto(int id, String username, String password, String[] split) {
         Integer idCorso = (split.length > 4 && !split[4].isEmpty()) ? Integer.parseInt(split[4]) : null;
         String curriculum = (split.length > 5 && !split[5].isEmpty()) ? split[5] : null;
-        return new UtenteIscritto(id, username, password, true, idCorso, curriculum);
+        return new UtenteIscritto(username, password, true, idCorso, curriculum);
     }
 
     private UtenteInCerca creaUtenteInCerca(int id, String username, String password, String[] split) {
@@ -90,7 +90,7 @@ public class UtenteFS implements UtenteDAO {
 
 
     @Override
-    public void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException {
+    public void aggiungiCorsoUtente(String username, Integer idCorso) {
         List<String> righe = new ArrayList<>();
         boolean utenteTrovato = false;
 
@@ -133,7 +133,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public Boolean aggiungiPreferitiUtente(String username, Integer idCorso) throws IOException {
+    public Boolean aggiungiPreferitiUtente(String username, Integer idCorso) {
         List<String> righe = new ArrayList<>();
         boolean preferitoAggiunto = false;
 
@@ -167,7 +167,7 @@ public class UtenteFS implements UtenteDAO {
 
 
     @Override
-    public void aggiungiCurriculumUtente(String username, String curriculum) throws IOException {
+    public void aggiungiCurriculumUtente(String username, String curriculum) {
         List<String> righe = new ArrayList<>();
         boolean utenteTrovato = false;
 
@@ -237,7 +237,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public List<Integer> getPreferitiUtente(String username) throws IOException {
+    public List<Integer> getPreferitiUtente(String username) {
         List<Integer> preferiti = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
@@ -259,7 +259,7 @@ public class UtenteFS implements UtenteDAO {
     }
 
     @Override
-    public void rimuoviPreferitoUtente(String username, int idCorso) throws IOException {
+    public void rimuoviPreferitoUtente(String username, int idCorso) {
         List<String> righe = new ArrayList<>();
         boolean utenteTrovato = false;
 

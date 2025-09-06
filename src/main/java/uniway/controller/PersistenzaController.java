@@ -1,5 +1,6 @@
 package uniway.controller;
 
+import uniway.beans.UtenteBean;
 import uniway.persistenza.*;
 
 import java.io.FileInputStream;
@@ -22,6 +23,7 @@ public class PersistenzaController {
     private String dbUsername;
     private String dbPassword;
     private String errore = "errore";
+    private UtenteBean utente;
 
     private PersistenzaController() throws IllegalArgumentException {
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
@@ -73,6 +75,16 @@ public class PersistenzaController {
 
     public Connection getConnessione() {
         return connessione;
+    }
+
+    public UtenteBean getCurrentUser() {
+        return utente;
+    }
+    public void setCurrentUser(UtenteBean utente) {
+        this.utente = utente;
+    }
+    public void logout(){
+        this.utente = null;
     }
 }
 

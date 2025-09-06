@@ -15,11 +15,9 @@ public class Utente {
 
     }
 
-    public Utente(int id, String username, String password, boolean iscritto) {
-        this.id = id;
+    public Utente(String username, String password) {
         this.username = username;
         this.password = password;
-        this.iscritto = iscritto;
 
     }
 

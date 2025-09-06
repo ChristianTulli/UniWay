@@ -1,6 +1,8 @@
 package uniway.controller;
 
 import uniway.beans.UtenteBean;
+import uniway.eccezioni.UtenteEsistenteException;
+import uniway.eccezioni.UtenteNonTrovatoException;
 import uniway.model.Utente;
 import uniway.model.UtenteInCerca;
 import uniway.model.UtenteIscritto;
@@ -13,21 +15,21 @@ public class LogInController {
 
     private UtenteDAO utenteDAO;
 
-    public LogInController() throws IllegalArgumentException {
+    public LogInController() {
         PersistenzaController persistenzaController = PersistenzaController.getInstance();
         this.utenteDAO = persistenzaController.getUtenteDAO();
     }
 
     //per la registrazione controlliamo se i dati inseriti momentaneamente nella classe bean sono accettabili e istanziamo un oggetto user in caso positivo, confermando la registrazione
 
-    public boolean registrazione(UtenteBean utenteBean) throws IOException {
+    public boolean registrazione(UtenteBean utenteBean) throws UtenteEsistenteException {
         if (utenteBean.getUsername().isEmpty() || utenteBean.getPassword().isEmpty() || utenteBean.getPassword().length() < 6) {
             return false;
         }
-        Optional<Utente> existingUser = utenteDAO.ottieniUtenti().stream().filter(u -> u.getUsername().equals(utenteBean.getUsername())).findFirst();
+        Utente existingUser = utenteDAO.trovaDaUsername(utenteBean.getUsername());
 
-        if (existingUser.isPresent()) {
-            return false; // Username già esistente
+        if (existingUser!=null) {
+            throw new UtenteEsistenteException("esiste già un utente con username: " + utenteBean.getUsername()); // Username già esistente
         }
         Utente utente;
         if (utenteBean.getIscritto()) {
@@ -39,16 +41,24 @@ public class LogInController {
         return true;
     }
 
-    public Optional<UtenteBean> autenticazione(String username, String password) throws IOException {
-        return utenteDAO.ottieniUtenti().stream().filter(utente -> utente.getUsername().equals(username) && utente.getPassword().equals(password)).findFirst().map(utente -> {
+    public UtenteBean autenticazione(String username, String password) {
+        if (username.isEmpty() || password.isEmpty()) {
+            throw new IllegalArgumentException("inserire username e password");
+        }
+        Utente utente = utenteDAO.trovaDaUsername(username);
+        if (utente == null) {
+            throw new UtenteNonTrovatoException("utente non trovato");
+        }
+        if (utente.getPassword().equals(password)) {
             if (utente instanceof UtenteIscritto utenteIscritto) {
-                return new UtenteBean(utenteIscritto.getUsername(), utenteIscritto.getPassword(), true, utenteIscritto.getIdCorso(), utenteIscritto.getCurriculum()
+                return new UtenteBean(utenteIscritto.getUsername(), utenteIscritto.getPassword(), true, utenteIscritto.getCorso(), utenteIscritto.getCurriculum()
                         //aggiungere attributo curriculum
                 );
             } else {
                 return new UtenteBean(utente.getUsername(), utente.getPassword(), false);
             }
-        });
+        }
+        throw new IllegalArgumentException("Password errata");
     }
 
 }

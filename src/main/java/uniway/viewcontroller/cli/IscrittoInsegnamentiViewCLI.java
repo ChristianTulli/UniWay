@@ -19,8 +19,8 @@ public class IscrittoInsegnamentiViewCLI {
         System.out.println("\n=== Insegnamenti del Corso ===");
 
         // Mostra i dati principali del corso selezionato
-        String nomeCorso = controller.getCorso(utenteBean.getIdCorso());
-        String nomeAteneo = controller.getAteneo(utenteBean.getIdCorso());
+        String nomeCorso = controller.getCorso(utenteBean.getCorso());
+        String nomeAteneo = controller.getAteneo(utenteBean.getCorso());
 
         System.out.println("Corso:     " + nomeCorso);
         System.out.println("Curriculum:" + utenteBean.getCurriculum());
@@ -29,7 +29,7 @@ public class IscrittoInsegnamentiViewCLI {
 
         // Recupera gli insegnamenti associati all'utente
         List<InsegnamentoBean> insegnamenti = controller.getInsegnamenti(
-                utenteBean.getIdCorso(),
+                utenteBean.getCorso(),
                 utenteBean.getCurriculum(),
                 utenteBean.getUsername()
         );

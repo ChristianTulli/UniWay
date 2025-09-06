@@ -9,18 +9,42 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UtenteDB implements UtenteDAO {
     private String colonnaPreferenze = "preferenze";
     private String queryfrequente = "SELECT preferenze FROM utenti WHERE username = ?";
     private final Connection conn;
+    private static final Logger LOGGER=Logger.getLogger(UtenteDB.class.getName());
 
     public UtenteDB(Connection conn) {
         this.conn = conn;
     }
 
     @Override
-    public void salvaUtente(Utente utente) throws IOException {
+    public Utente trovaDaUsername(String username) {
+        String query = "SELECT username, password, FROM utenti WHERE username = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String user = rs.getString("username");
+                    String pass = rs.getString("password");
+
+                    return new Utente(user, pass);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "errore durante la ricerca dell'utente");
+        }
+        return null; // nessun utente trovato
+    }
+
+
+    @Override
+    public void salvaUtente(Utente utente) {
         String query = "INSERT INTO utenti (username, password, iscritto) VALUES (?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -32,13 +56,13 @@ public class UtenteDB implements UtenteDAO {
                 throw new IOException("Nessun utente è stato inserito nel database.");
             }
 
-        } catch (SQLException e) {
-            throw new IOException("Errore durante la registrazione dell'utente", e);
+        } catch (SQLException | IOException e) {
+            LOGGER.log(Level.SEVERE, "errore durante la registrazione dell'utente");
         }
     }
 
     @Override
-    public List<Utente> ottieniUtenti() throws IOException {
+    public List<Utente> ottieniUtenti() {
         String query = "SELECT id, username, password, iscritto, id_corso, preferenze, curriculum FROM utenti";
         List<Utente> utenti = new ArrayList<>();
 
@@ -64,21 +88,21 @@ public class UtenteDB implements UtenteDAO {
                 }
 
                 if (iscritto) {
-                    utenti.add(new UtenteIscritto(id, utenteUsername, utentePassword, true, idCorso, curriculum));
+                    utenti.add(new UtenteIscritto(utenteUsername, utentePassword, true, corso, curriculum));
                 } else {
                     utenti.add(new UtenteInCerca(id, utenteUsername, utentePassword, false, preferenze));
                 }
             }
 
         } catch (SQLException e) {
-            throw new IOException("Errore durante il recupero degli utenti", e);
+            LOGGER.log(Level.SEVERE, "errore durante il recuper degli utenti");
         }
 
         return utenti;
     }
 
     @Override
-    public void aggiungiCorsoUtente(String usernameUtente, Integer idCorso) throws IOException {
+    public void aggiungiCorsoUtente(String usernameUtente, Integer idCorso) {
         String query = "UPDATE utenti SET id_corso = ? WHERE username = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -86,12 +110,12 @@ public class UtenteDB implements UtenteDAO {
             stmt.setString(2, usernameUtente);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new IOException("Errore durante l'aggiornamento del corso", e);
+            LOGGER.log(Level.SEVERE, "errore durante l'aggiornamento del corso'");
         }
     }
 
     @Override
-    public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
+    public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) {
         String querySelect = queryfrequente;
         String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
 
@@ -120,13 +144,14 @@ public class UtenteDB implements UtenteDAO {
             stmtUpdate.executeUpdate();
             return true;
         } catch (SQLException e) {
-            throw new IOException("Errore durante l'aggiornamento dei preferiti", e);
+            LOGGER.log(Level.SEVERE, "errore durante l'aggiornamrnto dei preferiti");
         }
+        return null;
     }
 
 
     @Override
-    public void aggiungiCurriculumUtente(String username, String curriculum) throws IOException {
+    public void aggiungiCurriculumUtente(String username, String curriculum) {
         String query = "UPDATE utenti SET curriculum = ? WHERE username = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -134,12 +159,12 @@ public class UtenteDB implements UtenteDAO {
             stmt.setString(2, username);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new IOException("Errore durante l'aggiornamento del curriculum", e);
+            LOGGER.log(Level.SEVERE, "errore durante l'aggiornamrnto del curriculum");
         }
     }
 
     @Override
-    public List<Integer> getPreferitiUtente(String username) throws IOException {
+    public List<Integer> getPreferitiUtente(String username) {
         List<Integer> preferiti = new ArrayList<>();
         String query = queryfrequente;
 
@@ -156,14 +181,14 @@ public class UtenteDB implements UtenteDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new IOException("Errore durante il recupero dei preferiti", e);
+            LOGGER.log(Level.SEVERE, "errore durante il recupero dei preferiti");
         }
 
         return preferiti;
     }
 
     @Override
-    public void rimuoviPreferitoUtente(String username, int idCorso) throws IOException {
+    public void rimuoviPreferitoUtente(String username, int idCorso) {
         String querySelect = queryfrequente;
         String queryUpdate = "UPDATE utenti SET preferenze = ? WHERE username = ?";
 
@@ -190,7 +215,7 @@ public class UtenteDB implements UtenteDAO {
             }
 
         } catch (SQLException e) {
-            throw new IOException("Errore durante la rimozione dai preferiti", e);
+            LOGGER.log(Level.SEVERE, "errore durante la rimozione dei preferiti");
         }
     }
 

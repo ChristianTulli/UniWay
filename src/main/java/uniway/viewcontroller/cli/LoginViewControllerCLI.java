@@ -66,7 +66,7 @@ public class LoginViewControllerCLI {
 
                 // Se utente è iscritto con corso già selezionato
                 if (utente.getIscritto()) {
-                    if (utente.getIdCorso() != null && utente.getCurriculum() != null) {
+                    if (utente.getCorso() != null && utente.getCurriculum() != null) {
                         System.out.println("Utente iscritto con corso selezionato");
                         new IscrittoInsegnamentiViewCLI().show(utente);
                     } else {

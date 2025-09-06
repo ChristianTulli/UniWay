@@ -2,23 +2,23 @@ package uniway.persistenza;
 
 import uniway.model.Utente;
 
-import java.io.IOException;
-
 import java.util.List;
 
 public interface UtenteDAO {
-     void salvaUtente(Utente utente) throws IOException;
+     void salvaUtente(Utente utente);
 
-     List<Utente> ottieniUtenti() throws IOException, IllegalArgumentException;
+     List<Utente> ottieniUtenti();
 
-     void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException;
+     Utente trovaDaUsername(String username);
 
-     Boolean aggiungiPreferitiUtente(String username, Integer idPreferiti) throws IOException;
+     void aggiungiCorsoUtente(String username, Integer idCorso);
 
-     List <Integer> getPreferitiUtente(String username) throws IOException;
+     Boolean aggiungiPreferitiUtente(String username, Integer idPreferiti);
 
-     void aggiungiCurriculumUtente(String username, String curriculum) throws IOException;
+     List <Integer> getPreferitiUtente(String username);
 
-     void rimuoviPreferitoUtente(String username, int idCorso) throws IOException;
+     void aggiungiCurriculumUtente(String username, String curriculum);
+
+     void rimuoviPreferitoUtente(String username, int idCorso);
 
 }

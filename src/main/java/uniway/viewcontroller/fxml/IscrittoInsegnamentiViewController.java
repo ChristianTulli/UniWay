@@ -120,8 +120,8 @@ public class IscrittoInsegnamentiViewController implements Initializable {
                     IscrittoCommentaViewController.class,
                     c -> c.impostaSchermata(
                             utenteBean,
-                            iscrittoInsegnamentiController.getCorso(utenteBean.getIdCorso()),
-                            iscrittoInsegnamentiController.getAteneo(utenteBean.getIdCorso()),
+                            iscrittoInsegnamentiController.getCorso(utenteBean.getCorso()),
+                            iscrittoInsegnamentiController.getAteneo(utenteBean.getCorso()),
                             insBean,
                             iscrittoInsegnamentiController
                     )
@@ -137,14 +137,14 @@ public class IscrittoInsegnamentiViewController implements Initializable {
 
         // popola la tabella insegnamenti
         List<InsegnamentoBean> lista = iscrittoInsegnamentiController.getInsegnamenti(
-                utenteBean.getIdCorso(), utenteBean.getCurriculum(), utenteBean.getUsername());
+                utenteBean.getCorso(), utenteBean.getCurriculum(), utenteBean.getUsername());
         ObservableList<InsegnamentoBean> listaInsegnamenti = FXCollections.observableArrayList(lista);
         tableView.setItems(listaInsegnamenti);
 
         // etichette corso/curriculum/ateneo
         curriculumLabel.setText(utenteBean.getCurriculum());
-        corsoLabel.setText(iscrittoInsegnamentiController.getCorso(utenteBean.getIdCorso()));
-        ateneoLabel.setText(iscrittoInsegnamentiController.getAteneo(utenteBean.getIdCorso()));
+        corsoLabel.setText(iscrittoInsegnamentiController.getCorso(utenteBean.getCorso()));
+        ateneoLabel.setText(iscrittoInsegnamentiController.getAteneo(utenteBean.getCorso()));
     }
 
     /** Logout semplice via NavigationManager */

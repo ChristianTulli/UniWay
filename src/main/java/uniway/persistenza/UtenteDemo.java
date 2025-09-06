@@ -4,7 +4,6 @@ import uniway.model.Utente;
 import uniway.model.UtenteInCerca;
 import uniway.model.UtenteIscritto;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,7 +13,7 @@ public class UtenteDemo implements UtenteDAO {
     private final AtomicInteger nextId = new AtomicInteger(1);
 
     @Override
-    public void salvaUtente(Utente utente) throws IOException {
+    public void salvaUtente(Utente utente) {
         utente.setId(nextId.getAndIncrement());
         utenti.add(utente);
     }
@@ -28,7 +27,7 @@ public class UtenteDemo implements UtenteDAO {
     public void aggiungiCorsoUtente(String username, Integer idCorso) {
         for (Utente u : utenti) {
             if (u.getUsername().equals(username) && u instanceof UtenteIscritto iscritto) {
-                iscritto.setIdCorso(idCorso);
+                iscritto.setCorso(idCorso);
             }
         }
     }

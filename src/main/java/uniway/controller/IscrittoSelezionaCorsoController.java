@@ -3,7 +3,6 @@ package uniway.controller;
 import uniway.beans.UtenteBean;
 import uniway.persistenza.CorsoDAO;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +26,7 @@ public class IscrittoSelezionaCorsoController {
     public void setCorsoUtente(UtenteBean utenteBean, String corsoSelezionato) {
         this.corso = corsoSelezionato;
         Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, tipologia, corso);
-        utenteBean.setIdCorso(idCorso);
+        utenteBean.setCorso(idCorso);
         try {
             persistenzaController.getUtenteDAO().aggiungiCorsoUtente(utenteBean.getUsername(), idCorso);
         } catch (Exception e) {
@@ -80,11 +79,7 @@ public class IscrittoSelezionaCorsoController {
 
     public void setCurriculumUtente(UtenteBean utente, String curriculum) {
         utente.setCurriculum(curriculum);
-        try {
-            persistenzaController.getUtenteDAO().aggiungiCurriculumUtente(utente.getUsername(), curriculum);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del curriculum", e);
-        }
+        persistenzaController.getUtenteDAO().aggiungiCurriculumUtente(utente.getUsername(), curriculum);
     }
 
 
