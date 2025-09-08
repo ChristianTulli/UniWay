@@ -1,7 +1,7 @@
 package uniway.viewcontroller.cli;
 
 import uniway.beans.UtenteBean;
-import uniway.controller.IscrittoSelezionaCorsoController;
+import uniway.controller.CommentaEValutaInsegnamentoController;
 import uniway.eccezioni.EsciException;
 import uniway.eccezioni.TornaAlLoginException;
 import uniway.utils.CLIUtils;
@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class IscrittoSelezionaCorsoViewCLI {
 
     private final Scanner scanner = new Scanner(System.in);
-    private final IscrittoSelezionaCorsoController controller = new IscrittoSelezionaCorsoController();
+    private final CommentaEValutaInsegnamentoController controller = new CommentaEValutaInsegnamentoController();
 
     // Mostra la schermata CLI per la selezione del corso da parte dell'utente iscritto.
     public void show(UtenteBean utenteBean) throws TornaAlLoginException, EsciException {
@@ -33,7 +33,7 @@ public class IscrittoSelezionaCorsoViewCLI {
         String disciplina = filtra("Disciplina", controller.getDiscipline(ateneo));
         if (disciplina == null) return;
 
-        String tipologia = filtra("Tipologia", controller.getTipologie(disciplina));
+        String tipologia = filtra("Tipologia", controller.getDurate(disciplina));
         if (tipologia == null) return;
 
         String classe = filtra("Corso", controller.getCorsi(tipologia));
@@ -48,7 +48,7 @@ public class IscrittoSelezionaCorsoViewCLI {
         String corsoSelezionato = filtra("Corso di Laurea", risultati);
         if (corsoSelezionato == null) return;
 
-        controller.setCorsoUtente(utenteBean, corsoSelezionato);
+        controller.setCorsoUtente(utenteBean);
 
         gestisciCurriculum(corsoSelezionato, utenteBean);
 
@@ -79,7 +79,7 @@ public class IscrittoSelezionaCorsoViewCLI {
             if (curriculum == null) return;
         }
 
-        controller.setCurriculumUtente(utenteBean, curriculum);
+        controller.setCurriculum(curriculum);
     }
 
     //Metodo ausiliario per selezionare un elemento da una lista

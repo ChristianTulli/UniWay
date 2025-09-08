@@ -8,8 +8,6 @@ import uniway.model.UtenteInCerca;
 import uniway.model.UtenteIscritto;
 import uniway.persistenza.UtenteDAO;
 
-import java.io.IOException;
-import java.util.Optional;
 
 public class LogInController {
 
@@ -38,6 +36,7 @@ public class LogInController {
             utente = new UtenteInCerca(utenteBean.getUsername(), utenteBean.getPassword(), utenteBean.getIscritto());
         }
         utenteDAO.salvaUtente(utente);
+        PersistenzaController.getInstance().setCurrentUser(utente);
         return true;
     }
 
@@ -51,11 +50,16 @@ public class LogInController {
         }
         if (utente.getPassword().equals(password)) {
             if (utente instanceof UtenteIscritto utenteIscritto) {
-                return new UtenteBean(utenteIscritto.getUsername(), utenteIscritto.getPassword(), true, utenteIscritto.getCorso(), utenteIscritto.getCurriculum()
-                        //aggiungere attributo curriculum
-                );
-            } else {
-                return new UtenteBean(utente.getUsername(), utente.getPassword(), false);
+                if(utenteIscritto.getCorso()!=null) {
+                    PersistenzaController.getInstance().setCurrentUser(utenteIscritto);//imposa utente attivo nella sessione
+                    return new UtenteBean(utenteIscritto.getUsername(), utenteIscritto.getPassword(), true, true);
+                }else{
+                    PersistenzaController.getInstance().setCurrentUser(utenteIscritto);//imposa utente attivo nella sessione
+                    return new UtenteBean(utente.getUsername(), utente.getPassword(), true, false);
+                }
+            } else if (utente instanceof UtenteInCerca utenteInCerca) {
+                PersistenzaController.getInstance().setCurrentUser(utenteInCerca);//imposa utente attivo nella sessione
+                return new UtenteBean(utenteInCerca.getUsername(), utenteInCerca.getPassword(), false);
             }
         }
         throw new IllegalArgumentException("Password errata");

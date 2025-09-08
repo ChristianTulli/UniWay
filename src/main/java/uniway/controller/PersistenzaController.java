@@ -1,6 +1,7 @@
 package uniway.controller;
 
 import uniway.beans.UtenteBean;
+import uniway.model.Utente;
 import uniway.persistenza.*;
 
 import java.io.FileInputStream;
@@ -19,11 +20,11 @@ public class PersistenzaController {
     private String isFullMode;
     private UtenteDAO utenteDAO;
     private RecensioneDAO recensioneDAO;
-    private String dbUrl;
-    private String dbUsername;
-    private String dbPassword;
+    private AteneoDAO ateneoDAO;
+    private CorsoDAO corsoDAO;
+    private InsegnamentoDAO insegnamentoDAO;
     private String errore = "errore";
-    private UtenteBean utente;
+    private Utente utenteCorrente;
 
     private PersistenzaController() throws IllegalArgumentException {
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
@@ -31,10 +32,10 @@ public class PersistenzaController {
             String mode = properties.getProperty("persistence.mode");
             isFullMode = properties.getProperty("running.mode");
 
-            dbUrl = properties.getProperty("db.url");
-            dbUsername = properties.getProperty("db.username");
-            dbPassword = properties.getProperty("db.password");
-            this.connessione = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            String dbUrl = properties.getProperty("db.url");
+            String dbUsername = properties.getProperty("db.username");
+            String dbPassword = properties.getProperty("db.password");
+            connessione = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
 
             if ("full".equals(isFullMode)) {
                 if ("file".equals(mode)) {
@@ -56,6 +57,9 @@ public class PersistenzaController {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, errore, e);
         }
+        ateneoDAO= new AteneoDAO();
+        corsoDAO= new CorsoDAO();
+        insegnamentoDAO= new InsegnamentoDAO();
     }
 
     public static synchronized PersistenzaController getInstance() {
@@ -73,18 +77,28 @@ public class PersistenzaController {
         return recensioneDAO;
     }
 
+    public AteneoDAO getAteneoDAO() {
+        return ateneoDAO;
+    }
+    public CorsoDAO getCorsoDAO() {
+        return corsoDAO;
+    }
+    public InsegnamentoDAO getInsegnamentoDAO() {
+        return insegnamentoDAO;
+    }
+
     public Connection getConnessione() {
         return connessione;
     }
 
-    public UtenteBean getCurrentUser() {
-        return utente;
+    public Utente getCurrentUser() {
+        return utenteCorrente;
     }
-    public void setCurrentUser(UtenteBean utente) {
-        this.utente = utente;
+    public void setCurrentUser(Utente utenteCorrente) {
+        this.utenteCorrente = utenteCorrente;
     }
     public void logout(){
-        this.utente = null;
+        this.utenteCorrente = null;
     }
 }
 

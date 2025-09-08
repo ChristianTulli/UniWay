@@ -1,28 +1,37 @@
 package uniway.model;
 
+import java.util.List;
+
 public class Corso {
-    private String nomeClasse;
-    private String nomeCorso;
+    private String regione;
+    private String provincia;
+    private String comune;
+    private String ateneo;
     private String disciplina;
     private String durata;
-    private String sedeProvincia;
-    private String sedeComune;
-    private String sedeRegione;
+    private String classe;
+    private String nomeCorso;
+    private String curriculum;
+    private List<Insegnamento> insegnamenti;
 
-    public Corso(String nomeClasse, String nomeCorso, String disciplina, String durata, String sedeProvincia, String sedeComune, String sedeRegione) {
-        this.nomeClasse = nomeClasse;
-        this.nomeCorso = nomeCorso;
+
+    public Corso(String regione, String provincia, String comune, String ateneo, String disciplina, String durata, String classe, String nomeCorso) {
+        this.regione = regione;
+        this.provincia = provincia;
+        this.comune = comune;
+        this.ateneo = ateneo;
         this.disciplina = disciplina;
         this.durata = durata;
-        this.sedeProvincia = sedeProvincia;
-        this.sedeComune = sedeComune;
-        this.sedeRegione = sedeRegione;
+        this.classe = classe;
+        this.nomeCorso = nomeCorso;
     }
-    public String getNomeClasse() {
-        return nomeClasse;
+
+
+    public String getClasse() {
+        return classe;
     }
-    public void setNomeClasse(String nomeClasse) {
-        this.nomeClasse = nomeClasse;
+    public void setClasse(String classe) {
+        this.classe = classe;
     }
     public String getNomeCorso() {
         return nomeCorso;
@@ -42,24 +51,43 @@ public class Corso {
     public void setDurata(String durata) {
         this.durata = durata;
     }
-    public String getSedeProvincia() {
-        return sedeProvincia;
+    public String getProvincia() {
+        return provincia;
     }
-    public void setSedeProvincia(String sedeProvincia) {
-        this.sedeProvincia = sedeProvincia;
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
     }
-    public String getSedeComune() {
-        return sedeComune;
+    public String getComune() {
+        return comune;
     }
-    public void setSedeComune(String sedeComune) {
-        this.sedeComune = sedeComune;
+    public void setComune(String comune) {
+        this.comune = comune;
     }
-    public String getSedeRegione() {
-        return sedeRegione;
+    public String getRegione() {
+        return regione;
     }
-    public void setSedeRegione(String sedeRegione) {
-        this.sedeRegione = sedeRegione;
+    public void setRegione(String regione) {
+        this.regione = regione;
     }
+    public String getCurriculum() {
+        return curriculum;
+    }
+    public void setCurriculum(String curriculum) {
+        this.curriculum = curriculum;
+    }
+    public String getAteneo() {
+        return ateneo;
+    }
+    public void setAteneo(String ateneo) {
+        this.ateneo = ateneo;
+    }
+    public List<Insegnamento> getInsegnamenti() {
+        return insegnamenti;
+    }
+    public void setInsegnamenti(List<Insegnamento> insegnamenti) {
+        this.insegnamenti = insegnamenti;
+    }
+
 
 
 }

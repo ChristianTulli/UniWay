@@ -3,7 +3,7 @@ package uniway.test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import uniway.beans.UtenteBean;
-import uniway.controller.IscrittoSelezionaCorsoController;
+import uniway.controller.CommentaEValutaInsegnamentoController;
 import uniway.controller.LogInController;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class IscrittoSelezionaCorsoDemoTest {
 
         assertTrue(maybe, "registrazione fallita");
 
-        IscrittoSelezionaCorsoController c = new IscrittoSelezionaCorsoController();
+        CommentaEValutaInsegnamentoController c = new CommentaEValutaInsegnamentoController();
 
         String corso="Ingegneria Informatica";
         //SELEZIONE FILTRI
@@ -53,7 +53,7 @@ public class IscrittoSelezionaCorsoDemoTest {
         assertNotNull(discipline, "discipline per Universita' degli studi di Roma Tor Vergata è null");
         assertTrue(discipline.contains("Ingegneria industriale e dell'informazione"), "Ingegneria industriale e dell'informazione non trovato tra " + discipline);
 
-        List<String> tipologie = c.getTipologie("Ingegneria industriale e dell'informazione");
+        List<String> tipologie = c.getDurate("Ingegneria industriale e dell'informazione");
         assertNotNull(tipologie, "tipologie per Ingegneria industriale e dell'informazione è null");
         assertTrue(tipologie.contains("Laurea triennale"), "Laurea triennale non trovato tra " + tipologie);
 
@@ -70,8 +70,8 @@ public class IscrittoSelezionaCorsoDemoTest {
         assertNotNull(curriculum, "curriculum per Ingegneria Informatica è null");
         assertTrue(curriculum.contains("Sistemi software e Web"), "Sistemi software e Web non trovato tra " + curriculum);
 
-        c.setCurriculumUtente(utenteBean, "Sistemi software e Web");
-        c.setCorsoUtente(utenteBean, corso);
+        c.setCurriculum("Sistemi software e Web");
+        c.setCorsoUtente(utenteBean);
 
         System.out.println("Corso selezionato: \n Universita' degli studi di Roma Tor Vergata \n Ingegneria dell'informazione \n Sistemi software e Web");
     }

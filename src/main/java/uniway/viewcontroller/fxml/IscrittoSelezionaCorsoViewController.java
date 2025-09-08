@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
-import uniway.controller.IscrittoSelezionaCorsoController;
+import uniway.controller.CommentaEValutaInsegnamentoController;
 import uniway.utils.NavigationManager;
 
 import java.net.URL;
@@ -17,8 +17,8 @@ import java.util.logging.Logger;
 
 public class IscrittoSelezionaCorsoViewController implements Initializable {
 
-    private final IscrittoSelezionaCorsoController iscrittoSelezionaCorsoController =
-            new IscrittoSelezionaCorsoController();
+    private final CommentaEValutaInsegnamentoController commentaEValutaInsegnamentoController =
+            new CommentaEValutaInsegnamentoController();
 
     private UtenteBean utenteBean;
 
@@ -51,7 +51,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setupComboBox(regione, iscrittoSelezionaCorsoController.getRegioni(), this::handleRegioneSelection);
+        setupComboBox(regione, commentaEValutaInsegnamentoController.getRegioni(), this::handleRegioneSelection);
     }
 
     private void setupComboBox(ComboBox<String> comboBox, List<String> items, EventHandler<ActionEvent> handler) {
@@ -73,37 +73,37 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     @FXML
     public void handleRegioneSelection(ActionEvent event) {
         resetComboBoxes(provincia, comune, ateneo, disciplina, tipologia, classe);
-        setupComboBox(provincia, iscrittoSelezionaCorsoController.getProvince(regione.getValue()), this::handleProvinciaSelection);
+        setupComboBox(provincia, commentaEValutaInsegnamentoController.getProvince(regione.getValue()), this::handleProvinciaSelection);
     }
 
     @FXML
     public void handleProvinciaSelection(ActionEvent event) {
         resetComboBoxes(comune, ateneo, disciplina, tipologia, classe);
-        setupComboBox(comune, iscrittoSelezionaCorsoController.getComuni(provincia.getValue()), this::handleComuneSelection);
+        setupComboBox(comune, commentaEValutaInsegnamentoController.getComuni(provincia.getValue()), this::handleComuneSelection);
     }
 
     @FXML
     public void handleComuneSelection(ActionEvent event) {
         resetComboBoxes(ateneo, disciplina, tipologia, classe);
-        setupComboBox(ateneo, iscrittoSelezionaCorsoController.getAtenei(comune.getValue()), this::handleAteneoSelection);
+        setupComboBox(ateneo, commentaEValutaInsegnamentoController.getAtenei(comune.getValue()), this::handleAteneoSelection);
     }
 
     @FXML
     public void handleAteneoSelection(ActionEvent event) {
         resetComboBoxes(disciplina, tipologia, classe);
-        setupComboBox(disciplina, iscrittoSelezionaCorsoController.getDiscipline(ateneo.getValue()), this::handleDisciplinaSelection);
+        setupComboBox(disciplina, commentaEValutaInsegnamentoController.getDiscipline(ateneo.getValue()), this::handleDisciplinaSelection);
     }
 
     @FXML
     public void handleDisciplinaSelection(ActionEvent event) {
         resetComboBoxes(tipologia, classe);
-        setupComboBox(tipologia, iscrittoSelezionaCorsoController.getTipologie(disciplina.getValue()), this::handleTipologiaSelection);
+        setupComboBox(tipologia, commentaEValutaInsegnamentoController.getDurate(disciplina.getValue()), this::handleTipologiaSelection);
     }
 
     @FXML
     public void handleTipologiaSelection(ActionEvent event) {
         resetComboBoxes(classe);
-        setupComboBox(classe, iscrittoSelezionaCorsoController.getCorsi(tipologia.getValue()), this::handleClasseSelection);
+        setupComboBox(classe, commentaEValutaInsegnamentoController.getCorsi(tipologia.getValue()), this::handleClasseSelection);
     }
 
     @FXML
@@ -117,7 +117,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     public void handleCercaSelection(ActionEvent event) {
         reimpostaUI();
 
-        List<String> risultati = iscrittoSelezionaCorsoController.getRisultati(classe.getValue());
+        List<String> risultati = commentaEValutaInsegnamentoController.getRisultati(classe.getValue());
         popolaRisultatiONotifica(risultati);
 
         agganciaListenerUnaVolta();
@@ -148,7 +148,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     private void quandoCorsoSelezionato(String corsoSelezionatoNuovo) {
         if (corsoSelezionatoNuovo == null) return;
 
-        List<String> curricula = iscrittoSelezionaCorsoController.getCurriculumPerCorso(corsoSelezionatoNuovo);
+        List<String> curricula = commentaEValutaInsegnamentoController.getCurriculumPerCorso(corsoSelezionatoNuovo);
 
         if (curricula == null || curricula.isEmpty()) {
             impostaSoloCorso(corsoSelezionatoNuovo);
@@ -182,12 +182,12 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     }
 
     private void impostaSoloCorso(String corso) {
-        iscrittoSelezionaCorsoController.setCorsoUtente(utenteBean, corso);
+        commentaEValutaInsegnamentoController.setCorsoUtente(utenteBean);
     }
 
     private void impostaCorsoECurriculum(String corso, String curriculum) {
-        iscrittoSelezionaCorsoController.setCorsoUtente(utenteBean, corso);
-        iscrittoSelezionaCorsoController.setCurriculumUtente(utenteBean, curriculum);
+        commentaEValutaInsegnamentoController.setCorsoUtente(utenteBean);
+        commentaEValutaInsegnamentoController.setCurriculum(curriculum);
     }
 
     private void aggiornaLabelSoloCorso(String corso) {

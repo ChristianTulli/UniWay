@@ -87,12 +87,9 @@ public class LogInViewController {
         try {
             UtenteBean utenteBean = loginController.autenticazione(u, p);
 
-            PersistenzaController.getInstance().setCurrentUser(utenteBean);//imposa utente attivo nella sessione
-
-
             if (utenteBean.getIscritto()) {
-                if (utenteBean.getCorso() != null && utenteBean.getCurriculum() != null) {
-                    // iscritto con corso/curriculum già impostati
+                if (utenteBean.getCorso()) {
+                    // iscritto con corso già impostato
                     NavigationManager.switchScene(event, FXML_CORSO_ISCRITTO, "UniWay - Insegnamenti",
                             IscrittoInsegnamentiViewController.class,
                             c -> c.impostaSchermata(utenteBean));

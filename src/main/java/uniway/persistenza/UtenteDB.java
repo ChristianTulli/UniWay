@@ -1,11 +1,12 @@
 package uniway.persistenza;
 
-import uniway.model.Utente;
-import uniway.model.UtenteInCerca;
-import uniway.model.UtenteIscritto;
+import uniway.model.*;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,10 +14,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UtenteDB implements UtenteDAO {
+    private static final Logger LOGGER = Logger.getLogger(UtenteDB.class.getName());
+    private final Connection conn;
     private String colonnaPreferenze = "preferenze";
     private String queryfrequente = "SELECT preferenze FROM utenti WHERE username = ?";
-    private final Connection conn;
-    private static final Logger LOGGER=Logger.getLogger(UtenteDB.class.getName());
 
     public UtenteDB(Connection conn) {
         this.conn = conn;
@@ -24,22 +25,135 @@ public class UtenteDB implements UtenteDAO {
 
     @Override
     public Utente trovaDaUsername(String username) {
-        String query = "SELECT username, password, FROM utenti WHERE username = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, username);
+        String query = "SELECT username, password, iscritto, id_corso, preferenze, curriculum FROM utenti WHERE username = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, username);
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String user = rs.getString("username");
                     String pass = rs.getString("password");
+                    boolean iscritto = rs.getBoolean("iscritto");
+                    Integer idCorso = rs.getInt("id_corso");
+                    String curriculum = rs.getString("curriculum");
+                    String preferenzeStr = rs.getString("preferenze");
+                    List<Integer> preferenze= parsePreferenze(preferenzeStr);
+                    Utente utente;
+                    if (iscritto) {
+                        utente = new UtenteIscritto(user, pass, iscritto, trovaCorsoDaId(idCorso, curriculum));
+                    } else {
+                        List<Corso> corsiPreferiti = new ArrayList<>();
+                        for (Integer idPref : preferenze) {
+                            Corso corso = trovaCorsoDaId(idPref, null); // curriculum non serve per i preferiti
+                            if (corso != null) {
+                                corsiPreferiti.add(corso);
+                            }
+                        }
+                        utente = new UtenteInCerca(user, pass, iscritto, corsiPreferiti);
 
-                    return new Utente(user, pass);
+                    }
+                    return utente;
                 }
+
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "errore durante la ricerca dell'utente");
         }
         return null; // nessun utente trovato
+    }
+
+    private List<Integer> parsePreferenze(String prefStr) {
+        if (prefStr == null || prefStr.isBlank()) return List.of();
+        List<Integer> out = new ArrayList<>();
+        for (String token : prefStr.split(",")) {
+            try {
+                out.add(Integer.parseInt(token.trim()));
+            } catch (NumberFormatException ex) {
+                LOGGER.log(Level.WARNING, "ID corso non valido nelle preferenze: {0}", token);
+            }
+        }
+        return out;
+    }
+
+    private Corso trovaCorsoDaId(Integer idCorso, String curriculum) {
+        String query = """
+                
+                SELECT
+                                c.idCorso,
+                                        c.regionecorso,
+                                        c.sedeprovincia,
+                                        c.sedecomune,
+                                        a.nome           AS nome_ateneo,
+                                c.gruppodisciplinare,
+                                        c.durata,
+                                        c.nomeclasse,
+                                        c.nomecorso
+                                FROM corsi AS c
+                                JOIN atenei AS a
+                                ON a.idAteneo = c.idAteneo
+                                WHERE c.idCorso = ?
+                """;
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, idCorso);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String regionecorso = rs.getString("regionecorso");
+                    String sedeprovincia = rs.getString("sedeprovincia");
+                    String sedecomune = rs.getString("sedecomune");
+                    String nomeAteneo = rs.getString("nome");
+                    String gruppodisciplinare = rs.getString("gruppodisciplinare");
+                    String durata = rs.getString("durata");
+                    String nomeclasse = rs.getString("nomeclasse");
+                    String nomecorso = rs.getString("nomecorso");
+                    Corso corso = new Corso(regionecorso, sedeprovincia, sedecomune, nomeAteneo, gruppodisciplinare, durata, nomeclasse, nomecorso);
+                    if(curriculum!=null) {
+                        List<Insegnamento> insegnamenti = trovaInsegnamentiDaIdCorsoCurriculum(idCorso, curriculum);
+                        corso.setCurriculum(curriculum);
+                        corso.setInsegnamenti(insegnamenti);
+                    }
+                    return corso;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "errore durante la ricerca del corso");
+        }
+
+        return null;
+    }
+
+    private List<Insegnamento> trovaInsegnamentiDaIdCorsoCurriculum(Integer idCorso, String curriculum){
+        String query = """
+                SELECT nome, anno, semestre, cfu
+        FROM insegnamenti
+        WHERE id_corso = ?
+        AND (
+                curriculum = ?                              -- caso "solo quel curriculum"
+        OR curriculum LIKE CONCAT('%,', ?, ',%')       -- caso in mezzo
+        OR curriculum LIKE CONCAT(?, ',%')             -- caso all’inizio
+        OR curriculum LIKE CONCAT('%,', ?)             -- caso alla fine
+  );
+        """
+        ;
+        List<Insegnamento> insegnamenti = new ArrayList<>();
+
+        try(PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, idCorso);
+            stmt.setString(2, curriculum);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    String nome = rs.getString("nome");
+                    Integer anno = rs.getInt("anno");
+                    Integer semestre = rs.getInt("semestre");
+                    Integer cfu = rs.getInt("cfu");
+                    insegnamenti.add(new Insegnamento(nome, anno, semestre, cfu));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "errore durante la ricerca dell'insegnamento");
+        }
+        return insegnamenti;
     }
 
 
@@ -70,27 +184,14 @@ public class UtenteDB implements UtenteDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                int id = rs.getInt("id");
                 String utenteUsername = rs.getString("username");
                 String utentePassword = rs.getString("password");
                 boolean iscritto = rs.getBoolean("iscritto");
-                Integer idCorso = rs.getObject("id_corso", Integer.class);
-                String curriculum = rs.getString("curriculum");
-                List<Integer> preferenze = new ArrayList<>();
-
-                if (!iscritto) {
-                    String prefStr = rs.getString(colonnaPreferenze);
-                    if (prefStr != null && !prefStr.isEmpty()) {
-                        preferenze = Arrays.stream(prefStr.split(","))
-                                .map(Integer::parseInt)
-                                .toList();
-                    }
-                }
 
                 if (iscritto) {
-                    utenti.add(new UtenteIscritto(utenteUsername, utentePassword, true, corso, curriculum));
+                    utenti.add(new UtenteIscritto(utenteUsername, utentePassword, true));
                 } else {
-                    utenti.add(new UtenteInCerca(id, utenteUsername, utentePassword, false, preferenze));
+                    utenti.add(new UtenteInCerca(utenteUsername, utentePassword, false));
                 }
             }
 
@@ -145,8 +246,8 @@ public class UtenteDB implements UtenteDAO {
             return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "errore durante l'aggiornamrnto dei preferiti");
+            return false;
         }
-        return null;
     }
 
 

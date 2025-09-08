@@ -2,14 +2,11 @@
 package uniway.beans;
 
 
-import uniway.model.Corso;
-
 public class UtenteBean {
     private String username;
     private String password;
     private boolean iscritto;
-    private Corso corso;
-    private String curriculum;
+    private boolean corsoImpostato;
 
     public UtenteBean(String username, String password, boolean iscritto) {
         this.username = username;
@@ -17,12 +14,11 @@ public class UtenteBean {
         this.iscritto = iscritto;
     }
 
-    public UtenteBean(String username, String password, boolean iscritto, Corso corso, String curriculum) {
+    public UtenteBean(String username, String password, boolean iscritto, boolean corsoImpostato) {
         this.username = username;
         this.password = password;
         this.iscritto = iscritto;
-        this.corso = corso;
-        this.curriculum = curriculum;
+        this.corsoImpostato = corsoImpostato;
     }
 
     public String getUsername() {
@@ -40,19 +36,13 @@ public class UtenteBean {
         return iscritto;
     }
 
-    public void setCorso(Corso corso) {
-        this.corso =corso;
+    public void setCorso(boolean corsoImpostato) {
+        this.corsoImpostato =corsoImpostato;
     }
 
-    public Corso getCorso() {
-        return corso;
+    public boolean getCorso() {
+        return corsoImpostato;
     }
 
-    public void setCurriculum(String curriculum) {
-        this.curriculum = curriculum;
-    }
-    public String getCurriculum() {
-        return curriculum;
-    }
 
 }

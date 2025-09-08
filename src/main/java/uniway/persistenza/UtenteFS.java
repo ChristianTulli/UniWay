@@ -75,7 +75,7 @@ public class UtenteFS implements UtenteDAO {
     private UtenteIscritto creaUtenteIscritto(int id, String username, String password, String[] split) {
         Integer idCorso = (split.length > 4 && !split[4].isEmpty()) ? Integer.parseInt(split[4]) : null;
         String curriculum = (split.length > 5 && !split[5].isEmpty()) ? split[5] : null;
-        return new UtenteIscritto(username, password, true, idCorso, curriculum);
+        return new UtenteIscritto(username, password, true, idCorso);
     }
 
     private UtenteInCerca creaUtenteInCerca(int id, String username, String password, String[] split) {
@@ -85,7 +85,7 @@ public class UtenteFS implements UtenteDAO {
                     .map(Integer::parseInt)
                     .toList();
         }
-        return new UtenteInCerca(id, username, password, false, preferenze);
+        return new UtenteInCerca(username, password, false, preferenze);
     }
 
 

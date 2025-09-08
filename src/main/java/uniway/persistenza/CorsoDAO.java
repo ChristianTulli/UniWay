@@ -136,7 +136,7 @@ public class CorsoDAO {
         return discipline;
     }
 
-    public List<String> getTipologieByDisciplina(String disciplina) {
+    public List<String> getDurateByDisciplina(String disciplina) {
         List<String> tipologie = new ArrayList<>();
         String query = "SELECT DISTINCT durata FROM corsi WHERE gruppodisciplinare = ?";
 
