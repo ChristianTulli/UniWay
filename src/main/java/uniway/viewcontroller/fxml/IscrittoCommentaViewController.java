@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.IscrittoCommentaController;
-import uniway.controller.IscrittoInsegnamentiController;
 import uniway.utils.NavigationManager;
 
 import java.net.URL;

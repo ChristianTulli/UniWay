@@ -87,9 +87,7 @@ public class LogInViewController {
             if (utenteBean.getIscritto()) {
                 if (utenteBean.getCorso()) {
                     // iscritto con corso già impostato
-                    NavigationManager.switchScene(event, FXML_CORSO_ISCRITTO, "UniWay - Insegnamenti",
-                            IscrittoInsegnamentiViewController.class,
-                            c -> c.impostaSchermata(utenteBean));
+                    NavigationManager.switchScene(event, FXML_CORSO_ISCRITTO, "UniWay - Insegnamenti");
                 } else {
                     // iscritto ma deve selezionare il corso
                     NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)");

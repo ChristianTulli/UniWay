@@ -9,18 +9,18 @@ import uniway.persistenza.RecensioneDAO;
 public class IscrittoCommentaController {
 
     private RecensioneDAO recensioneDAO;
-    private IscrittoInsegnamentiController iscrittoInsegnamentiController;
+    private CommentaEValutaInsegnamentoController commentaEValutaInsegnamentoController;
 
     public IscrittoCommentaController() {
             recensioneDAO = PersistenzaController.getInstance().getRecensioneDAO();
     }
 
-    public void setIscrittoVisualizzaInsegnamentiController(IscrittoInsegnamentiController iscrittoInsegnamentiController) {
-        this.iscrittoInsegnamentiController = iscrittoInsegnamentiController;
+    public void setIscrittoVisualizzaInsegnamentiController(CommentaEValutaInsegnamentoController commentaEValutaInsegnamentoController) {
+        this.commentaEValutaInsegnamentoController = commentaEValutaInsegnamentoController;
     }
 
     public void salvaRecensione(UtenteBean utenteBean, InsegnamentoBean insegnamentoBean, String testo, Integer valutazione){
-        Insegnamento insegnamento = iscrittoInsegnamentiController.passaInsegnamento(insegnamentoBean);
+        Insegnamento insegnamento = commentaEValutaInsegnamentoController.passaInsegnamento(insegnamentoBean);
         Recensione recensione= new Recensione(testo, valutazione, utenteBean.getUsername(), insegnamento.getId());
         recensioneDAO.setRecesnione(recensione);
 

@@ -1,6 +1,7 @@
 package uniway.persistenza;
 
 
+import uniway.model.Insegnamento;
 import uniway.model.Recensione;
 
 import java.io.IOException;
@@ -22,23 +23,33 @@ public class RecensioneDB implements RecensioneDAO {
         this.conn = conn;
     }
 
-    public Integer getValutazioneUtente(int idInsegnamento, String usernameUtente) {
-        String query = "SELECT valutazione_generale FROM recensioni WHERE id_insegnamento = ? AND nome_utente = ?";
+    public Integer getValutazioneUtente(Insegnamento insegnamento, String usernameUtente) {
+        String query = """
+        SELECT r.valutazione_generale
+        FROM recensioni r
+        JOIN insegnamenti i ON r.id_insegnamento = i.id_insegnamento
+        WHERE i.nome = ? AND i.anno = ? AND i.semestre = ? AND i.cfu = ? AND r.nome_utente = ?
+    """;
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, idInsegnamento);
-            stmt.setString(2, usernameUtente);
+            stmt.setString(1, insegnamento.getNome());
+            stmt.setInt(2, insegnamento.getAnno());
+            stmt.setInt(3, insegnamento.getSemestre());
+            stmt.setInt(4, insegnamento.getCfu());
+            stmt.setString(5, usernameUtente);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("valutazione_generale");
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, ECCEZIONE, e);
+            LOGGER.log(Level.SEVERE, "Errore nel recupero valutazione", e);
         }
 
-        return null; // Nessuna recensione trovata
+        return null;
     }
+
 
     public void setRecesnione(Recensione recensione) {
         String query = "INSERT INTO recensioni (commento, valutazione_generale, nome_utente, id_insegnamento) VALUES (?, ?, ?, ?)";

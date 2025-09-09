@@ -4,6 +4,7 @@ import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.eccezioni.UtenteNonTrovatoException;
 import uniway.model.Corso;
+import uniway.model.Insegnamento;
 import uniway.model.Utente;
 import uniway.model.UtenteIscritto;
 import uniway.persistenza.CorsoDAO;
@@ -11,6 +12,7 @@ import uniway.persistenza.InsegnamentoDAO;
 import uniway.persistenza.RecensioneDAO;
 import uniway.persistenza.UtenteDAO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -43,12 +45,42 @@ public class CommentaEValutaInsegnamentoController {
     }
 
     public UtenteBean getUtenteBean(){
-        //scrivere logica
+        UtenteBean ub= new UtenteBean();
+        ub.setCurriculum(curriculum);
+        ub.setNomeAteneo(ateneo);
+        ub.setNomeCorso(corso);
+        return ub;
     }
 
-    public List<InsegnamentoBean> getInsegnamentiBean(){
-        //scrivere logica
+    public List<InsegnamentoBean> getInsegnamentiBean() {
+        Utente u = PersistenzaController.getInstance().getCurrentUser();
+        if (!(u instanceof UtenteIscritto ui)) {
+            throw new IllegalStateException("L'utente corrente non è un iscritto");
+        }
+
+        Corso corso = ui.getCorso();
+        if (corso == null || corso.getInsegnamenti() == null) {
+            return List.of(); // nessun insegnamento
+        }
+
+        List<InsegnamentoBean> beans = new ArrayList<>();
+        for (Insegnamento ins : corso.getInsegnamenti()) {
+            InsegnamentoBean bean = new InsegnamentoBean();
+            bean.setNome(ins.getNome());
+            bean.setAnno(ins.getAnno());
+            bean.setSemestre(ins.getSemestre());
+            bean.setCurriculum(ins.getCurriculum());
+            bean.setCfu(ins.getCfu());
+
+            // recupero valutazione dal DAO
+            Integer valutazione = recensioneDAO.getValutazioneUtente(ins, ui.getUsername());
+            bean.setValutazione(valutazione);
+
+            beans.add(bean);
+        }
+        return beans;
     }
+
 
     //sistema di filtri dinamico per la selezione del corso e curriculum di appartenenza:
 
@@ -120,6 +152,7 @@ public class CommentaEValutaInsegnamentoController {
             ui.setCorso(corsoUtente);
             utenteDAO.aggiungiCorsoUtente(ui, corsoUtente);
             p.setCurrentUser(ui);
+            return;
         }
         throw new IllegalStateException("L'utente corrente non è iscritto");
     }

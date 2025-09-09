@@ -11,6 +11,7 @@ public class UtenteBean {
     private String nomeCorso;
     private String nomeAteneo;
 
+    public UtenteBean() {}
     public UtenteBean(String username, String password, boolean iscritto) {
         this.username = username;
         this.password = password;

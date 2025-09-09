@@ -11,7 +11,6 @@ import javafx.scene.text.Text;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.CommentaEValutaInsegnamentoController;
-import uniway.controller.IscrittoInsegnamentiController;
 import uniway.utils.NavigationManager;
 
 import java.net.URL;
@@ -21,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class IscrittoInsegnamentiViewController implements Initializable {
-    private UtenteBean utenteBean;
     private final CommentaEValutaInsegnamentoController commentaEValutaInsegnamentoController = new CommentaEValutaInsegnamentoController();
 
     private static final Logger LOGGER = Logger.getLogger(IscrittoInsegnamentiViewController.class.getName());
@@ -119,11 +117,12 @@ public class IscrittoInsegnamentiViewController implements Initializable {
         alert.showAndWait();
     }
 
-    /** Naviga alla schermata di commento passando tutti i dati necessari */
+    //Naviga alla schermata di commento passando tutti i dati necessari
     private void apriSchermataCommento(InsegnamentoBean insBean) {
         try {
             var stage = (javafx.stage.Stage) tableView.getScene().getWindow();
             NavigationManager.switchScene(stage, FXML_COMMENTA, TITOLO_COMMENTA);
+            //CONTROLLA SE LA SCHERMATA DEI COMMENTI E' DA IMPOSTARE IN QUALCHE MODO
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nell'apertura della visualizzazione del corso", e);
         }
@@ -132,6 +131,7 @@ public class IscrittoInsegnamentiViewController implements Initializable {
 
     /** Logout semplice via NavigationManager */
     public void logOut(ActionEvent event) {
+        commentaEValutaInsegnamentoController.logOut();
         NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
