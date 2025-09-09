@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
 import uniway.controller.LogInController;
-import uniway.controller.PersistenzaController;
 import uniway.eccezioni.UtenteEsistenteException;
 import uniway.eccezioni.UtenteNonTrovatoException;
 import uniway.utils.NavigationManager;
@@ -60,9 +59,7 @@ public class LogInViewController {
     public void onIscrittoButtonClick(ActionEvent event) {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), true);
         if (registra(utenteBean)) {
-            NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)",
-                    IscrittoSelezionaCorsoViewController.class,
-                    c -> c.impostaSchermata(utenteBean));
+            NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)");
         }
     }
 
@@ -95,9 +92,7 @@ public class LogInViewController {
                             c -> c.impostaSchermata(utenteBean));
                 } else {
                     // iscritto ma deve selezionare il corso
-                    NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)",
-                            IscrittoSelezionaCorsoViewController.class,
-                            c -> c.impostaSchermata(utenteBean));
+                    NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)");
                 }
             } else {
                 // utente in cerca

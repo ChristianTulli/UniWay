@@ -10,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
+import uniway.controller.CommentaEValutaInsegnamentoController;
 import uniway.controller.IscrittoInsegnamentiController;
 import uniway.utils.NavigationManager;
 
@@ -21,11 +22,9 @@ import java.util.logging.Logger;
 
 public class IscrittoInsegnamentiViewController implements Initializable {
     private UtenteBean utenteBean;
-    private final IscrittoInsegnamentiController iscrittoInsegnamentiController =
-            new IscrittoInsegnamentiController();
+    private final CommentaEValutaInsegnamentoController commentaEValutaInsegnamentoController = new CommentaEValutaInsegnamentoController();
 
-    private static final Logger LOGGER =
-            Logger.getLogger(IscrittoInsegnamentiViewController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(IscrittoInsegnamentiViewController.class.getName());
 
     // destinazioni
     private static final String FXML_COMMENTA = "/view/IscrittoCommentaUI.fxml";
@@ -46,6 +45,17 @@ public class IscrittoInsegnamentiViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        UtenteBean ub = commentaEValutaInsegnamentoController.getUtenteBean();
+        // popola la tabella insegnamenti
+        List<InsegnamentoBean> lista = commentaEValutaInsegnamentoController.getInsegnamentiBean();
+        ObservableList<InsegnamentoBean> listaInsegnamenti = FXCollections.observableArrayList(lista);
+        tableView.setItems(listaInsegnamenti);
+
+        // etichette corso/curriculum/ateneo
+        curriculumLabel.setText(ub.getCurriculum());
+        corsoLabel.setText(ub.getNomeCorso());
+        ateneoLabel.setText(ub.getNomeAteneo());
+
         configuraColonne();
         configuraInsegnamentoCellFactory();
         configuraRowFactory();
@@ -113,39 +123,12 @@ public class IscrittoInsegnamentiViewController implements Initializable {
     private void apriSchermataCommento(InsegnamentoBean insBean) {
         try {
             var stage = (javafx.stage.Stage) tableView.getScene().getWindow();
-            NavigationManager.switchScene(
-                    stage,
-                    FXML_COMMENTA,
-                    TITOLO_COMMENTA,
-                    IscrittoCommentaViewController.class,
-                    c -> c.impostaSchermata(
-                            utenteBean,
-                            iscrittoInsegnamentiController.getCorso(utenteBean.getCorso()),
-                            iscrittoInsegnamentiController.getAteneo(utenteBean.getCorso()),
-                            insBean,
-                            iscrittoInsegnamentiController
-                    )
-            );
+            NavigationManager.switchScene(stage, FXML_COMMENTA, TITOLO_COMMENTA);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nell'apertura della visualizzazione del corso", e);
         }
     }
 
-    /** Invocata dalla schermata precedente per inizializzare la view con l’utente */
-    public void impostaSchermata(UtenteBean utenteBean) {
-        this.utenteBean = utenteBean;
-
-        // popola la tabella insegnamenti
-        List<InsegnamentoBean> lista = iscrittoInsegnamentiController.getInsegnamenti(
-                utenteBean.getCorso(), utenteBean.getCurriculum(), utenteBean.getUsername());
-        ObservableList<InsegnamentoBean> listaInsegnamenti = FXCollections.observableArrayList(lista);
-        tableView.setItems(listaInsegnamenti);
-
-        // etichette corso/curriculum/ateneo
-        curriculumLabel.setText(utenteBean.getCurriculum());
-        corsoLabel.setText(iscrittoInsegnamentiController.getCorso(utenteBean.getCorso()));
-        ateneoLabel.setText(iscrittoInsegnamentiController.getAteneo(utenteBean.getCorso()));
-    }
 
     /** Logout semplice via NavigationManager */
     public void logOut(ActionEvent event) {

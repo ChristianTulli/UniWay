@@ -347,12 +347,19 @@ public class CorsoDAO {
         return risultati;
     }
 
-    public List<String> getCurriculum(Integer idCorso) {
+    public List<String> getCurriculum(String nomecorso, String nomeAteneo) {
         List<String> curriculum = new ArrayList<>();
-        String query = "SELECT curriculum FROM corsi WHERE id = ?";
+        String query ="""
+            SELECT c.curriculum
+            FROM corsi c
+            JOIN atenei a ON a.id = c.idateneo
+            WHERE c.nomecorso = ?
+              AND a.nome = ?
+        """;
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, idCorso);
+            stmt.setString(1, nomecorso);
+            stmt.setString(2, nomeAteneo);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {

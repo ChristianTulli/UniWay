@@ -48,7 +48,7 @@ public class IscrittoSelezionaCorsoViewCLI {
         String corsoSelezionato = filtra("Corso di Laurea", risultati);
         if (corsoSelezionato == null) return;
 
-        controller.setCorsoUtente(utenteBean);
+        controller.setCorsoUtente();
 
         gestisciCurriculum(corsoSelezionato, utenteBean);
 

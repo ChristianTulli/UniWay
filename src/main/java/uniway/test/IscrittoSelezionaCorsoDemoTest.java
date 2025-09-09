@@ -71,7 +71,7 @@ public class IscrittoSelezionaCorsoDemoTest {
         assertTrue(curriculum.contains("Sistemi software e Web"), "Sistemi software e Web non trovato tra " + curriculum);
 
         c.setCurriculum("Sistemi software e Web");
-        c.setCorsoUtente(utenteBean);
+        c.setCorsoUtente();
 
         System.out.println("Corso selezionato: \n Universita' degli studi di Roma Tor Vergata \n Ingegneria dell'informazione \n Sistemi software e Web");
     }

@@ -5,7 +5,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import uniway.beans.UtenteBean;
 import uniway.controller.CommentaEValutaInsegnamentoController;
 import uniway.utils.NavigationManager;
 
@@ -17,24 +16,17 @@ import java.util.logging.Logger;
 
 public class IscrittoSelezionaCorsoViewController implements Initializable {
 
-    private final CommentaEValutaInsegnamentoController commentaEValutaInsegnamentoController =
-            new CommentaEValutaInsegnamentoController();
-
-    private UtenteBean utenteBean;
+    private final CommentaEValutaInsegnamentoController commentaEValutaInsegnamentoController = new CommentaEValutaInsegnamentoController();
 
     // destinazioni
     private static final String FXML_INSEGNAMENTI = "/view/IscrittoInsegnamentiUI.fxml";
     private static final String FXML_LOGIN        = "/view/LogInUI.fxml";
-
     private static final String TITOLO_INSEGNAMENTI = "UniWay - Insegnamenti (Iscritto)";
     private static final String TITOLO_LOGIN        = "UniWay - Login";
 
     private static final Logger LOGGER =
             Logger.getLogger(IscrittoSelezionaCorsoViewController.class.getName());
 
-    public void impostaSchermata(UtenteBean utenteBean) {
-        this.utenteBean = utenteBean;
-    }
 
     @FXML private ComboBox<String> regione;
     @FXML private ComboBox<String> provincia;
@@ -146,12 +138,10 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     }
 
     private void quandoCorsoSelezionato(String corsoSelezionatoNuovo) {
-        if (corsoSelezionatoNuovo == null) return;
-
         List<String> curricula = commentaEValutaInsegnamentoController.getCurriculumPerCorso(corsoSelezionatoNuovo);
 
         if (curricula == null || curricula.isEmpty()) {
-            impostaSoloCorso(corsoSelezionatoNuovo);
+            commentaEValutaInsegnamentoController.setCorsoUtente();
             aggiornaLabelSoloCorso(corsoSelezionatoNuovo);
             vaiAInterfacciaCommenti(); // navigazione centralizzata
             return;
@@ -159,7 +149,8 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
 
         if (curricula.size() == 1) {
             String unico = curricula.getFirst();
-            impostaCorsoECurriculum(corsoSelezionatoNuovo, unico);
+            commentaEValutaInsegnamentoController.setCurriculum(unico);
+            commentaEValutaInsegnamentoController.setCorsoUtente();
             aggiornaLabelCorsoECurriculum(corsoSelezionatoNuovo, unico);
             vaiAInterfacciaCommenti();
             return;
@@ -175,19 +166,11 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
         dialog.setContentText("Scegli curriculum:");
 
         dialog.showAndWait().ifPresent(curr -> {
-            impostaCorsoECurriculum(corso, curr);
+            commentaEValutaInsegnamentoController.setCurriculum(curr);
+            commentaEValutaInsegnamentoController.setCorsoUtente();
             aggiornaLabelCorsoECurriculum(corso, curr);
             vaiAInterfacciaCommenti();
         });
-    }
-
-    private void impostaSoloCorso(String corso) {
-        commentaEValutaInsegnamentoController.setCorsoUtente(utenteBean);
-    }
-
-    private void impostaCorsoECurriculum(String corso, String curriculum) {
-        commentaEValutaInsegnamentoController.setCorsoUtente(utenteBean);
-        commentaEValutaInsegnamentoController.setCurriculum(curriculum);
     }
 
     private void aggiornaLabelSoloCorso(String corso) {
@@ -203,15 +186,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
         try {
             // ottieni lo Stage dalla view
             javafx.stage.Stage stage = (javafx.stage.Stage) listView.getScene().getWindow();
-
-            // naviga passando l'UtenteBean al controller successivo
-            uniway.utils.NavigationManager.switchScene(
-                    stage,
-                    FXML_INSEGNAMENTI,
-                    TITOLO_INSEGNAMENTI,
-                    uniway.viewcontroller.fxml.IscrittoInsegnamentiViewController.class,
-                    c -> c.impostaSchermata(utenteBean)
-            );
+            uniway.utils.NavigationManager.switchScene(stage, FXML_INSEGNAMENTI, TITOLO_INSEGNAMENTI);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nel passaggio alla schermata Insegnamenti", e);
         }
@@ -221,6 +196,7 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
     /** Logout → torna al login con NavigationManager */
     @FXML
     public void logOut(ActionEvent event) {
+        commentaEValutaInsegnamentoController.logOut();
         NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }

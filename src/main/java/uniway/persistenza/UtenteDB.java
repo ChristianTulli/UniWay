@@ -203,15 +203,29 @@ public class UtenteDB implements UtenteDAO {
     }
 
     @Override
-    public void aggiungiCorsoUtente(String usernameUtente, Integer idCorso) {
-        String query = "UPDATE utenti SET id_corso = ? WHERE username = ?";
+    public void aggiungiCorsoUtente(Utente u, Corso c) {
+        String usernameUtente=u.getUsername();
+        String nomeCorso=c.getNomeCorso();
+        String nomeAteneo=c.getAteneo();
+        String curriculum=c.getCurriculum();
+
+        String query = """
+                UPDATE utenti u
+        JOIN corsi c   ON c.nomecorso = ?
+        JOIN atenei a  ON a.idAteneo = c.idAteneo AND a.nome = ?
+        SET u.id_corso = c.idCorso,
+                u.curriculum = ?
+        WHERE u.username = ?
+        """;
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, idCorso);
-            stmt.setString(2, usernameUtente);
+            stmt.setString(1, nomeCorso);
+            stmt.setString(2, nomeAteneo);
+            stmt.setString(3, curriculum);
+            stmt.setString(4, usernameUtente);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "errore durante l'aggiornamento del corso'");
+            LOGGER.log(Level.SEVERE, "errore durante l'inserimento del corso");
         }
     }
 

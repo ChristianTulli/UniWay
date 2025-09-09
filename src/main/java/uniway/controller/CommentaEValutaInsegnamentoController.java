@@ -1,7 +1,11 @@
 package uniway.controller;
 
+import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
+import uniway.eccezioni.UtenteNonTrovatoException;
 import uniway.model.Corso;
+import uniway.model.Utente;
+import uniway.model.UtenteIscritto;
 import uniway.persistenza.CorsoDAO;
 import uniway.persistenza.InsegnamentoDAO;
 import uniway.persistenza.RecensioneDAO;
@@ -9,13 +13,11 @@ import uniway.persistenza.UtenteDAO;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CommentaEValutaInsegnamentoController {
 
     private static final Logger LOGGER = Logger.getLogger(CommentaEValutaInsegnamentoController.class.getName());
-    private final PersistenzaController persistenzaController = PersistenzaController.getInstance(); // Otteniamo il Singleton
     private final CorsoDAO corsoDAO;
     private final InsegnamentoDAO insegnamentoDAO;
     private final UtenteDAO utenteDAO;
@@ -28,7 +30,7 @@ public class CommentaEValutaInsegnamentoController {
     private String durata;
     private String classe;
     private String corso;
-    private String curriculum;
+    private String curriculum=null;
     private Corso corsoUtente;
 
 
@@ -40,6 +42,14 @@ public class CommentaEValutaInsegnamentoController {
         recensioneDAO=persistenzaController.getRecensioneDAO();
     }
 
+    public UtenteBean getUtenteBean(){
+        //scrivere logica
+    }
+
+    public List<InsegnamentoBean> getInsegnamentiBean(){
+        //scrivere logica
+    }
+
     //sistema di filtri dinamico per la selezione del corso e curriculum di appartenenza:
 
     public List<String> getRegioni() {
@@ -49,13 +59,13 @@ public class CommentaEValutaInsegnamentoController {
     public List<String> getProvince(String regioneselezionata) {
         Objects.requireNonNull(regioneselezionata);
         this.regione=regioneselezionata;
-        return corsoDAO.getProvinceByRegione(regioneselezionata);
+        return corsoDAO.getProvinceByRegione(regione);
     }
 
     public List<String> getComuni(String provinciaselezionata) {
         Objects.requireNonNull(provinciaselezionata);
         this.provincia=provinciaselezionata;
-        return corsoDAO.getComuniByProvincia(provinciaselezionata);
+        return corsoDAO.getComuniByProvincia(provincia);
     }
 
     public List<String> getAtenei(String comuneselezionato) {
@@ -85,30 +95,39 @@ public class CommentaEValutaInsegnamentoController {
     public List<String> getRisultati(String classeselezionata) {
         Objects.requireNonNull(classeselezionata);
         this.classe=classeselezionata;
-        return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, durata, classeselezionata);
+        return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, durata, classe);
     }
 
     public List<String> getCurriculumPerCorso(String corsoSelezionato) {
         Objects.requireNonNull(corsoSelezionato);
         this.corso = corsoSelezionato;
-        Integer idCorso = corsoDAO.getIdCorsoByNome(comune, ateneo, durata, corso);
-        return corsoDAO.getCurriculum(idCorso);
+        return corsoDAO.getCurriculum(corso, ateneo);
     }
 
     public void setCurriculum(String curriculumSelezionato) {
-        Objects.requireNonNull(curriculumSelezionato);
         this.curriculum = curriculumSelezionato;
     }
 
-    public void setCorsoUtente(UtenteBean utenteBean) {
+    public void setCorsoUtente() {
         this.corsoUtente = new Corso(regione, provincia, comune, ateneo, disciplina, durata, classe, corso);
-
-        utenteBean.setCorso(idCorso);
-        try {
-            persistenzaController.getUtenteDAO().aggiungiCorsoUtente(utenteBean.getUsername(), idCorso);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Errore durante l'inserimento del corso", e);
+        this.corsoUtente.setCurriculum(curriculum);
+        PersistenzaController p = PersistenzaController.getInstance();
+        Utente u = p.getCurrentUser();
+        if (u==null){
+            throw new UtenteNonTrovatoException("Nessun utente in sessione");
         }
+        if(u instanceof UtenteIscritto ui) {
+            ui.setCorso(corsoUtente);
+            utenteDAO.aggiungiCorsoUtente(ui, corsoUtente);
+            p.setCurrentUser(ui);
+        }
+        throw new IllegalStateException("L'utente corrente non è iscritto");
     }
+
+    public void logOut(){
+        PersistenzaController p = PersistenzaController.getInstance();
+        p.logout();
+    }
+
 
 }

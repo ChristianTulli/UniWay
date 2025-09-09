@@ -1,5 +1,6 @@
 package uniway.persistenza;
 
+import uniway.model.Corso;
 import uniway.model.Utente;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface UtenteDAO {
 
      Utente trovaDaUsername(String username);
 
-     void aggiungiCorsoUtente(String username, Integer idCorso);
+     void aggiungiCorsoUtente(Utente utente, Corso corso);
 
      Boolean aggiungiPreferitiUtente(String username, Integer idPreferiti);
 
