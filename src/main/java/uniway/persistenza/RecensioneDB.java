@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//PRODUCT
 public class RecensioneDB implements RecensioneDAO {
     private static final Logger LOGGER = Logger.getLogger(RecensioneDB.class.getName());
     private final Connection conn;

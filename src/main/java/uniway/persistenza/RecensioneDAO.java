@@ -6,6 +6,7 @@ import uniway.model.Recensione;
 
 import java.util.List;
 
+//ABSTRACT PRODUCT
 public interface RecensioneDAO {
     Integer getValutazioneUtente(Insegnamento insegnamento, String usernameUtente);
 

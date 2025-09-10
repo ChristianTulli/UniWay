@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 
 public class InCercaConfrontaCorsoController {
     private static final Logger LOGGER = Logger.getLogger(InCercaConfrontaCorsoController.class.getName());
-    private final CorsoDAO corsoDAO = new CorsoDAO();
-    private final InsegnamentoDAO insegnamentoDAO = new InsegnamentoDAO();
+    private final CorsoDAO corsoDAO = SessioneControllerSingleton.getInstance().getCorsoDAO();
+    private final InsegnamentoDAO insegnamentoDAO = SessioneControllerSingleton.getInstance().getInsegnamentoDAO();
     private final SessioneControllerSingleton sessioneControllerSingleton = SessioneControllerSingleton.getInstance();
 
     public List<InsegnamentoBean> getInsegnamenti(String nomeCorso, String nomeAteneo) {

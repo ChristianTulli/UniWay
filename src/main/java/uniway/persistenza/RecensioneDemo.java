@@ -5,6 +5,7 @@ import uniway.model.Recensione;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+//PRODUCT
 public class RecensioneDemo implements RecensioneDAO {
 
     // Mappa: idInsegnamento -> (nomeUtente -> Recensione)

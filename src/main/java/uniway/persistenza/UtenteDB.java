@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//PRODUCT
 public class UtenteDB implements UtenteDAO {
     private static final Logger LOGGER = Logger.getLogger(UtenteDB.class.getName());
     private final Connection conn;

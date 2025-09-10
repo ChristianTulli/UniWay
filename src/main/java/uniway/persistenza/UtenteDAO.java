@@ -5,6 +5,7 @@ import uniway.model.Utente;
 
 import java.util.List;
 
+//ABSTRACT PRODUCT
 public interface UtenteDAO {
      void salvaUtente(Utente utente);
 

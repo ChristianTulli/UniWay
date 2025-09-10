@@ -7,6 +7,7 @@ import uniway.model.UtenteIscritto;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//PRODUCT
 public class UtenteDemo implements UtenteDAO {
 
     private final List<Utente> utenti = new ArrayList<>();

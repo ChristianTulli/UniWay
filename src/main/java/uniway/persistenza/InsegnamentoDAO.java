@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//PRODUCT
 public class InsegnamentoDAO {
 
     private final Connection conn;
     private static final Logger LOGGER = Logger.getLogger(InsegnamentoDAO.class.getName());
 
-    public InsegnamentoDAO() {
-        this.conn = SessioneControllerSingleton.getInstance().getConnessione();
+    public InsegnamentoDAO(Connection conn) {
+        this.conn = conn;
     }
 
     public void getInsegnamentiFromDB(String nomeCorso, String nomeAteneo, List<Insegnamento> insegnamenti) {

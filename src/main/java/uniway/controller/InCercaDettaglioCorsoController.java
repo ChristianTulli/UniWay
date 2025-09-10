@@ -20,8 +20,8 @@ public class InCercaDettaglioCorsoController {
     private List<Insegnamento> insegnamenti=new ArrayList<>();
 
     public InCercaDettaglioCorsoController(){
-        corsoDAO = new CorsoDAO();
-        insegnamentoDAO = new InsegnamentoDAO();
+        corsoDAO = sessioneControllerSingleton.getCorsoDAO();
+        insegnamentoDAO = sessioneControllerSingleton.getInsegnamentoDAO();
     }
 
     public List<InsegnamentoBean> getInsegnamenti(String corsoCorrente, String ateneoCorrente) {

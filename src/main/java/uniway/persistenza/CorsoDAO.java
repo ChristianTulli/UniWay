@@ -15,8 +15,9 @@ public class CorsoDAO {
     private String eccezione = "problema nella comunicazione col database";
     private String nomecorso = "nomecorso";
 
-    public CorsoDAO() {
-        this.conn = SessioneControllerSingleton.getInstance().getConnessione();
+    //PRODUCT
+    public CorsoDAO(Connection conn) {
+        this.conn = conn;
     }
 
     public List<String> getAllRegioni() {
