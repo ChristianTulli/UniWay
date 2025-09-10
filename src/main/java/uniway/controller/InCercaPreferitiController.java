@@ -1,5 +1,6 @@
 package uniway.controller;
 
+import uniway.patterns.SessioneControllerSingleton;
 import uniway.persistenza.CorsoDAO;
 
 import java.io.IOException;
@@ -8,11 +9,11 @@ import java.util.List;
 
 public class InCercaPreferitiController {
 
-    private final PersistenzaController persistenzaController = PersistenzaController.getInstance();
+    private final SessioneControllerSingleton sessioneControllerSingleton = SessioneControllerSingleton.getInstance();
     private final CorsoDAO corsoDAO = new CorsoDAO();
 
     public List<String> getPreferiti(String username) throws IOException {
-        List<Integer> idPreferiti = persistenzaController.getUtenteDAO().getPreferitiUtente(username);
+        List<Integer> idPreferiti = sessioneControllerSingleton.getUtenteDAO().getPreferitiUtente(username);
         List<String> descrizioni = new ArrayList<>();
 
         for (Integer id : idPreferiti) {
@@ -31,7 +32,7 @@ public class InCercaPreferitiController {
                 corso.split(" - ")[1], // nome ateneo
                 corso.split(" - ")[0]  // nome corso
         );
-        persistenzaController.getUtenteDAO().rimuoviPreferitoUtente(username, idCorso);
+        sessioneControllerSingleton.getUtenteDAO().rimuoviPreferitoUtente(username, idCorso);
     }
 
 }

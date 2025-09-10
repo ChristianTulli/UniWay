@@ -1,6 +1,6 @@
 package uniway.persistenza;
 
-import uniway.controller.PersistenzaController;
+import uniway.patterns.SessioneControllerSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class CorsoDAO {
     private String nomecorso = "nomecorso";
 
     public CorsoDAO() {
-        this.conn = PersistenzaController.getInstance().getConnessione();
+        this.conn = SessioneControllerSingleton.getInstance().getConnessione();
     }
 
     public List<String> getAllRegioni() {

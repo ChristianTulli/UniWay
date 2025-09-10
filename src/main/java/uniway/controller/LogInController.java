@@ -6,6 +6,7 @@ import uniway.eccezioni.UtenteNonTrovatoException;
 import uniway.model.Utente;
 import uniway.model.UtenteInCerca;
 import uniway.model.UtenteIscritto;
+import uniway.patterns.SessioneControllerSingleton;
 import uniway.persistenza.UtenteDAO;
 
 
@@ -14,8 +15,8 @@ public class LogInController {
     private UtenteDAO utenteDAO;
 
     public LogInController() {
-        PersistenzaController persistenzaController = PersistenzaController.getInstance();
-        this.utenteDAO = persistenzaController.getUtenteDAO();
+        SessioneControllerSingleton sessioneControllerSingleton = SessioneControllerSingleton.getInstance();
+        this.utenteDAO = sessioneControllerSingleton.getUtenteDAO();
     }
 
     //per la registrazione controlliamo se i dati inseriti momentaneamente nella classe bean sono accettabili e istanziamo un oggetto user in caso positivo, confermando la registrazione
@@ -36,7 +37,7 @@ public class LogInController {
             utente = new UtenteInCerca(utenteBean.getUsername(), utenteBean.getPassword(), utenteBean.getIscritto());
         }
         utenteDAO.salvaUtente(utente);
-        PersistenzaController.getInstance().setCurrentUser(utente);
+        SessioneControllerSingleton.getInstance().setCurrentUser(utente);
         return true;
     }
 
@@ -51,14 +52,14 @@ public class LogInController {
         if (utente.getPassword().equals(password)) {
             if (utente instanceof UtenteIscritto utenteIscritto) {
                 if(utenteIscritto.getCorso()!=null) {
-                    PersistenzaController.getInstance().setCurrentUser(utenteIscritto);//imposa utente attivo nella sessione
+                    SessioneControllerSingleton.getInstance().setCurrentUser(utenteIscritto);//imposa utente attivo nella sessione
                     return new UtenteBean(utenteIscritto.getUsername(), utenteIscritto.getPassword(), true, true);
                 }else{
-                    PersistenzaController.getInstance().setCurrentUser(utenteIscritto);//imposa utente attivo nella sessione
+                    SessioneControllerSingleton.getInstance().setCurrentUser(utenteIscritto);//imposa utente attivo nella sessione
                     return new UtenteBean(utente.getUsername(), utente.getPassword(), true, false);
                 }
             } else if (utente instanceof UtenteInCerca utenteInCerca) {
-                PersistenzaController.getInstance().setCurrentUser(utenteInCerca);//imposa utente attivo nella sessione
+                SessioneControllerSingleton.getInstance().setCurrentUser(utenteInCerca);//imposa utente attivo nella sessione
                 return new UtenteBean(utenteInCerca.getUsername(), utenteInCerca.getPassword(), false);
             }
         }

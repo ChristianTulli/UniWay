@@ -1,5 +1,6 @@
 package uniway.persistenza;
 
+import uniway.eccezioni.RecensioneNonSalvataException;
 import uniway.model.Insegnamento;
 import uniway.model.Recensione;
 
@@ -8,7 +9,7 @@ import java.util.List;
 public interface RecensioneDAO {
     Integer getValutazioneUtente(Insegnamento insegnamento, String usernameUtente);
 
-    void setRecesnione(Recensione recensione);
+    void setRecensione(Recensione recensione) throws RecensioneNonSalvataException;
 
     List<Recensione> getRecensioniByInsegnamento(Integer idInsegnamento);
 

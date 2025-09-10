@@ -1,4 +1,4 @@
-package uniway.utils;
+package uniway.patterns;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -13,12 +13,12 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class NavigationManager {
+public final class NavigationManagerFacade {
 
-    private NavigationManager() {}
+    private NavigationManagerFacade() {}
 
     private static final Logger LOGGER =
-            Logger.getLogger(NavigationManager.class.getName());
+            Logger.getLogger(NavigationManagerFacade.class.getName());
     private static final String ERR = "Errore nel cambio scena. FXML: ";
     private static final double WIDTH = 1600;
     private static final double HEIGHT = 900;
@@ -26,7 +26,7 @@ public final class NavigationManager {
     /* ====== SCENE (Stage già noto) ====== */
     public static void switchScene(Stage stage, String fxmlPath, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(NavigationManager.class.getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(NavigationManagerFacade.class.getResource(fxmlPath));
             Parent root = loader.load();
             stage.setScene(new Scene(root, WIDTH, HEIGHT));
             stage.setTitle(title);
@@ -42,7 +42,7 @@ public final class NavigationManager {
     public static <C> void switchScene(Stage stage, String fxmlPath, String title,
                                        Class<C> controllerType, Consumer<C> initializer) {
         try {
-            FXMLLoader loader = new FXMLLoader(NavigationManager.class.getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(NavigationManagerFacade.class.getResource(fxmlPath));
             Parent root = loader.load();
 
             if (controllerType != null && initializer != null) {
@@ -84,7 +84,7 @@ public final class NavigationManager {
     public static <C> void switchPane(String fxmlPath, Node anyNodeInsideScene,
                                       Class<C> controllerType, Consumer<C> initializer) {
         try {
-            FXMLLoader loader = new FXMLLoader(NavigationManager.class.getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(NavigationManagerFacade.class.getResource(fxmlPath));
             Parent newContent = loader.load();
 
             if (controllerType != null && initializer != null) {

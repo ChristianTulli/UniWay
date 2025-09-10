@@ -2,6 +2,7 @@ package uniway.controller;
 
 import uniway.beans.RecensioneBean;
 import uniway.model.Recensione;
+import uniway.patterns.SessioneControllerSingleton;
 import uniway.persistenza.RecensioneDAO;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class InCercaRecensioneController {
     private final RecensioneDAO recensioneDAO;
 
     public InCercaRecensioneController() {
-        this.recensioneDAO = PersistenzaController.getInstance().getRecensioneDAO();
+        this.recensioneDAO = SessioneControllerSingleton.getInstance().getRecensioneDAO();
     }
 
     public List<RecensioneBean> getRecensioni(int idInsegnamento) {
@@ -26,7 +27,6 @@ public class InCercaRecensioneController {
                 bean.setNome(rec.getNomeUtente());
                 bean.setCommento(rec.getCommento());
                 bean.setValutazione(rec.getValutazione());
-                bean.setData(rec.getData());
                 recensioniBean.add(bean);
             }
             return recensioniBean;

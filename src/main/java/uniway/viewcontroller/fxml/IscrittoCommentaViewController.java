@@ -8,8 +8,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
-import uniway.controller.IscrittoCommentaController;
-import uniway.utils.NavigationManager;
+import uniway.controller.CommentaEValutaInsegnamentoController;
+import uniway.eccezioni.RecensioneNonSalvataException;
+import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
 import java.util.Objects;
@@ -19,9 +20,9 @@ import java.util.logging.Logger;
 
 public class IscrittoCommentaViewController implements Initializable {
 
-    private UtenteBean utenteBean;
     private InsegnamentoBean insegnamentoBean;
-    private final IscrittoCommentaController iscrittoCommentaController = new IscrittoCommentaController();
+    private UtenteBean utenteBean;
+    private final CommentaEValutaInsegnamentoController commentaEValutaInsegnamentoController= new CommentaEValutaInsegnamentoController();
     private int valutazioneSelezionata = 0;
     private static final Logger LOGGER = Logger.getLogger(IscrittoCommentaViewController.class.getName());
 
@@ -52,34 +53,13 @@ public class IscrittoCommentaViewController implements Initializable {
         star4.setOnMouseClicked(e -> aggiornaStelle(4));
         star5.setOnMouseClicked(e -> aggiornaStelle(5));
         commentoArea.textProperty().addListener((obs, oldText, newText) -> aggiornaStatoPulsante());
-    }
-
-    public void setUtenteBean(UtenteBean utenteBean) {
-        this.utenteBean = utenteBean;
+        //GUARDA L'INITIALIZE DI ISCRITTOINSEGNAMENTIVIEWCONTROLLER PER IMPOSTARE LE ETICHETTE INVECE DI TUTTI I METODI QUI SOTTO
+        utenteBean = commentaEValutaInsegnamentoController.getUtenteBean();
         curriculumLabel.setText(utenteBean.getCurriculum());
-    }
-
-    public void setCorso(String nomeCorso, String nomeAteneo){
-        corsoLabel.setText(nomeCorso);
-        ateneoLabel.setText(nomeAteneo);
-    }
-
-    public void setInsegnamentoBean(InsegnamentoBean insegnamentoBean) {
-        this.insegnamentoBean = insegnamentoBean;
+        corsoLabel.setText(utenteBean.getNomeCorso());
+        ateneoLabel.setText(utenteBean.getNomeAteneo());
         insegnamentoLabel.setText(insegnamentoBean.getNome());
-    }
 
-    public void setIscrittoVisualizzaInsegnamentiController(IscrittoInsegnamentiController iscrittoInsegnamentiController){
-        iscrittoCommentaController.setIscrittoVisualizzaInsegnamentiController(iscrittoInsegnamentiController);
-    }
-
-    public void impostaSchermata(UtenteBean utenteBean, String nomeCorso, String nomeAteneo,
-                                 InsegnamentoBean insegnamentoBean,
-                                 IscrittoInsegnamentiController iscrittoInsegnamentiController){
-        setUtenteBean(utenteBean);
-        setCorso(nomeCorso,nomeAteneo);
-        setInsegnamentoBean(insegnamentoBean);
-        setIscrittoVisualizzaInsegnamentiController(iscrittoInsegnamentiController);
     }
 
     private void aggiornaStelle(int valore) {
@@ -103,35 +83,40 @@ public class IscrittoCommentaViewController implements Initializable {
 
     @FXML
     private void salvaRecensione(ActionEvent event) {
-        iscrittoCommentaController.salvaRecensione(utenteBean, insegnamentoBean, commentoArea.getText(), valutazioneSelezionata);
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Recensione salvata");
         alert.setHeaderText(null);
+        try {
+            commentaEValutaInsegnamentoController.recensisciInsegnamento(utenteBean, insegnamentoBean, commentoArea.getText(), valutazioneSelezionata);
+        }catch (RecensioneNonSalvataException e) {
+            alert.setContentText("e");
+            alert.showAndWait();
+            goBack(); // torna alla lista insegnamenti
+            return;
+        }
         alert.setContentText("La tua recensione è stata registrata con successo!");
         alert.showAndWait();
-
         goBack(); // torna alla lista insegnamenti
     }
 
-    /** Torna alla schermata degli insegnamenti passando l'utente */
+    public void impostaSchermata(InsegnamentoBean insegnamentoBean){
+        this.insegnamentoBean = insegnamentoBean;
+    }
+
+    //Torna alla schermata degli insegnamenti passando l'utente
     public void goBack() {
         try {
             var stage = (javafx.stage.Stage) commentoArea.getScene().getWindow();
-            NavigationManager.switchScene(
-                    stage,
-                    FXML_INSEGNAMENTI,
-                    TITOLO_INSEGNAMENTI,
-                    IscrittoInsegnamentiViewController.class,
-                    c -> c.impostaSchermata(utenteBean)
-            );
+            NavigationManagerFacade.switchScene(stage, FXML_INSEGNAMENTI, TITOLO_INSEGNAMENTI);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nell'apertura della schermata della lista dei corsi", e);
         }
     }
 
     public void logOut(ActionEvent event) {
-        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
+        commentaEValutaInsegnamentoController.logOut();
+        NavigationManagerFacade.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 

@@ -3,6 +3,7 @@ package uniway.controller;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.model.Insegnamento;
+import uniway.patterns.SessioneControllerSingleton;
 import uniway.persistenza.CorsoDAO;
 import uniway.persistenza.InsegnamentoDAO;
 
@@ -15,7 +16,7 @@ public class InCercaConfrontaCorsoController {
     private static final Logger LOGGER = Logger.getLogger(InCercaConfrontaCorsoController.class.getName());
     private final CorsoDAO corsoDAO = new CorsoDAO();
     private final InsegnamentoDAO insegnamentoDAO = new InsegnamentoDAO();
-    private final PersistenzaController persistenzaController = PersistenzaController.getInstance();
+    private final SessioneControllerSingleton sessioneControllerSingleton = SessioneControllerSingleton.getInstance();
 
     public List<InsegnamentoBean> getInsegnamenti(String nomeCorso, String nomeAteneo) {
         List<Insegnamento> insegnamenti = new ArrayList<>();
@@ -38,7 +39,7 @@ public class InCercaConfrontaCorsoController {
     public Boolean aggiungiAiPreferiti(UtenteBean utenteBean, String nomeCorso, String nomeAteneo) {
         try {
             Integer idCorso = corsoDAO.getIdCorsoByNomeAndAteneo(nomeAteneo, nomeCorso);
-            return persistenzaController.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
+            return sessioneControllerSingleton.getUtenteDAO().aggiungiPreferitiUtente(utenteBean.getUsername(), idCorso);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore durante l'aggiunta ai preferiti", e);
             return false;

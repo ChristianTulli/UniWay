@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import uniway.controller.CommentaEValutaInsegnamentoController;
-import uniway.utils.NavigationManager;
+import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
 import java.util.List;
@@ -186,18 +186,18 @@ public class IscrittoSelezionaCorsoViewController implements Initializable {
         try {
             // ottieni lo Stage dalla view
             javafx.stage.Stage stage = (javafx.stage.Stage) listView.getScene().getWindow();
-            uniway.utils.NavigationManager.switchScene(stage, FXML_INSEGNAMENTI, TITOLO_INSEGNAMENTI);
+            NavigationManagerFacade.switchScene(stage, FXML_INSEGNAMENTI, TITOLO_INSEGNAMENTI);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nel passaggio alla schermata Insegnamenti", e);
         }
     }
 
 
-    /** Logout → torna al login con NavigationManager */
+    /** Logout → torna al login con NavigationManagerFacade */
     @FXML
     public void logOut(ActionEvent event) {
         commentaEValutaInsegnamentoController.logOut();
-        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
+        NavigationManagerFacade.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 

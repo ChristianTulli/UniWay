@@ -1,6 +1,6 @@
 package uniway.persistenza;
 
-import uniway.controller.PersistenzaController;
+import uniway.patterns.SessioneControllerSingleton;
 import uniway.model.Insegnamento;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ public class InsegnamentoDAO {
     private static final Logger LOGGER = Logger.getLogger(InsegnamentoDAO.class.getName());
 
     public InsegnamentoDAO() {
-        this.conn = PersistenzaController.getInstance().getConnessione();
+        this.conn = SessioneControllerSingleton.getInstance().getConnessione();
     }
 
     public void getInsegnamentiFromDB(String nomeCorso, String nomeAteneo, List<Insegnamento> insegnamenti) {

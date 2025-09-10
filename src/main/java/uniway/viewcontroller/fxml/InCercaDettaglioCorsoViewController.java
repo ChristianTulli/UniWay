@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaDettaglioCorsoController;
-import uniway.utils.NavigationManager;
+import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
 import java.util.List;
@@ -92,7 +92,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     private void apriSchermataConfronto(String corsoSimile) {
         try {
             var stage = (javafx.stage.Stage) listaCorsiSimili.getScene().getWindow();
-            NavigationManager.switchScene(
+            NavigationManagerFacade.switchScene(
                     stage,
                     FXML_CONFRONTO,
                     TITOLO_CONFRONTO,
@@ -124,7 +124,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
             );
 
             var stage = (javafx.stage.Stage) tableView.getScene().getWindow();
-            NavigationManager.switchScene(
+            NavigationManagerFacade.switchScene(
                     stage,
                     FXML_RECENSIONI,
                     TITOLO_RECENSIONI,
@@ -220,7 +220,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     // ===== NAVIGAZIONE =====
 
     public void goBack(ActionEvent event) {
-        NavigationManager.switchScene(
+        NavigationManagerFacade.switchScene(
                 event,
                 FXML_RICERCA,
                 TITOLO_RICERCA,
@@ -230,7 +230,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     }
 
     public void goToPreferiti(ActionEvent event) {
-        NavigationManager.switchScene(
+        NavigationManagerFacade.switchScene(
                 event,
                 FXML_PREFERITI,
                 TITOLO_PREFERITI,
@@ -240,7 +240,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     }
 
     public void logOut(ActionEvent event) {
-        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
+        NavigationManagerFacade.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 

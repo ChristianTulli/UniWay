@@ -7,7 +7,7 @@ import uniway.beans.UtenteBean;
 import uniway.controller.LogInController;
 import uniway.eccezioni.UtenteEsistenteException;
 import uniway.eccezioni.UtenteNonTrovatoException;
-import uniway.utils.NavigationManager;
+import uniway.patterns.NavigationManagerFacade;
 
 public class LogInViewController {
 
@@ -59,7 +59,7 @@ public class LogInViewController {
     public void onIscrittoButtonClick(ActionEvent event) {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), true);
         if (registra(utenteBean)) {
-            NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)");
+            NavigationManagerFacade.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)");
         }
     }
 
@@ -67,7 +67,7 @@ public class LogInViewController {
     public void onRicercaButtonClick(ActionEvent event) {
         UtenteBean utenteBean = new UtenteBean(usernameField.getText(), passwordField.getText(), false);
         if (registra(utenteBean)) {
-            NavigationManager.switchScene(event, FXML_RICERCA, "UniWay - Trova corso",
+            NavigationManagerFacade.switchScene(event, FXML_RICERCA, "UniWay - Trova corso",
                     InCercaTrovaCorsoViewController.class,
                     c -> c.impostaSchermata(utenteBean));
         }
@@ -87,14 +87,14 @@ public class LogInViewController {
             if (utenteBean.getIscritto()) {
                 if (utenteBean.getCorso()) {
                     // iscritto con corso già impostato
-                    NavigationManager.switchScene(event, FXML_CORSO_ISCRITTO, "UniWay - Insegnamenti");
+                    NavigationManagerFacade.switchScene(event, FXML_CORSO_ISCRITTO, "UniWay - Insegnamenti");
                 } else {
                     // iscritto ma deve selezionare il corso
-                    NavigationManager.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)");
+                    NavigationManagerFacade.switchScene(event, FXML_ISCRITTO, "UniWay - Seleziona corso (Iscritto)");
                 }
             } else {
                 // utente in cerca
-                NavigationManager.switchScene(event, FXML_RICERCA, "UniWay - Trova corso",
+                NavigationManagerFacade.switchScene(event, FXML_RICERCA, "UniWay - Trova corso",
                         InCercaTrovaCorsoViewController.class,
                         c -> c.impostaSchermata(utenteBean));
             }

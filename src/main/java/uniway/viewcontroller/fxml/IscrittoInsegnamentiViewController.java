@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.CommentaEValutaInsegnamentoController;
-import uniway.utils.NavigationManager;
+import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
 import java.util.List;
@@ -121,7 +121,10 @@ public class IscrittoInsegnamentiViewController implements Initializable {
     private void apriSchermataCommento(InsegnamentoBean insBean) {
         try {
             var stage = (javafx.stage.Stage) tableView.getScene().getWindow();
-            NavigationManager.switchScene(stage, FXML_COMMENTA, TITOLO_COMMENTA);
+            NavigationManagerFacade.switchScene(stage, FXML_COMMENTA, TITOLO_COMMENTA,
+                    IscrittoCommentaViewController.class,
+                    c->c.impostaSchermata(insBean)
+                    );
             //CONTROLLA SE LA SCHERMATA DEI COMMENTI E' DA IMPOSTARE IN QUALCHE MODO
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore nell'apertura della visualizzazione del corso", e);
@@ -129,10 +132,10 @@ public class IscrittoInsegnamentiViewController implements Initializable {
     }
 
 
-    /** Logout semplice via NavigationManager */
+    /** Logout semplice via NavigationManagerFacade */
     public void logOut(ActionEvent event) {
         commentaEValutaInsegnamentoController.logOut();
-        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
+        NavigationManagerFacade.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 

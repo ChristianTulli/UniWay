@@ -1,28 +1,29 @@
 package uniway.persistenza;
 
 
+import uniway.eccezioni.RecensioneNonSalvataException;
 import uniway.model.Insegnamento;
 import uniway.model.Recensione;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RecensioneDB implements RecensioneDAO {
     private static final Logger LOGGER = Logger.getLogger(RecensioneDB.class.getName());
-    private static final String ECCEZIONE = "problema nella comunicazione con la tabella recensioni nel database";
     private final Connection conn;
 
     public RecensioneDB(Connection conn) {
         this.conn = conn;
     }
 
+    @Override
     public Integer getValutazioneUtente(Insegnamento insegnamento, String usernameUtente) {
         String query = """
         SELECT r.valutazione_generale
@@ -50,25 +51,101 @@ public class RecensioneDB implements RecensioneDAO {
         return null;
     }
 
+    @Override
+    public void setRecensione(Recensione recensione) throws RecensioneNonSalvataException {
+        Objects.requireNonNull(recensione, "recensione nulla");
+        Objects.requireNonNull(recensione.getInsegnamento(), "insegnamento nullo");
+        Objects.requireNonNull(recensione.getNomeUtente(), "nome utente nullo");
 
-    public void setRecesnione(Recensione recensione) {
-        String query = "INSERT INTO recensioni (commento, valutazione_generale, nome_utente, id_insegnamento) VALUES (?, ?, ?, ?)";
+        //trovo id dell'insegnamento
+        Integer idInsegnamento = resolveIdInsegnamento(recensione);
+        if (idInsegnamento == null) {
+            throw new RecensioneNonSalvataException("Insegnamento non trovato per l'utente selezionato");
+        }
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, recensione.getCommento());
-            stmt.setInt(2, recensione.getValutazione());
-            stmt.setString(3, recensione.getNomeUtente());
-            stmt.setInt(4, recensione.getIdInsegnamento());
+        // salvo la recensione
+        final String insert = """
+        INSERT INTO recensioni (commento, valutazione_generale, nome_utente, id_insegnamento)
+        VALUES (?, ?, ?, ?)
+    """;
 
-            int rowsAffected = stmt.executeUpdate();
+        try (PreparedStatement ps = conn.prepareStatement(insert)) {
+            ps.setString(1, recensione.getCommento());
+            ps.setInt(2, recensione.getValutazione());
+            ps.setString(3, recensione.getNomeUtente());
+            ps.setInt(4, idInsegnamento);
 
-            if (rowsAffected == 0) {
-                throw new IOException("Nessuna recensione è stata inserita nel database.");
+            int rows = ps.executeUpdate();
+            if (rows != 1) {
+                throw new RecensioneNonSalvataException("La recensione non è stata salvata");
             }
-        } catch (IOException | SQLException e) {
-            LOGGER.log(Level.SEVERE, ECCEZIONE, e);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore durante l'inserimento recensione", e);
+            throw new RecensioneNonSalvataException("Errore DB durante il salvataggio");
         }
     }
+
+    //trova l'id_insegnamento
+    private Integer resolveIdInsegnamento(Recensione r) {
+        Insegnamento ins = r.getInsegnamento();
+        String curriculum = ins.getCurriculum();
+
+        // Query con curriculum presente
+        final String withCurr = """
+        SELECT i.id_insegnamento
+        FROM insegnamenti i
+        JOIN utenti u ON u.id_corso = i.id_corso
+        WHERE u.username = ?
+          AND i.nome     = ?
+          AND i.anno     = ?
+          AND i.semestre = ?
+          AND i.cfu      = ?
+          AND ( i.curriculum = ?
+             OR i.curriculum LIKE CONCAT('%,', ?, ',%')
+             OR i.curriculum LIKE CONCAT(?, ',%')
+             OR i.curriculum LIKE CONCAT('%,', ?) )
+        LIMIT 1
+    """;
+
+        // Variante senza curriculum
+        final String noCurr = """
+        SELECT i.id_insegnamento
+        FROM insegnamenti i
+        JOIN utenti u ON u.id_corso = i.id_corso
+        WHERE u.username = ?
+          AND i.nome     = ?
+          AND i.anno     = ?
+          AND i.semestre = ?
+          AND i.cfu      = ?
+        LIMIT 1
+    """;
+
+        try (PreparedStatement ps = conn.prepareStatement(
+                (curriculum != null && !curriculum.isBlank()) ? withCurr : noCurr)) {
+
+            int k = 1;
+            ps.setString(k++, r.getNomeUtente());
+            ps.setString(k++, ins.getNome());
+            ps.setInt(k++,    ins.getAnno());
+            ps.setInt(k++,    ins.getSemestre());
+            ps.setInt(k++,    ins.getCfu());
+
+            if (curriculum != null && !curriculum.isBlank()) {
+                ps.setString(k++, curriculum);
+                ps.setString(k++, curriculum);
+                ps.setString(k++, curriculum);
+                ps.setString(k++, curriculum);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : null;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore durante la risoluzione id_insegnamento", e);
+            return null;
+        }
+    }
+
 
     @Override
     public List<Recensione> getRecensioniByInsegnamento(Integer idInsegnamento) {

@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaConfrontaCorsoController;
-import uniway.utils.NavigationManager;
+import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
 import java.util.List;
@@ -149,11 +149,11 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
         alert.showAndWait();
     }
 
-    // ===== NAVIGAZIONE con NavigationManager =====
+    // ===== NAVIGAZIONE con NavigationManagerFacade =====
 
     @FXML
     public void goBack(ActionEvent event) {
-        NavigationManager.switchScene(
+        NavigationManagerFacade.switchScene(
                 event,
                 FXML_DETTAGLIO,
                 TITOLO_DETTAGLIO,
@@ -164,7 +164,7 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
 
     @FXML
     public void goToPreferiti(ActionEvent event) {
-        NavigationManager.switchScene(
+        NavigationManagerFacade.switchScene(
                 event,
                 FXML_PREFERITI,
                 TITOLO_PREFERITI,
@@ -175,7 +175,7 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
 
     @FXML
     public void logOut(ActionEvent event) {
-        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
+        NavigationManagerFacade.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 

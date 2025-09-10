@@ -7,7 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaTrovaCorsoController;
-import uniway.utils.NavigationManager;
+import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
 import java.util.List;
@@ -152,7 +152,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
     private void apriDettaglioCorso(String corsoSelezionato) {
         try {
             var stage = (javafx.stage.Stage) listView.getScene().getWindow();
-            NavigationManager.switchScene(
+            NavigationManagerFacade.switchScene(
                     stage,
                     FXML_DETTAGLIO,
                     TITOLO_DETTAGLIO,
@@ -165,7 +165,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
     }
 
     public void goToPreferiti(ActionEvent event) {
-        NavigationManager.switchScene(
+        NavigationManagerFacade.switchScene(
                 event,
                 FXML_PREFERITI,
                 TITOLO_PREFERITI,
@@ -175,7 +175,7 @@ public class InCercaTrovaCorsoViewController implements Initializable {
     }
 
     public void logOut(ActionEvent event) {
-        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
+        NavigationManagerFacade.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 

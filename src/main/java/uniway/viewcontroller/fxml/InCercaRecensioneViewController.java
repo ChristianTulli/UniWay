@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 import uniway.beans.RecensioneBean;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaRecensioneController;
-import uniway.utils.NavigationManager;
+import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
 import java.util.List;
@@ -116,12 +116,12 @@ public class InCercaRecensioneViewController implements Initializable {
         // nessuna init anticipata
     }
 
-    // ===== NAVIGAZIONE con NavigationManager =====
+    // ===== NAVIGAZIONE con NavigationManagerFacade =====
 
     @FXML
     public void goBack(ActionEvent event) {
         // Torna al dettaglio corso, passando di nuovo i dati
-        NavigationManager.switchScene(
+        NavigationManagerFacade.switchScene(
                 event,
                 FXML_DETTAGLIO,
                 TITOLO_DETTAGLIO,
@@ -132,7 +132,7 @@ public class InCercaRecensioneViewController implements Initializable {
 
     @FXML
     public void goToPreferiti(ActionEvent event) {
-        NavigationManager.switchScene(
+        NavigationManagerFacade.switchScene(
                 event,
                 FXML_PREFERITI,
                 TITOLO_PREFERITI,
@@ -143,7 +143,7 @@ public class InCercaRecensioneViewController implements Initializable {
 
     @FXML
     public void logOut(ActionEvent event) {
-        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
+        NavigationManagerFacade.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 

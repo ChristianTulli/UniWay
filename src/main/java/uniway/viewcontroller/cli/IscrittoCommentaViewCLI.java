@@ -2,7 +2,6 @@ package uniway.viewcontroller.cli;
 
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
-import uniway.controller.IscrittoCommentaController;
 import uniway.eccezioni.EsciException;
 import uniway.eccezioni.TornaAlLoginException;
 import uniway.utils.CLIUtils;

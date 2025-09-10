@@ -1,6 +1,5 @@
-package uniway.controller;
+package uniway.patterns;
 
-import uniway.beans.UtenteBean;
 import uniway.model.Utente;
 import uniway.persistenza.*;
 
@@ -12,9 +11,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PersistenzaController {
-    private static final Logger LOGGER = Logger.getLogger(PersistenzaController.class.getName());
-    private static PersistenzaController instance = null;
+public class SessioneControllerSingleton {
+    private static final Logger LOGGER = Logger.getLogger(SessioneControllerSingleton.class.getName());
+    private static SessioneControllerSingleton instance = null;
     private final Properties properties = new Properties();
     private Connection connessione;
     private String isFullMode;
@@ -26,7 +25,7 @@ public class PersistenzaController {
     private String errore = "errore";
     private Utente utenteCorrente;
 
-    private PersistenzaController() throws IllegalArgumentException {
+    private SessioneControllerSingleton() throws IllegalArgumentException {
         try (FileInputStream input = new FileInputStream("src/main/resources/config.properties")) {
             properties.load(input);
             String mode = properties.getProperty("persistence.mode");
@@ -62,9 +61,9 @@ public class PersistenzaController {
         insegnamentoDAO= new InsegnamentoDAO();
     }
 
-    public static synchronized PersistenzaController getInstance() {
+    public static synchronized SessioneControllerSingleton getInstance() {
         if (instance == null) {
-            instance = new PersistenzaController();
+            instance = new SessioneControllerSingleton();
         }
         return instance;
     }

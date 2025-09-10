@@ -1,6 +1,6 @@
 package uniway.persistenza;
 
-import uniway.controller.PersistenzaController;
+import uniway.patterns.SessioneControllerSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class AteneoDAO {
     private String eccezione = "problema nella comunicazione col database";
 
     public AteneoDAO() {
-        this.conn = PersistenzaController.getInstance().getConnessione();
+        this.conn = SessioneControllerSingleton.getInstance().getConnessione();
     }
 
     public List<String> getAllTipiAteneo() {

@@ -2,26 +2,21 @@ package uniway.controller;
 
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
+import uniway.eccezioni.RecensioneNonSalvataException;
 import uniway.eccezioni.UtenteNonTrovatoException;
-import uniway.model.Corso;
-import uniway.model.Insegnamento;
-import uniway.model.Utente;
-import uniway.model.UtenteIscritto;
+import uniway.model.*;
+import uniway.patterns.SessioneControllerSingleton;
 import uniway.persistenza.CorsoDAO;
-import uniway.persistenza.InsegnamentoDAO;
 import uniway.persistenza.RecensioneDAO;
 import uniway.persistenza.UtenteDAO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public class CommentaEValutaInsegnamentoController {
 
-    private static final Logger LOGGER = Logger.getLogger(CommentaEValutaInsegnamentoController.class.getName());
     private final CorsoDAO corsoDAO;
-    private final InsegnamentoDAO insegnamentoDAO;
     private final UtenteDAO utenteDAO;
     private final RecensioneDAO recensioneDAO;
     private String regione;
@@ -33,15 +28,13 @@ public class CommentaEValutaInsegnamentoController {
     private String classe;
     private String corso;
     private String curriculum=null;
-    private Corso corsoUtente;
 
 
     public CommentaEValutaInsegnamentoController() {
-        PersistenzaController persistenzaController = PersistenzaController.getInstance();
-        corsoDAO=persistenzaController.getCorsoDAO();
-        insegnamentoDAO=persistenzaController.getInsegnamentoDAO();
-        utenteDAO=persistenzaController.getUtenteDAO();
-        recensioneDAO=persistenzaController.getRecensioneDAO();
+        SessioneControllerSingleton sessioneControllerSingleton = SessioneControllerSingleton.getInstance();
+        corsoDAO= sessioneControllerSingleton.getCorsoDAO();
+        utenteDAO= sessioneControllerSingleton.getUtenteDAO();
+        recensioneDAO= sessioneControllerSingleton.getRecensioneDAO();
     }
 
     public UtenteBean getUtenteBean(){
@@ -53,18 +46,18 @@ public class CommentaEValutaInsegnamentoController {
     }
 
     public List<InsegnamentoBean> getInsegnamentiBean() {
-        Utente u = PersistenzaController.getInstance().getCurrentUser();
+        Utente u = SessioneControllerSingleton.getInstance().getCurrentUser();
         if (!(u instanceof UtenteIscritto ui)) {
             throw new IllegalStateException("L'utente corrente non è un iscritto");
         }
 
-        Corso corso = ui.getCorso();
-        if (corso == null || corso.getInsegnamenti() == null) {
+        Corso c = ui.getCorso();
+        if (c == null || c.getInsegnamenti() == null) {
             return List.of(); // nessun insegnamento
         }
 
         List<InsegnamentoBean> beans = new ArrayList<>();
-        for (Insegnamento ins : corso.getInsegnamenti()) {
+        for (Insegnamento ins : c.getInsegnamenti()) {
             InsegnamentoBean bean = new InsegnamentoBean();
             bean.setNome(ins.getNome());
             bean.setAnno(ins.getAnno());
@@ -141,9 +134,9 @@ public class CommentaEValutaInsegnamentoController {
     }
 
     public void setCorsoUtente() {
-        this.corsoUtente = new Corso(regione, provincia, comune, ateneo, disciplina, durata, classe, corso);
-        this.corsoUtente.setCurriculum(curriculum);
-        PersistenzaController p = PersistenzaController.getInstance();
+        Corso corsoUtente = new Corso(regione, provincia, comune, ateneo, disciplina, durata, classe, corso);
+        corsoUtente.setCurriculum(curriculum);
+        SessioneControllerSingleton p = SessioneControllerSingleton.getInstance();
         Utente u = p.getCurrentUser();
         if (u==null){
             throw new UtenteNonTrovatoException("Nessun utente in sessione");
@@ -157,8 +150,18 @@ public class CommentaEValutaInsegnamentoController {
         throw new IllegalStateException("L'utente corrente non è iscritto");
     }
 
+    public void recensisciInsegnamento(UtenteBean utenteBean, InsegnamentoBean insegnamentoBean, String testo, Integer valutazione) {
+        Insegnamento insegnamento = new Insegnamento(insegnamentoBean.getNome(), insegnamentoBean.getAnno(), insegnamentoBean.getSemestre(), insegnamentoBean.getCurriculum(), insegnamentoBean.getCfu());
+        Recensione recensione=new Recensione(testo, valutazione, utenteBean.getUsername(), insegnamento);
+        try{
+            recensioneDAO.setRecensione(recensione);
+        }catch (RecensioneNonSalvataException e){
+            throw new RecensioneNonSalvataException("Recensione non salvata");
+        }
+    }
+
     public void logOut(){
-        PersistenzaController p = PersistenzaController.getInstance();
+        SessioneControllerSingleton p = SessioneControllerSingleton.getInstance();
         p.logout();
     }
 

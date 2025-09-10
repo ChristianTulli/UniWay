@@ -6,7 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
 import uniway.controller.InCercaPreferitiController;
-import uniway.utils.NavigationManager;
+import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class InCercaPreferitiViewController implements Initializable {
             var stage = (javafx.stage.Stage) listView.getScene().getWindow();
             List<String> corsiSimili = new ArrayList<>();
 
-            NavigationManager.switchScene(
+            NavigationManagerFacade.switchScene(
                     stage,
                     FXML_DETTAGLIO,
                     TITOLO_DETTAGLIO,
@@ -102,7 +102,7 @@ public class InCercaPreferitiViewController implements Initializable {
 
     /** Torna alla ricerca (mantiene l’utente attivo) */
     public void goToRicerca(ActionEvent event) {
-        NavigationManager.switchScene(
+        NavigationManagerFacade.switchScene(
                 event,
                 FXML_RICERCA,
                 TITOLO_RICERCA,
@@ -113,7 +113,7 @@ public class InCercaPreferitiViewController implements Initializable {
 
     /** Logout semplice */
     public void logOut(ActionEvent event) {
-        NavigationManager.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
+        NavigationManagerFacade.switchScene(event, FXML_LOGIN, TITOLO_LOGIN);
     }
 }
 
