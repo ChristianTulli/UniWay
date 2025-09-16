@@ -44,12 +44,12 @@ public class LogInViewController {
             return ok;
 
         } catch (UtenteEsistenteException e) {
-            // caso di business: username già in uso
+            // caso di username già in uso
             errorLabel.setText(e.getMessage()); // "esiste già un utente con username: …"
             return false;
 
         } catch (Exception e) {
-            // fallback per errori imprevisti (DAO, I/O, ecc.)
+            // per errori imprevisti (DAO, I/O, ecc.)
             errorLabel.setText("Errore inatteso durante la registrazione.");
             return false;
         }
@@ -105,7 +105,7 @@ public class LogInViewController {
 
         } catch (IllegalArgumentException e) {
             // usata sia per campi vuoti che per password errata
-            errorLabel.setText(e.getMessage()); // "inserire username e password" / "Password errata"
+            errorLabel.setText("password errata");
 
         } catch (Exception e) {
             // fallback imprevisti (I/O, DB, ecc.)

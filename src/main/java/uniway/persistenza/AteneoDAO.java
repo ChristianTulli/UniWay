@@ -1,6 +1,5 @@
 package uniway.persistenza;
 
-import uniway.patterns.SessioneControllerSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;

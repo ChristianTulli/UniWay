@@ -17,8 +17,7 @@ public final class NavigationManagerFacade {
 
     private NavigationManagerFacade() {}
 
-    private static final Logger LOGGER =
-            Logger.getLogger(NavigationManagerFacade.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(NavigationManagerFacade.class.getName());
     private static final String ERR = "Errore nel cambio scena. FXML: ";
     private static final double WIDTH = 1600;
     private static final double HEIGHT = 900;

@@ -2,23 +2,23 @@ package uniway.controller;
 
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
-import uniway.eccezioni.RecensioneNonSalvataException;
 import uniway.eccezioni.UtenteNonTrovatoException;
 import uniway.model.*;
 import uniway.patterns.SessioneControllerSingleton;
 import uniway.persistenza.CorsoDAO;
+import uniway.persistenza.InsegnamentoDAO;
 import uniway.persistenza.RecensioneDAO;
 import uniway.persistenza.UtenteDAO;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class CommentaEValutaInsegnamentoController {
 
     private final CorsoDAO corsoDAO;
     private final UtenteDAO utenteDAO;
     private final RecensioneDAO recensioneDAO;
+    private final InsegnamentoDAO insegnamentoDAO;
     private String regione;
     private String provincia;
     private String comune;
@@ -35,13 +35,16 @@ public class CommentaEValutaInsegnamentoController {
         corsoDAO= sessioneControllerSingleton.getCorsoDAO();
         utenteDAO= sessioneControllerSingleton.getUtenteDAO();
         recensioneDAO= sessioneControllerSingleton.getRecensioneDAO();
+        insegnamentoDAO = SessioneControllerSingleton.getInstance().getInsegnamentoDAO();
     }
 
     public UtenteBean getUtenteBean(){
+        UtenteIscritto ui =(UtenteIscritto) SessioneControllerSingleton.getInstance().getCurrentUser();
         UtenteBean ub= new UtenteBean();
-        ub.setCurriculum(curriculum);
-        ub.setNomeAteneo(ateneo);
-        ub.setNomeCorso(corso);
+        ub.setUsername(ui.getUsername());
+        ub.setCurriculum(ui.getCorso().getCurriculum());
+        ub.setNomeAteneo(ui.getCorso().getAteneo());
+        ub.setNomeCorso(ui.getCorso().getNomeCorso());
         return ub;
     }
 
@@ -62,7 +65,6 @@ public class CommentaEValutaInsegnamentoController {
             bean.setNome(ins.getNome());
             bean.setAnno(ins.getAnno());
             bean.setSemestre(ins.getSemestre());
-            bean.setCurriculum(ins.getCurriculum());
             bean.setCfu(ins.getCfu());
 
             // recupero valutazione dal DAO
@@ -82,49 +84,41 @@ public class CommentaEValutaInsegnamentoController {
     }
 
     public List<String> getProvince(String regioneselezionata) {
-        Objects.requireNonNull(regioneselezionata);
         this.regione=regioneselezionata;
         return corsoDAO.getProvinceByRegione(regione);
     }
 
     public List<String> getComuni(String provinciaselezionata) {
-        Objects.requireNonNull(provinciaselezionata);
         this.provincia=provinciaselezionata;
         return corsoDAO.getComuniByProvincia(provincia);
     }
 
     public List<String> getAtenei(String comuneselezionato) {
-        Objects.requireNonNull(comuneselezionato);
         this.comune = comuneselezionato;
         return corsoDAO.getAteneiByComune(comune);
     }
 
     public List<String> getDiscipline(String ateneoselezionato) {
-        Objects.requireNonNull(ateneoselezionato);
         this.ateneo = ateneoselezionato;
         return corsoDAO.getDisciplineByAteneo(comune, ateneo);
     }
 
     public List<String> getDurate(String disciplinaselezionata) {
-        Objects.requireNonNull(disciplinaselezionata);
         this.disciplina = disciplinaselezionata;
         return corsoDAO.getDurateByDisciplina(disciplina);
     }
 
     public List<String> getCorsi(String durataselezionata) {
-        Objects.requireNonNull(durataselezionata);
         this.durata = durataselezionata;
         return corsoDAO.getCorsiByTipologia(comune, ateneo, disciplina, durata);
     }
 
     public List<String> getRisultati(String classeselezionata) {
-        Objects.requireNonNull(classeselezionata);
         this.classe=classeselezionata;
         return corsoDAO.getRisultatiByCorsi(comune, ateneo, disciplina, durata, classe);
     }
 
     public List<String> getCurriculumPerCorso(String corsoSelezionato) {
-        Objects.requireNonNull(corsoSelezionato);
         this.corso = corsoSelezionato;
         return corsoDAO.getCurriculum(corso, ateneo);
     }
@@ -134,31 +128,45 @@ public class CommentaEValutaInsegnamentoController {
     }
 
     public void setCorsoUtente() {
-        Corso corsoUtente = new Corso(regione, provincia, comune, ateneo, disciplina, durata, classe, corso);
-        corsoUtente.setCurriculum(curriculum);
+        Corso corsoUtente = new Corso(regione, provincia, comune, ateneo, disciplina, classe, corso);
+        corsoUtente.setDurata(durata);
+        List<Insegnamento> insegnamenti= new ArrayList<>();
+        if(curriculum==null){
+            insegnamentoDAO.getInsegnamenti(corsoUtente, insegnamenti);
+            corsoUtente.setInsegnamenti(insegnamenti);
+        }else{
+            corsoUtente.setCurriculum(curriculum);
+            insegnamentoDAO.getInsegnamentiWithCurriculum(corsoUtente, insegnamenti);
+            corsoUtente.setInsegnamenti(insegnamenti);
+        }
         SessioneControllerSingleton p = SessioneControllerSingleton.getInstance();
         Utente u = p.getCurrentUser();
         if (u==null){
             throw new UtenteNonTrovatoException("Nessun utente in sessione");
         }
         if(u instanceof UtenteIscritto ui) {
-            ui.setCorso(corsoUtente);
+
             utenteDAO.aggiungiCorsoUtente(ui, corsoUtente);
+            ui.setCorso(corsoUtente);
             p.setCurrentUser(ui);
             return;
         }
         throw new IllegalStateException("L'utente corrente non è iscritto");
     }
 
-    public void recensisciInsegnamento(UtenteBean utenteBean, InsegnamentoBean insegnamentoBean, String testo, Integer valutazione) {
-        Insegnamento insegnamento = new Insegnamento(insegnamentoBean.getNome(), insegnamentoBean.getAnno(), insegnamentoBean.getSemestre(), insegnamentoBean.getCurriculum(), insegnamentoBean.getCfu());
-        Recensione recensione=new Recensione(testo, valutazione, utenteBean.getUsername(), insegnamento);
-        try{
-            recensioneDAO.setRecensione(recensione);
-        }catch (RecensioneNonSalvataException e){
-            throw new RecensioneNonSalvataException("Recensione non salvata");
-        }
+    public void recensisciInsegnamento(UtenteBean utenteBean, InsegnamentoBean insegnamentoBean,
+                                       String testo, Integer valutazione) {
+        Insegnamento insegnamento = new Insegnamento(
+                insegnamentoBean.getNome(),
+                insegnamentoBean.getAnno(),
+                insegnamentoBean.getSemestre(),
+                insegnamentoBean.getCfu()
+        );
+        Recensione recensione = new Recensione(testo, valutazione, utenteBean.getUsername(), insegnamento);
+        recensioneDAO.setRecensione(recensione); // lascia propagare RecensioneNonSalvataException
     }
+
+
 
     public void logOut(){
         SessioneControllerSingleton p = SessioneControllerSingleton.getInstance();

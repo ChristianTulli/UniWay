@@ -9,7 +9,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
-import uniway.controller.InCercaConfrontaCorsoController;
+import uniway.controller.ConfrontaCorsoController;
+import uniway.eccezioni.CorsoGiaPresenteTraIPreferitiException;
 import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
@@ -24,7 +25,7 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
     private String ateneo1;
     private String ateneo2;
 
-    private final InCercaConfrontaCorsoController controller = new InCercaConfrontaCorsoController();
+    private final ConfrontaCorsoController controller = new ConfrontaCorsoController();
     private List<String> corsiSimili;
 
     // destinazioni
@@ -121,23 +122,23 @@ public class InCercaConfrontaCorsoViewController implements Initializable {
 
     @FXML
     public void aggiungiAiPreferiti1(ActionEvent event) {
-        boolean aggiunto = controller.aggiungiAiPreferiti(utenteBean, corso1, ateneo1);
-        if (aggiunto) {
+        try{
+            controller.aggiungiAiPreferiti(corso1, ateneo1);
             preferitiButton1.setDisable(true);
             mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");
-        } else {
-            mostraPopup("Già nei preferiti", "Hai già aggiunto questo corso ai tuoi preferiti.");
+        } catch (CorsoGiaPresenteTraIPreferitiException e) {
+            mostraPopup("Già nei preferiti", e.getMessage());
         }
     }
 
     @FXML
     public void aggiungiAiPreferiti2(ActionEvent event) {
-        boolean aggiunto = controller.aggiungiAiPreferiti(utenteBean, corso2, ateneo2);
-        if (aggiunto) {
+        try{
+            controller.aggiungiAiPreferiti(corso2, ateneo2);
             preferitiButton2.setDisable(true);
             mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");
-        } else {
-            mostraPopup("Già nei preferiti", "Hai già aggiunto questo corso ai tuoi preferiti.");
+        } catch (CorsoGiaPresenteTraIPreferitiException e) {
+            mostraPopup("Già nei preferiti", e.getMessage());
         }
     }
 

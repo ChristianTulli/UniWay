@@ -22,4 +22,11 @@ public class UtenteInCerca extends Utente{
     public void setPreferenze(List<Corso> preferiti) {
         this.preferiti = (preferiti != null) ? preferiti : new ArrayList<>();
     }
+    public void aggiungiPreferito(Corso corso) {
+        this.preferiti.add(corso);
+    }
+
+    public void rimuoviPreferito(Corso corso) {
+        this.preferiti.remove(corso);
+    }
 }

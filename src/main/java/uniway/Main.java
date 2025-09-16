@@ -16,7 +16,7 @@ public class Main {
         String uiVersion = loadUIVersion();
 
         if ("cli".equalsIgnoreCase(uiVersion)) {
-            new CLIController().start(); // non dimenticare il .start()
+            new CLIController().start();
         } else {
             Application.launch(FXMLController.class, args);
         }

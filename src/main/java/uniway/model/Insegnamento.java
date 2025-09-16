@@ -4,18 +4,9 @@ public class Insegnamento {
     private String nome;
     private Integer anno;
     private Integer semestre;
-    private String curriculum;
     private Integer cfu;
 
     public Insegnamento() {}
-
-    public Insegnamento(String nome, Integer anno, Integer semestre, String curriculum, Integer cfu) {
-        this.nome = nome;
-        this.anno = anno;
-        this.semestre = semestre;
-        this.curriculum = curriculum;
-        this.cfu = cfu;
-    }
 
     public Insegnamento(String nome, Integer anno, Integer semestre, Integer cfu) {
         this.nome = nome;
@@ -46,14 +37,6 @@ public class Insegnamento {
 
     public void setSemestre(Integer semestre) {
         this.semestre = semestre;
-    }
-
-    public String getCurriculum() {
-        return curriculum;
-    }
-
-    public void setCurriculum(String curriculum) {
-        this.curriculum = curriculum;
     }
 
     public Integer getCfu() {

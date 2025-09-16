@@ -58,7 +58,7 @@ public class IscrittoCommentaViewController implements Initializable {
         curriculumLabel.setText(utenteBean.getCurriculum());
         corsoLabel.setText(utenteBean.getNomeCorso());
         ateneoLabel.setText(utenteBean.getNomeAteneo());
-        insegnamentoLabel.setText(insegnamentoBean.getNome());
+
 
     }
 
@@ -90,7 +90,7 @@ public class IscrittoCommentaViewController implements Initializable {
         try {
             commentaEValutaInsegnamentoController.recensisciInsegnamento(utenteBean, insegnamentoBean, commentoArea.getText(), valutazioneSelezionata);
         }catch (RecensioneNonSalvataException e) {
-            alert.setContentText("e");
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
             goBack(); // torna alla lista insegnamenti
             return;
@@ -102,6 +102,7 @@ public class IscrittoCommentaViewController implements Initializable {
 
     public void impostaSchermata(InsegnamentoBean insegnamentoBean){
         this.insegnamentoBean = insegnamentoBean;
+        insegnamentoLabel.setText(insegnamentoBean.getNome());
     }
 
     //Torna alla schermata degli insegnamenti passando l'utente

@@ -5,7 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
-import uniway.controller.InCercaPreferitiController;
+import uniway.controller.GestisciCorsiDiLaureaPreferitiController;
 import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class InCercaPreferitiViewController implements Initializable {
 
     private UtenteBean utenteBean;
-    private final InCercaPreferitiController inCercaPreferitiController = new InCercaPreferitiController();
+    private final GestisciCorsiDiLaureaPreferitiController gestisciCorsiDiLaureaPreferitiController = new GestisciCorsiDiLaureaPreferitiController();
     private static final Logger LOGGER = Logger.getLogger(InCercaPreferitiViewController.class.getName());
 
     // destinazioni
@@ -45,11 +45,7 @@ public class InCercaPreferitiViewController implements Initializable {
 
     public void impostaSchermata(UtenteBean utenteBean) {
         this.utenteBean = utenteBean;
-        try {
-            listView.getItems().setAll(inCercaPreferitiController.getPreferiti(utenteBean.getUsername()));
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Errore nell'impostazione della schermata", e);
-        }
+            listView.getItems().setAll(gestisciCorsiDiLaureaPreferitiController.getPreferiti());
     }
 
     private void mostraPopupAzione(String corso) {
@@ -75,7 +71,7 @@ public class InCercaPreferitiViewController implements Initializable {
 
     private void rimuoviCorsoDaiPreferiti(String corso) {
         try {
-            inCercaPreferitiController.rimuoviPreferito(utenteBean.getUsername(), corso);
+            gestisciCorsiDiLaureaPreferitiController.rimuoviPreferito(corso);
             listView.getItems().remove(corso);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Errore durante la rimozione del corso dai preferiti", e);

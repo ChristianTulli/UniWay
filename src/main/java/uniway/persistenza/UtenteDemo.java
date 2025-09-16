@@ -1,85 +1,78 @@
 package uniway.persistenza;
 
+import uniway.eccezioni.CorsoGiaPresenteTraIPreferitiException;
+import uniway.model.Corso;
 import uniway.model.Utente;
 import uniway.model.UtenteInCerca;
 import uniway.model.UtenteIscritto;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-//PRODUCT
 public class UtenteDemo implements UtenteDAO {
 
-    private final List<Utente> utenti = new ArrayList<>();
-    private final AtomicInteger nextId = new AtomicInteger(1);
+    private final List<Utente> utenti = new CopyOnWriteArrayList<>();
+    private String utentenullo="utente nullo";
+    private String corsonullo="corso nullo";
 
     @Override
     public void salvaUtente(Utente utente) {
-        utente.setId(nextId.getAndIncrement());
+        Objects.requireNonNull(utente, utentenullo);
+        if (trovaDaUsername(utente.getUsername()) != null) {
+            throw new IllegalArgumentException("Username già esistente: " + utente.getUsername());
+        }
         utenti.add(utente);
     }
 
     @Override
-    public List<Utente> ottieniUtenti() {
-        return new ArrayList<>(utenti); // copia difensiva
-    }
-
-    @Override
-    public void aggiungiCorsoUtente(String username, Integer idCorso) {
+    public Utente trovaDaUsername(String username) {
         for (Utente u : utenti) {
-            if (u.getUsername().equals(username) && u instanceof UtenteIscritto iscritto) {
-                iscritto.setCorso(idCorso);
-            }
+            if (u.getUsername().equals(username)) return u;
+        }
+        return null;
+    }
+
+    @Override
+    public void aggiungiCorsoUtente(UtenteIscritto utente, Corso corso) {
+        Objects.requireNonNull(utente, utentenullo);
+        Objects.requireNonNull(corso, corsonullo);
+        Utente u = trovaDaUsername(utente.getUsername());
+        if (u instanceof UtenteIscritto ui) {
+            ui.setCorso(corso);
         }
     }
 
     @Override
-    public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) {
-        for (Utente u : utenti) {
-            if (u.getUsername().equals(usernameUtente) && u instanceof UtenteInCerca inCerca) {
-                List<Integer> preferenze = inCerca.getPreferenze();
-                if (!preferenze.contains(idCorso)) {
-                    preferenze.add(idCorso);
-                    return true;  // Aggiunto con successo
-                } else {
-                    return false; // Già presente
-                }
-            }
-        }
-        return false; // Utente non trovato o non compatibile
-    }
+    public void aggiungiPreferitiUtente(UtenteInCerca utente, Corso corso) {
+        Objects.requireNonNull(utente, utentenullo);
+        Objects.requireNonNull(corso, corsonullo);
 
+        Utente u = trovaDaUsername(utente.getUsername());
+        if (!(u instanceof UtenteInCerca ic)) return;
 
-    @Override
-    public List<Integer> getPreferitiUtente(String username) {
-        for (Utente u : utenti) {
-            if (u.getUsername().equals(username) && u instanceof UtenteInCerca inCerca) {
-                return new ArrayList<>(inCerca.getPreferenze());
-            }
+        List<Corso> prefs = ic.getPreferenze();
+        boolean exists = prefs.stream().anyMatch(p ->
+                Objects.equals(p.getNomeCorso(), corso.getNomeCorso()) &&
+                        Objects.equals(p.getAteneo(),corso.getAteneo()));
+        if (exists) {
+            throw new CorsoGiaPresenteTraIPreferitiException("Il corso è già presente tra i preferiti.");
         }
-        return new ArrayList<>();
+        prefs.add(corso);
     }
 
     @Override
-    public void aggiungiCurriculumUtente(String username, String curriculum) {
-        for (Utente u : utenti) {
-            if (u.getUsername().equals(username) && u instanceof UtenteIscritto iscritto) {
-                iscritto.setCurriculum(curriculum);
-            }
-        }
-    }
+    public void rimuoviPreferitoUtente(UtenteInCerca utente, Corso corso) {
+        Objects.requireNonNull(utente, utentenullo);
+        Objects.requireNonNull(corso, corsonullo);
 
-    @Override
-    public void rimuoviPreferitoUtente(String username, int idCorso) {
-        for (Utente utente : utenti) {
-            if (utente.getUsername().equals(username) && utente instanceof UtenteInCerca inCerca) {
-                List<Integer> preferenze = inCerca.getPreferenze();
-                if (preferenze.contains(idCorso)) {
-                    preferenze.remove((Integer) idCorso);// rimuove l'id specifico
-                }
-            }
-        }
+        Utente u = trovaDaUsername(utente.getUsername());
+        if (!(u instanceof UtenteInCerca ic)) return;
+
+        ic.getPreferenze().removeIf(p ->
+                Objects.equals(p.getNomeCorso(), corso.getNomeCorso()) &&
+                        Objects.equals(p.getAteneo(),corso.getAteneo()));
     }
 
 }
+
 

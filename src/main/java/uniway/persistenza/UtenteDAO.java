@@ -2,25 +2,20 @@ package uniway.persistenza;
 
 import uniway.model.Corso;
 import uniway.model.Utente;
+import uniway.model.UtenteInCerca;
+import uniway.model.UtenteIscritto;
 
-import java.util.List;
 
 //ABSTRACT PRODUCT
 public interface UtenteDAO {
      void salvaUtente(Utente utente);
 
-     List<Utente> ottieniUtenti();
-
      Utente trovaDaUsername(String username);
 
-     void aggiungiCorsoUtente(Utente utente, Corso corso);
+     void aggiungiCorsoUtente(UtenteIscritto utente, Corso corso);
 
-     Boolean aggiungiPreferitiUtente(String username, Integer idPreferiti);
+     void aggiungiPreferitiUtente(UtenteInCerca utente, Corso corso);
 
-     List <Integer> getPreferitiUtente(String username);
-
-     void aggiungiCurriculumUtente(String username, String curriculum);
-
-     void rimuoviPreferitoUtente(String username, int idCorso);
+     void rimuoviPreferitoUtente(UtenteInCerca utente, Corso corso);
 
 }

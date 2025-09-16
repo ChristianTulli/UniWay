@@ -1,4 +1,4 @@
-package uniway.patterns.abstractFactory;
+package uniway.patterns.abstractfactory;
 
 import uniway.persistenza.*;
 

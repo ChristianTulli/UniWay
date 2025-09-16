@@ -1,6 +1,6 @@
 package uniway.persistenza;
 
-import uniway.patterns.SessioneControllerSingleton;
+import uniway.model.Corso;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +14,9 @@ public class CorsoDAO {
     private static final Logger LOGGER = Logger.getLogger(CorsoDAO.class.getName());
     private String eccezione = "problema nella comunicazione col database";
     private String nomecorso = "nomecorso";
+    private String nomeclasse = "nomeclasse";
+    private String durata = "durata";
+    private String gruppodusciplinare = "gruppodisciplinare";
 
     //PRODUCT
     public CorsoDAO(Connection conn) {
@@ -45,7 +48,7 @@ public class CorsoDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                durate.add(rs.getString("durata"));
+                durate.add(rs.getString(durata));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, eccezione, e);
@@ -128,7 +131,7 @@ public class CorsoDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                discipline.add(rs.getString("gruppodisciplinare"));
+                discipline.add(rs.getString(gruppodusciplinare));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, eccezione, e);
@@ -146,7 +149,7 @@ public class CorsoDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                tipologie.add(rs.getString("durata"));
+                tipologie.add(rs.getString(durata));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, eccezione, e);
@@ -175,7 +178,7 @@ public class CorsoDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                corsi.add(rs.getString("nomeclasse"));
+                corsi.add(rs.getString(nomeclasse));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, eccezione, e);
@@ -215,57 +218,41 @@ public class CorsoDAO {
         return risultati;
     }
 
-    public Integer getIdCorsoByNome(String comune, String ateneo, String tipologia, String nomecorso) {
+
+    public Corso getCorsoByNomeAndAteneo(String nomeCorso, String ateneo) {
         String query = """
-            SELECT c.id 
-            FROM corsi c 
-            JOIN atenei a ON c.idateneo = a.id 
-            WHERE c.sedecomune = ? 
-            AND a.nome = ? 
-            AND c.durata = ? 
-            AND c.nomecorso = ?
-        """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, comune);
-            stmt.setString(2, ateneo);
-            stmt.setString(3, tipologia);
-            stmt.setString(4, nomecorso);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("id");
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, eccezione, e);
-        }
-
-        return null;
-    }
-
-    public Integer getIdCorsoByNomeAndAteneo(String ateneo, String nomecorso) {
-        String query = """
-            SELECT c.id 
-            FROM corsi c 
-            JOIN atenei a ON c.idateneo = a.id 
-            WHERE a.nome = ? 
-            AND c.nomecorso = ?
-        """;
+        SELECT c.nomecorso, c.nomeclasse, c.gruppodisciplinare, c.durata,
+               c.regionecorso, c.sedeprovincia, c.sedecomune, a.nome AS nomeAteneo
+        FROM corsi c
+        JOIN atenei a ON c.idateneo = a.id
+        WHERE a.nome = ? AND c.nomecorso = ?
+        LIMIT 1
+    """;
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, ateneo);
-            stmt.setString(2, nomecorso);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("id");
+            stmt.setString(2, nomeCorso);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                     Corso c =new Corso(
+                            rs.getString("regionecorso"),         // regione
+                            rs.getString("sedeprovincia"),       // provincia
+                            rs.getString("sedecomune"),          // comune
+                            rs.getString("nomeAteneo"),      // ateneo
+                            rs.getString(gruppodusciplinare), // disciplina
+                            rs.getString(nomeclasse),      // classe
+                            rs.getString(nomecorso)        // nomeCorso
+                    );
+                     c.setDurata(rs.getString(durata));//durata
+                    return c;
+                }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, eccezione, e);
+            LOGGER.log(Level.SEVERE, "Errore durante il recupero del corso", e);
         }
-
         return null;
     }
+
 
     public List<String> getDisciplineByDurata(String durata) {
         List<String> discipline = new ArrayList<>();
@@ -276,7 +263,7 @@ public class CorsoDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                discipline.add(rs.getString("gruppodisciplinare"));
+                discipline.add(rs.getString(gruppodusciplinare));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, eccezione, e);
@@ -295,7 +282,7 @@ public class CorsoDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                classi.add(rs.getString("nomeclasse"));
+                classi.add(rs.getString(nomeclasse));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, eccezione, e);
@@ -336,7 +323,7 @@ public class CorsoDAO {
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                String corso = rs.getString("nomecorso");
+                String corso = rs.getString(nomecorso);
                 String ateneo = rs.getString("nome_ateneo");
                 risultati.add(corso + " - " + ateneo);
             }
@@ -379,43 +366,6 @@ public class CorsoDAO {
         return curriculum;
     }
 
-    public String getNomeByIdCorso(Integer idCorso) {
-        String query = "SELECT nomecorso FROM corsi WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, idCorso);
-            ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                return rs.getString(nomecorso);
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Errore nella query getNomeByIdCorso", e);
-        }
-
-        return null;
-    }
-
-    public String getAteneoByIdCorso(Integer idCorso) {
-        String query = """
-            SELECT a.nome 
-            FROM atenei a 
-            JOIN corsi c ON a.id = c.idateneo 
-            WHERE c.id = ?
-        """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, idCorso);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getString("nome");
-            }
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Errore nel recupero del nome dell'ateneo", e);
-        }
-
-        return null;
-    }
 }
 

@@ -1,8 +1,8 @@
 package uniway.patterns;
 
 import uniway.model.Utente;
-import uniway.patterns.abstractFactory.DAOFactories;
-import uniway.patterns.abstractFactory.DAOFactory;
+import uniway.patterns.abstractfactory.DAOFactories;
+import uniway.patterns.abstractfactory.DAOFactory;
 import uniway.persistenza.*;
 
 import java.io.FileInputStream;

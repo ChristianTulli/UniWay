@@ -12,6 +12,6 @@ public interface RecensioneDAO {
 
     void setRecensione(Recensione recensione) throws RecensioneNonSalvataException;
 
-    List<Recensione> getRecensioniByInsegnamento(Integer idInsegnamento);
+    List<Recensione> getRecensioniByInsegnamento(Insegnamento insegnamento);
 
 }

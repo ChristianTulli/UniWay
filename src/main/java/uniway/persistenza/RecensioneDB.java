@@ -29,7 +29,7 @@ public class RecensioneDB implements RecensioneDAO {
         String query = """
         SELECT r.valutazione_generale
         FROM recensioni r
-        JOIN insegnamenti i ON r.id_insegnamento = i.id_insegnamento
+        JOIN insegnamenti i ON r.id_insegnamento = i.id
         WHERE i.nome = ? AND i.anno = ? AND i.semestre = ? AND i.cfu = ? AND r.nome_utente = ?
     """;
 
@@ -59,7 +59,7 @@ public class RecensioneDB implements RecensioneDAO {
         Objects.requireNonNull(recensione.getNomeUtente(), "nome utente nullo");
 
         //trovo id dell'insegnamento
-        Integer idInsegnamento = resolveIdInsegnamento(recensione);
+        Integer idInsegnamento = resolveIdInsegnamento(recensione.getInsegnamento());
         if (idInsegnamento == null) {
             throw new RecensioneNonSalvataException("Insegnamento non trovato per l'utente selezionato");
         }
@@ -87,56 +87,20 @@ public class RecensioneDB implements RecensioneDAO {
     }
 
     //trova l'id_insegnamento
-    private Integer resolveIdInsegnamento(Recensione r) {
-        Insegnamento ins = r.getInsegnamento();
-        String curriculum = ins.getCurriculum();
+    private Integer resolveIdInsegnamento(Insegnamento ins) {
 
-        // Query con curriculum presente
-        final String withCurr = """
-        SELECT i.id_insegnamento
-        FROM insegnamenti i
-        JOIN utenti u ON u.id_corso = i.id_corso
-        WHERE u.username = ?
-          AND i.nome     = ?
-          AND i.anno     = ?
-          AND i.semestre = ?
-          AND i.cfu      = ?
-          AND ( i.curriculum = ?
-             OR i.curriculum LIKE CONCAT('%,', ?, ',%')
-             OR i.curriculum LIKE CONCAT(?, ',%')
-             OR i.curriculum LIKE CONCAT('%,', ?) )
-        LIMIT 1
+        final String query = """
+        SELECT i.id
+                    FROM insegnamenti i
+                    WHERE i.nome=? AND i.anno=? AND i.semestre=? AND i.cfu=?
+                    LIMIT 1
     """;
 
-        // Variante senza curriculum
-        final String noCurr = """
-        SELECT i.id_insegnamento
-        FROM insegnamenti i
-        JOIN utenti u ON u.id_corso = i.id_corso
-        WHERE u.username = ?
-          AND i.nome     = ?
-          AND i.anno     = ?
-          AND i.semestre = ?
-          AND i.cfu      = ?
-        LIMIT 1
-    """;
-
-        try (PreparedStatement ps = conn.prepareStatement(
-                (curriculum != null && !curriculum.isBlank()) ? withCurr : noCurr)) {
-
-            int k = 1;
-            ps.setString(k++, r.getNomeUtente());
-            ps.setString(k++, ins.getNome());
-            ps.setInt(k++,    ins.getAnno());
-            ps.setInt(k++,    ins.getSemestre());
-            ps.setInt(k++,    ins.getCfu());
-
-            if (curriculum != null && !curriculum.isBlank()) {
-                ps.setString(k++, curriculum);
-                ps.setString(k++, curriculum);
-                ps.setString(k++, curriculum);
-                ps.setString(k++, curriculum);
-            }
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, ins.getNome());
+            ps.setInt(2,    ins.getAnno());
+            ps.setInt(3,    ins.getSemestre());
+            ps.setInt(4,    ins.getCfu());
 
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() ? rs.getInt(1) : null;
@@ -149,27 +113,37 @@ public class RecensioneDB implements RecensioneDAO {
 
 
     @Override
-    public List<Recensione> getRecensioniByInsegnamento(Integer idInsegnamento) {
-        List<Recensione> recensioni = new ArrayList<>();
-        String query = "SELECT nome_utente, commento, valutazione_generale FROM recensioni WHERE id_insegnamento = ?";
+    public List<Recensione> getRecensioniByInsegnamento(Insegnamento insegnamento) {
+        Objects.requireNonNull(insegnamento, "insegnamento nullo");
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, idInsegnamento);
-            ResultSet rs = stmt.executeQuery();
+        Integer idIns = resolveIdInsegnamento(insegnamento); // vedi sotto
+        if (idIns == null) return List.of(); // nessun match
 
-            while (rs.next()) {
-                Recensione recensione = new Recensione();
-                recensione.setNomeUtente(rs.getString("nome_utente"));
-                recensione.setCommento(rs.getString("commento"));
-                recensione.setValutazione(rs.getInt("valutazione_generale"));
-                recensioni.add(recensione);
+        String sql = """
+            SELECT r.commento, r.valutazione_generale, r.nome_utente
+            FROM recensioni r
+            WHERE r.id_insegnamento = ?
+            ORDER BY r.nome_utente
+        """;
+
+        List<Recensione> out = new ArrayList<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idIns);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Recensione rec = new Recensione(
+                            rs.getString("commento"),
+                            rs.getInt("valutazione_generale"),
+                            rs.getString("nome_utente"),
+                            insegnamento // ricollego lo stesso oggetto passato
+                    );
+                    out.add(rec);
+                }
             }
-
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Errore nel recupero delle recensioni", e);
+            LOGGER.log(Level.SEVERE, "Errore nel recupero recensioni per insegnamento", e);
         }
-
-        return recensioni;
+        return out;
     }
 
 }

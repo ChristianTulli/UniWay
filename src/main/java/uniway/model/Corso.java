@@ -3,6 +3,7 @@ package uniway.model;
 import java.util.List;
 
 public class Corso {
+
     private String regione;
     private String provincia;
     private String comune;
@@ -14,17 +15,18 @@ public class Corso {
     private String curriculum;
     private List<Insegnamento> insegnamenti;
 
+    public Corso() {}
 
-    public Corso(String regione, String provincia, String comune, String ateneo, String disciplina, String durata, String classe, String nomeCorso) {
+    public Corso(String regione, String provincia, String comune, String ateneo, String disciplina, String classe, String nomeCorso) {
         this.regione = regione;
         this.provincia = provincia;
         this.comune = comune;
         this.ateneo = ateneo;
         this.disciplina = disciplina;
-        this.durata = durata;
         this.classe = classe;
         this.nomeCorso = nomeCorso;
     }
+
 
 
     public String getClasse() {

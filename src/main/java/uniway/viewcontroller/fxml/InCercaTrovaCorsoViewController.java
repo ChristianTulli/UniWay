@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import uniway.beans.UtenteBean;
-import uniway.controller.InCercaTrovaCorsoController;
+import uniway.controller.TrovaCorsoController;
 import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 public class InCercaTrovaCorsoViewController implements Initializable {
 
-    private final InCercaTrovaCorsoController inCercaTrovaCorsoController = new InCercaTrovaCorsoController();
+    private final TrovaCorsoController trovaCorsoController = new TrovaCorsoController();
     private UtenteBean utenteBean;
 
     private static final Logger LOGGER = Logger.getLogger(InCercaTrovaCorsoViewController.class.getName());
@@ -54,9 +54,9 @@ public class InCercaTrovaCorsoViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setupComboBox(statale, inCercaTrovaCorsoController.getTipiAteneo(), this::handleStataleSelection);
-        setupComboBox(regione, inCercaTrovaCorsoController.getRegioni(), this::handleRegioneSelection);
-        setupComboBox(durata, inCercaTrovaCorsoController.getDurate(), this::handleDurataSelection);
+        setupComboBox(statale, trovaCorsoController.getTipiAteneo(), this::handleStataleSelection);
+        setupComboBox(regione, trovaCorsoController.getRegioni(), this::handleRegioneSelection);
+        setupComboBox(durata, trovaCorsoController.getDurate(), this::handleDurataSelection);
         cerca.setDisable(true);
 
         // Selezione dalla lista → apri dettaglio
@@ -94,52 +94,52 @@ public class InCercaTrovaCorsoViewController implements Initializable {
 
     @FXML public void handleStataleSelection(ActionEvent event) {
         resetComboBoxes(tipologia);
-        setupComboBox(tipologia, inCercaTrovaCorsoController.getTipologie(statale.getValue()), this::handleTipologiaSelection);
+        setupComboBox(tipologia, trovaCorsoController.getTipologie(statale.getValue()), this::handleTipologiaSelection);
         checkCercaEnabled();
     }
 
     @FXML public void handleTipologiaSelection(ActionEvent event) {
         resetComboBoxes();
-        inCercaTrovaCorsoController.setTipologia(tipologia.getValue());
+        trovaCorsoController.setTipologia(tipologia.getValue());
     }
 
     @FXML public void handleRegioneSelection(ActionEvent event) {
         resetComboBoxes(provincia, comune);
-        setupComboBox(provincia, inCercaTrovaCorsoController.getProvince(regione.getValue()), this::handleProvinciaSelection);
+        setupComboBox(provincia, trovaCorsoController.getProvince(regione.getValue()), this::handleProvinciaSelection);
         checkCercaEnabled();
     }
 
     @FXML public void handleProvinciaSelection(ActionEvent event) {
         resetComboBoxes(comune);
-        setupComboBox(comune, inCercaTrovaCorsoController.getComuni(provincia.getValue()), this::handleComuneSelection);
+        setupComboBox(comune, trovaCorsoController.getComuni(provincia.getValue()), this::handleComuneSelection);
     }
 
     @FXML public void handleComuneSelection(ActionEvent event) {
         resetComboBoxes();
-        inCercaTrovaCorsoController.setComune(comune.getValue());
+        trovaCorsoController.setComune(comune.getValue());
     }
 
     @FXML public void handleDurataSelection(ActionEvent event) {
         resetComboBoxes(gruppoDisciplina, classeCorso);
-        setupComboBox(gruppoDisciplina, inCercaTrovaCorsoController.getDiscipline(durata.getValue()), this::handleGruppoSelection);
+        setupComboBox(gruppoDisciplina, trovaCorsoController.getDiscipline(durata.getValue()), this::handleGruppoSelection);
         checkCercaEnabled();
     }
 
     @FXML public void handleGruppoSelection(ActionEvent event) {
         resetComboBoxes(classeCorso);
-        setupComboBox(classeCorso, inCercaTrovaCorsoController.getClassi(gruppoDisciplina.getValue()), this::handleClasseSelection);
+        setupComboBox(classeCorso, trovaCorsoController.getClassi(gruppoDisciplina.getValue()), this::handleClasseSelection);
     }
 
     @FXML public void handleClasseSelection(ActionEvent event) {
         resetComboBoxes();
-        inCercaTrovaCorsoController.setClasseCorso(classeCorso.getValue());
+        trovaCorsoController.setClasseCorso(classeCorso.getValue());
     }
 
     // --- CERCA ---
     @FXML
     public void handleCercaSelection(ActionEvent event) {
         resetComboBoxes();
-        List<String> risultato = inCercaTrovaCorsoController.getRisultati();
+        List<String> risultato = trovaCorsoController.getRisultati();
         if (risultato != null && !risultato.isEmpty()) {
             listView.getItems().addAll(risultato);
         } else {

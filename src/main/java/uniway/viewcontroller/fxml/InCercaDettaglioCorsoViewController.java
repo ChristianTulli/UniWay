@@ -9,7 +9,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import uniway.beans.InsegnamentoBean;
 import uniway.beans.UtenteBean;
-import uniway.controller.InCercaDettaglioCorsoController;
+import uniway.controller.GestisciCorsiDiLaureaPreferitiController;
+import uniway.controller.TrovaCorsoController;
+import uniway.eccezioni.CorsoGiaPresenteTraIPreferitiException;
 import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
@@ -25,8 +27,8 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     private String nomeCorso;
     private String nomeAteneo;
 
-    private final InCercaDettaglioCorsoController inCercaDettaglioCorsoController =
-            new InCercaDettaglioCorsoController();
+    private final TrovaCorsoController trovaCorsoController=new TrovaCorsoController();
+    private final GestisciCorsiDiLaureaPreferitiController gestisciCorsiDiLaureaPreferitiController=new GestisciCorsiDiLaureaPreferitiController();
 
     private static final Logger LOGGER =
             Logger.getLogger(InCercaDettaglioCorsoViewController.class.getName());
@@ -119,10 +121,6 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
 
     private void apriSchermataRecensioni(InsegnamentoBean insSel) {
         try {
-            Integer idInsegnamento = inCercaDettaglioCorsoController.getIdInsegnamento(
-                    insSel.getNome(), nomeCorso, nomeAteneo
-            );
-
             var stage = (javafx.stage.Stage) tableView.getScene().getWindow();
             NavigationManagerFacade.switchScene(
                     stage,
@@ -130,7 +128,6 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
                     TITOLO_RECENSIONI,
                     InCercaRecensioneViewController.class,
                     c -> c.impostaSchermata(
-                            idInsegnamento,
                             nomeCorso,
                             nomeAteneo,
                             insSel.getNome(),
@@ -187,7 +184,7 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
                 : "");
 
         List<InsegnamentoBean> lista =
-                inCercaDettaglioCorsoController.getInsegnamenti(nomeCorso, nomeAteneo);
+                trovaCorsoController.mostraInsegnamenti(nomeCorso, nomeAteneo);
         tableView.setItems(FXCollections.observableArrayList(lista));
     }
 
@@ -199,12 +196,12 @@ public class InCercaDettaglioCorsoViewController implements Initializable {
     @FXML
     public void aggiungiAiPreferiti(ActionEvent event) {
         if (utenteBean != null && nomeCorso != null) {
-            boolean aggiunto = inCercaDettaglioCorsoController.aggiungiAiPreferiti(utenteBean, nomeCorso, nomeAteneo);
-            if (aggiunto) {
+            try{
+                gestisciCorsiDiLaureaPreferitiController.aggiungiAiPreferiti(nomeCorso, nomeAteneo);
                 preferitiButton.setDisable(true);
                 mostraPopup("Aggiunto ai preferiti", "Il corso è stato aggiunto con successo.");
-            } else {
-                mostraPopup("Corso già nei preferiti", "Hai già aggiunto questo corso ai tuoi preferiti.");
+            }catch(CorsoGiaPresenteTraIPreferitiException e){
+                mostraPopup(e.getMessage(), "Hai già aggiunto questo corso ai tuoi preferiti.");
             }
         }
     }

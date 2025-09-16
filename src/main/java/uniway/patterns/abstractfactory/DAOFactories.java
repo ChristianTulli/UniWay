@@ -1,4 +1,4 @@
-package uniway.patterns.abstractFactory;
+package uniway.patterns.abstractfactory;
 
 import java.sql.Connection;
 import java.util.Objects;

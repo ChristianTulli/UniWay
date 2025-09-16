@@ -9,7 +9,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import uniway.beans.RecensioneBean;
 import uniway.beans.UtenteBean;
-import uniway.controller.InCercaRecensioneController;
+import uniway.controller.TrovaCorsoController;
 import uniway.patterns.NavigationManagerFacade;
 
 import java.net.URL;
@@ -25,13 +25,13 @@ public class InCercaRecensioneViewController implements Initializable {
     @FXML private Label mediaLabel;
     @FXML private ListView<RecensioneBean> listViewRecensioni;
 
-    private final InCercaRecensioneController controller = new InCercaRecensioneController();
-    private int idInsegnamento;
+    private final TrovaCorsoController trovaCorsoController = new TrovaCorsoController();
 
     private List<String> corsiSimili;
     private String corso;
     private String ateneo;
     private UtenteBean utente;
+    private String nomeInsegnamento;
 
     // destinazioni
     private static final String FXML_DETTAGLIO  = "/view/InCercaDettaglioCorsoUI.fxml";
@@ -41,19 +41,18 @@ public class InCercaRecensioneViewController implements Initializable {
     private static final String TITOLO_PREFERITI = "UniWay - Preferiti";
     private static final String TITOLO_LOGIN     = "UniWay - Login";
 
-    public void impostaSchermata(Integer idInsegnamento,
+    public void impostaSchermata(
                                  String nomeCorso,
                                  String nomeAteneo,
                                  String nomeInsegnamento,
                                  String curriculum,
                                  UtenteBean utenteBean,
                                  List<String> corsisimili) {
-
-        this.idInsegnamento = idInsegnamento;
         this.corso = nomeCorso;
         this.ateneo = nomeAteneo;
         this.utente = utenteBean;
         this.corsiSimili = corsisimili;
+        this.nomeInsegnamento = nomeInsegnamento;
 
         corsoLabel.setText(corso);
         ateneoLabel.setText(ateneo);
@@ -64,8 +63,8 @@ public class InCercaRecensioneViewController implements Initializable {
     }
 
     private void caricaRecensioni() {
-        List<RecensioneBean> recensioni = controller.getRecensioni(idInsegnamento);
-        double media = controller.getMediaValutazioni(recensioni);
+        List<RecensioneBean> recensioni = trovaCorsoController.getRecensioni(corso, ateneo, nomeInsegnamento);
+        double media = trovaCorsoController.getMediaValutazioni(recensioni);
 
         mediaLabel.setText(String.format("%.1f", media));
         listViewRecensioni.getItems().setAll(recensioni);
