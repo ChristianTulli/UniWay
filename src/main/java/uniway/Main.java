@@ -1,26 +1,37 @@
-
 package uniway;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import uniway.viewcontroller.CLIController;
+import uniway.viewcontroller.FXMLController;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Main extends Application {
-    //avviammo la schermata iniziale dell'applicazione
-    @Override
-    public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/accesso-registrazione.fxml")));
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+public class Main {
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+    public static void main(String[] args) {
+        String uiVersion = loadUIVersion();
+
+        if ("cli".equalsIgnoreCase(uiVersion)) {
+            new CLIController().start(); // non dimenticare il .start()
+        } else {
+            Application.launch(FXMLController.class, args);
+        }
     }
 
-    public static void main(String[] args) {
-        launch();
+    private static String loadUIVersion() {
+        Properties props = new Properties();
+        try (InputStream input = Main.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (input != null) {
+                props.load(input);
+                return props.getProperty("ui.version", "fxml");
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "errore nell'avvio della UI", e);
+        }
+        return "fxml"; // default fallback
     }
 }
