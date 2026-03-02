@@ -1,6 +1,8 @@
 # UniWay
-Progetto ISPW
+Progetto di Ingegneria del Software e Progettazione Web
 
+DOCUMENTAZIONE:
+https://github.com/ChristianTulli/UniWay/blob/master/UniWay-ChristianTulli-0307317.pdf
 
 1. 
 modifiche per impostare modalita' full o demo o livello di persistenza file o database
