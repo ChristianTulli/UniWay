@@ -134,7 +134,7 @@ public class UtenteDB implements UtenteDAO {
         OR curriculum LIKE CONCAT(?, ',%')             -- caso all’inizio
         OR curriculum LIKE CONCAT('%,', ?)             -- caso alla fine
   );
-        """
+  """
         ;
         List<Insegnamento> insegnamenti = new ArrayList<>();
 
