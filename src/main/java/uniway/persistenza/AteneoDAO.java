@@ -1,6 +1,5 @@
 package uniway.persistenza;
 
-import uniway.controller.PersistenzaController;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,13 +7,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//PRODUCT
 public class AteneoDAO {
     private static final Logger LOGGER = Logger.getLogger(AteneoDAO.class.getName());
     private final Connection conn;
     private String eccezione = "problema nella comunicazione col database";
 
-    public AteneoDAO() {
-        this.conn = PersistenzaController.getInstance().getConnessione();
+    public AteneoDAO(Connection conn) {
+        this.conn = conn;
     }
 
     public List<String> getAllTipiAteneo() {

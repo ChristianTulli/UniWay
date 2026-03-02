@@ -1,314 +1,330 @@
 package uniway.persistenza;
 
+import uniway.eccezioni.CorsoGiaPresenteTraIPreferitiException;
+import uniway.model.Corso;
 import uniway.model.Utente;
-import uniway.model.UtenteIscritto;
 import uniway.model.UtenteInCerca;
+import uniway.model.UtenteIscritto;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class UtenteFS implements UtenteDAO {
+
+    // === Costanti per evitare duplicazioni di literal ===
+    private static final String MSG_UTENTE_NULLO = "utente nullo";
+    private static final String MSG_CORSO_NULLO  = "corso nullo";
+    private static final String MSG_ERR_LETTURA  = "Errore lettura file";
+    private static final String MSG_ERR_SCRITTURA= "Errore scrittura file";
+    private static final String MSG_ERR_UTENTI   = "Errore lettura file utenti";
+
     private final String path;
 
     public UtenteFS(String path) {
-        this.path = path;
+        this.path = Objects.requireNonNull(path, "path nullo");
+    }
+
+    // ----------------- API -----------------
+
+    @Override
+    public void salvaUtente(Utente utente) {
+        Objects.requireNonNull(utente, MSG_UTENTE_NULLO);
+        // preveniamo duplicati (username unico)
+        if (trovaDaUsername(utente.getUsername()) != null) {
+            throw new IllegalArgumentException("Username già esistente: " + utente.getUsername());
+        }
+        appendLine(serializeUserLine(utente));
     }
 
     @Override
-    public void salvaUtente(Utente utente) throws IOException {
-        List<Utente> utenti = ottieniUtenti();
-        int nuovoId = utenti.isEmpty() ? 1 : utenti.get(utenti.size() - 1).getId() + 1;
+    public Utente trovaDaUsername(String username) {
+        Objects.requireNonNull(username, "username nullo");
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] cols = splitCSV(line);
+                if (cols.length >= 3 && username.equals(cols[0])) {
+                    return parseUser(cols);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            // file assente → nessun utente
+            return null;
+        } catch (IOException e) {
+            throw new FilePersistenceException(MSG_ERR_UTENTI, e);
+        }
+        return null;
+    }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, true))) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(nuovoId).append(",")
-                    .append(utente.getUsername()).append(",")
-                    .append(utente.getPassword()).append(",")
-                    .append(utente.getIscritto()).append(",");
+    @Override
+    public void aggiungiCorsoUtente(UtenteIscritto utente, Corso corso) {
+        Objects.requireNonNull(utente, MSG_UTENTE_NULLO);
+        Objects.requireNonNull(corso,  MSG_CORSO_NULLO);
 
-            if (utente instanceof UtenteIscritto iscritto) {
-                sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
-            } else if (utente instanceof UtenteInCerca inCerca) {
-                sb.append(",").append(inCerca.getPreferenze().stream()
-                        .map(String::valueOf) // Converte Integer in String
-                        .collect(Collectors.joining(";"))); // Unisce con ";"
+        List<String> lines = readAll();
+        int idx = -1;
+
+        // Trova indice riga dell'utente iscritto (niente continue/break multipli)
+        for (int i = 0; i < lines.size() && idx == -1; i++) {
+            String[] cols = splitCSV(lines.get(i));
+            if (cols.length >= 3) {
+                String u = cols[0];
+                boolean iscritto = Boolean.parseBoolean(cols[2]);
+                if (u.equals(utente.getUsername()) && iscritto) {
+                    idx = i;
+                }
+            }
+        }
+
+        if (idx != -1) {
+            String[] cols = splitCSV(lines.get(idx));
+            ensureCols(cols, 6);
+            cols[3] = safe(corso.getNomeCorso());
+            cols[4] = safe(corso.getAteneo());
+            // preferiti (col 5) resta com’è
+            lines.set(idx, joinCSV(cols));
+        } else {
+            // se non esiste, creiamo riga coerente con i dati
+            String nuova = joinCSV(new String[]{
+                    safe(utente.getUsername()),
+                    safe(utente.getPassword()),
+                    "true",
+                    safe(corso.getNomeCorso()),
+                    safe(corso.getAteneo()),
+                    "" // preferiti vuoto
+            });
+            lines.add(nuova);
+        }
+
+        writeAll(lines);
+    }
+
+    @Override
+    public void aggiungiPreferitiUtente(UtenteInCerca utente, Corso corso) {
+        Objects.requireNonNull(utente, MSG_UTENTE_NULLO);
+        Objects.requireNonNull(corso,  MSG_CORSO_NULLO);
+
+        List<String> lines = readAll();
+        final String key = buildPrefKey(corso); // "corso|ateneo"
+
+        int idx = -1;
+        for (int i = 0; i < lines.size() && idx == -1; i++) {
+            String[] cols = splitCSV(lines.get(i));
+            if (cols.length >= 3) {
+                String u = cols[0];
+                boolean iscritto = Boolean.parseBoolean(cols[2]);
+                if (u.equals(utente.getUsername()) && !iscritto) {
+                    idx = i;
+                }
+            }
+        }
+
+        if (idx != -1) {
+            String[] cols = splitCSV(lines.get(idx));
+            ensureCols(cols, 6);
+            List<String> prefs = parsePreferiti(cols[5]);
+
+            if (prefs.contains(key)) {
+                throw new CorsoGiaPresenteTraIPreferitiException("Il corso è già presente tra i preferiti.");
             }
 
-            writer.write(sb.toString());
-            writer.newLine();
+            prefs.add(key);
+            cols[5] = serializePreferiti(prefs);
+            lines.set(idx, joinCSV(cols));
+        } else {
+            // se non esiste, creiamo riga “in cerca” con quel preferito
+            String nuova = joinCSV(new String[]{
+                    safe(utente.getUsername()),
+                    safe(utente.getPassword()),
+                    "false",
+                    "", // corsoNome
+                    "", // ateneoNome
+                    serializePreferiti(List.of(key))
+            });
+            lines.add(nuova);
+        }
+
+        writeAll(lines);
+    }
+
+    @Override
+    public void rimuoviPreferitoUtente(UtenteInCerca utente, Corso corso) {
+        Objects.requireNonNull(utente, MSG_UTENTE_NULLO);
+        Objects.requireNonNull(corso,  MSG_CORSO_NULLO);
+
+        List<String> lines = readAll();
+        final String key = buildPrefKey(corso);
+
+        int idx = -1;
+        for (int i = 0; i < lines.size() && idx == -1; i++) {
+            String[] cols = splitCSV(lines.get(i));
+            if (cols.length >= 3) {
+                String u = cols[0];
+                boolean iscritto = Boolean.parseBoolean(cols[2]);
+                if (u.equals(utente.getUsername()) && !iscritto) {
+                    idx = i;
+                }
+            }
+        }
+
+        if (idx != -1) {
+            String[] cols = splitCSV(lines.get(idx));
+            ensureCols(cols, 6);
+            List<String> prefs = parsePreferiti(cols[5]);
+            boolean removed = prefs.remove(key);
+            if (removed) {
+                cols[5] = prefs.isEmpty() ? "" : serializePreferiti(prefs);
+                lines.set(idx, joinCSV(cols));
+                writeAll(lines);
+            }
+            // se non rimuove nulla, non facciamo nulla (comportamento tollerante)
+        }
+        // se utente non trovato, no-op
+    }
+
+    // ----------------- Helpers di parsing/IO -----------------
+
+    private String[] splitCSV(String line) {
+        // manteniamo colonne vuote in coda
+        return line.split(",", -1);
+    }
+
+    private String joinCSV(String[] cols) {
+        return String.join(",", cols);
+    }
+
+    private void ensureCols(String[] cols, int min) {
+        if (cols.length < min) {
+            String[] n = Arrays.copyOf(cols, min);
+            for (int i = cols.length; i < min; i++) n[i] = "";
+            System.arraycopy(n, 0, cols, 0, n.length);
         }
     }
 
-    @Override
-    public List<Utente> ottieniUtenti() throws IOException {
-        List<Utente> utenti = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                processaRiga(line, utenti);
+    private String safe(String s) { return (s == null) ? "" : s; }
+
+    private List<String> readAll() {
+        List<String> out = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String l;
+            while ((l = br.readLine()) != null) out.add(l);
+        } catch (FileNotFoundException e) {
+            // file non esistente → lista vuota
+        } catch (IOException e) {
+            throw new FilePersistenceException(MSG_ERR_LETTURA, e);
+        }
+        return out;
+    }
+
+    private void writeAll(List<String> lines) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+            for (String l : lines) {
+                bw.write(l);
+                bw.newLine();
             }
         } catch (IOException e) {
-            throw new IOException("Errore nella lettura del file utenti", e);
+            throw new FilePersistenceException(MSG_ERR_SCRITTURA, e);
         }
-        return utenti;
     }
 
-    private void processaRiga(String line, List<Utente> utenti) {
-        String[] split = line.split(",");
-        if (split.length < 4) return;
+    private void appendLine(String line) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+            bw.write(line);
+            bw.newLine();
+        } catch (IOException e) {
+            throw new FilePersistenceException(MSG_ERR_SCRITTURA, e);
+        }
+    }
 
-        int id = Integer.parseInt(split[0]);
-        String username = split[1];
-        String password = split[2];
-        boolean iscritto = Boolean.parseBoolean(split[3]);
+    private String serializeUserLine(Utente u) {
+        String username = safe(u.getUsername());
+        String password = safe(u.getPassword());
+        String iscritto = String.valueOf(u.getIscritto());
+        String corso = "";
+        String ateneo = "";
+        String preferiti = "";
+
+        if (u instanceof UtenteIscritto ui && ui.getCorso() != null) {
+            corso  = safe(ui.getCorso().getNomeCorso());
+            ateneo = safe(ui.getCorso().getAteneo());
+        } else if (u instanceof UtenteInCerca ic && ic.getPreferenze() != null) {
+            // Stream.toList() → lista non modificata
+            List<String> prefs = ic.getPreferenze().stream()
+                    .filter(Objects::nonNull)
+                    .map(this::buildPrefKey)
+                    .toList();
+            preferiti = serializePreferiti(prefs);
+        }
+
+        return joinCSV(new String[]{ username, password, iscritto, corso, ateneo, preferiti });
+    }
+
+    private Utente parseUser(String[] cols) {
+        String username = cols[0];
+        String password = cols[1];
+        boolean iscritto = Boolean.parseBoolean(cols[2]);
 
         if (iscritto) {
-            utenti.add(creaUtenteIscritto(id, username, password, split));
+            String corsoNome  = cols.length > 3 ? cols[3] : "";
+            String ateneoNome = cols.length > 4 ? cols[4] : "";
+            UtenteIscritto ui = new UtenteIscritto(username, password, true);
+            if (!corsoNome.isBlank() || !ateneoNome.isBlank()) {
+                Corso c = new Corso();
+                c.setNomeCorso(corsoNome);
+                c.setAteneo(ateneoNome);
+                ui.setCorso(c);
+            }
+            return ui;
         } else {
-            utenti.add(creaUtenteInCerca(id, username, password, split));
-        }
-    }
-
-    private UtenteIscritto creaUtenteIscritto(int id, String username, String password, String[] split) {
-        Integer idCorso = (split.length > 4 && !split[4].isEmpty()) ? Integer.parseInt(split[4]) : null;
-        String curriculum = (split.length > 5 && !split[5].isEmpty()) ? split[5] : null;
-        return new UtenteIscritto(id, username, password, true, idCorso, curriculum);
-    }
-
-    private UtenteInCerca creaUtenteInCerca(int id, String username, String password, String[] split) {
-        List<Integer> preferenze = new ArrayList<>();
-        if (split.length > 4 && !split[4].isEmpty()) {
-            preferenze = Arrays.stream(split[4].split(";"))
-                    .map(Integer::parseInt)
+            String prefStr = cols.length > 5 ? cols[5] : "";
+            // Stream.toList() → lista non modificata
+            List<Corso> preferiti = parsePreferiti(prefStr).stream()
+                    .map(this::parseKeyToCorso)
                     .toList();
-        }
-        return new UtenteInCerca(id, username, password, false, preferenze);
-    }
-
-
-    @Override
-    public void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException {
-        List<String> righe = new ArrayList<>();
-        boolean utenteTrovato = false;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] split = line.split(",");
-
-                if (split.length >= 4 && split[1].equals(username)) { // Controllo se è l'utente giusto
-                    utenteTrovato = true;
-
-                    // Se l'utente è iscritto, aggiorno o aggiungo l'idCorso
-                    if (split[3].equals("true")) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(split[0]).append(",")  // ID
-                                .append(split[1]).append(",")  // Username
-                                .append(split[2]).append(",")  // Password
-                                .append(split[3]).append(","); // Iscritto
-                                sb.append(idCorso); // Assegno direttamente idCorso
-
-                        line = sb.toString(); // Converte il contenuto aggiornato in stringa
-                    }
-                }
-
-                righe.add(line);
-            }
-        }
-
-        if (!utenteTrovato) {
-            throw new IOException("Utente non trovato nel file.");
-        }
-
-        // Sovrascrivo il file con le righe aggiornate
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-            for (String riga : righe) {
-                writer.write(riga);
-                writer.newLine();
-            }
+            return new UtenteInCerca(username, password, false, preferiti);
         }
     }
 
-    @Override
-    public Boolean aggiungiPreferitiUtente(String usernameUtente, Integer idCorso) throws IOException {
-        List<Utente> utenti = ottieniUtenti();
-        boolean aggiunto = false;
-
-        for (Utente u : utenti) {
-            if (u.getUsername().equals(usernameUtente) && u instanceof UtenteInCerca inCerca) {
-                List<Integer> preferenze = new ArrayList<>(inCerca.getPreferenze());
-                if (!preferenze.contains(idCorso)) {
-                    preferenze.add(idCorso);
-                    inCerca.setPreferenze(preferenze); // aggiorna la lista nell'oggetto
-                    aggiunto = true;
-                }
-                break;
-            }
+    private List<String> parsePreferiti(String pref) {
+        if (pref == null || pref.isBlank()) return new ArrayList<>();
+        String[] parts = pref.split(";");
+        List<String> out = new ArrayList<>();
+        for (String p : parts) {
+            String t = p.trim();
+            if (!t.isEmpty()) out.add(t);
         }
-
-        if (aggiunto) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-                for (Utente u : utenti) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(u.getId()).append(",")
-                            .append(u.getUsername()).append(",")
-                            .append(u.getPassword()).append(",")
-                            .append(u.getIscritto()).append(",");
-
-                    if (u instanceof UtenteIscritto iscritto) {
-                        sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
-                        sb.append(",").append(iscritto.getCurriculum() != null ? iscritto.getCurriculum() : "");
-                    } else if (u instanceof UtenteInCerca inCerca) {
-                        sb.append(inCerca.getPreferenze().stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.joining(";")));
-                    }
-
-                    writer.write(sb.toString());
-                    writer.newLine();
-                }
-            }
-        }
-
-        return aggiunto;
+        return out;
     }
 
-
-
-
-
-    @Override
-    public void aggiungiCurriculumUtente(String username, String curriculum) throws IOException {
-        List<String> righe = new ArrayList<>();
-        boolean utenteTrovato = false;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] split = line.split(",");
-
-                if (split.length >= 4 && split[1].equals(username) && split[3].equals("true")) {
-                    utenteTrovato = true;
-
-                    // Estendi array se necessario
-                    while (split.length < 6) {
-                        split = Arrays.copyOf(split, split.length + 1);
-                    }
-
-                    split[5] = curriculum;
-                    line = String.join(",", split);
-                }
-
-                righe.add(line);
-            }
-        }
-
-        if (!utenteTrovato) {
-            throw new IOException("Utente iscritto non trovato nel file.");
-        }
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-            for (String riga : righe) {
-                writer.write(riga);
-                writer.newLine();
-            }
-        }
+    private String serializePreferiti(List<String> prefs) {
+        return String.join(";", prefs);
     }
 
-
-    private String processaRigaPreferiti(String line, String username, int idCorso) {
-        String[] split = line.split(",");
-        if (split.length >= 4 && split[1].equals(username) && !split[3].equals("true")) {
-            if (split.length < 5) {
-                split = Arrays.copyOf(split, 5);
-                split[4] = "";
-            }
-
-            List<Integer> preferiti = new ArrayList<>();
-            if (!split[4].isEmpty()) {
-                preferiti = Arrays.stream(split[4].split(";"))
-                        .map(Integer::parseInt)
-                        .toList();
-            }
-
-            if (!preferiti.contains(idCorso)) {
-                preferiti = new ArrayList<>(preferiti);
-                preferiti.add(idCorso);
-            }
-
-            split[4] = preferiti.stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining(";"));
-
-            return String.join(",", split);
-        }
-        return null; // Nessuna modifica alla riga
+    private String buildPrefKey(Corso c) {
+        return safe(c.getNomeCorso()) + "|" + safe(c.getAteneo());
     }
 
-    @Override
-    public List<Integer> getPreferitiUtente(String username) throws IOException {
-        List<Integer> preferiti = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] split = line.split(",");
-                if (split.length >= 5 && split[1].equals(username) && split[3].equals("false")) {
-                    String preferenzeStr = split[4];
-                    if (preferenzeStr != null && !preferenzeStr.isBlank()) {
-                        for (String idStr : preferenzeStr.split(";")) {
-                            preferiti.add(Integer.parseInt(idStr.trim()));
-                        }
-                    }
-                    break;
-                }
-            }
+    private Corso parseKeyToCorso(String key) {
+        String nome = "";
+        String ateneo = "";
+        int sep = key.indexOf('|');
+        if (sep >= 0) {
+            nome = key.substring(0, sep);
+            ateneo = key.substring(sep + 1);
+        } else {
+            // fallback: tutto come nome
+            nome = key;
         }
-        return preferiti;
+        Corso c = new Corso();
+        c.setNomeCorso(nome);
+        c.setAteneo(ateneo);
+        return c;
     }
 
-    @Override
-    public void rimuoviPreferitoUtente(String username, int idCorso) throws IOException {
-        List<Utente> utenti = ottieniUtenti();
-        boolean rimosso = false;
-
-        for (Utente u : utenti) {
-            if (u.getUsername().equals(username) && u instanceof UtenteInCerca inCerca) {
-                List<Integer> preferenze = new ArrayList<>(inCerca.getPreferenze()); // copia mutabile
-                if (preferenze.remove((Integer) idCorso)) {
-                    inCerca.setPreferenze(preferenze);
-                    rimosso = true;
-                }
-                break;
-            }
-        }
-
-        if (rimosso) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-                for (Utente u : utenti) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(u.getId()).append(",")
-                            .append(u.getUsername()).append(",")
-                            .append(u.getPassword()).append(",")
-                            .append(u.getIscritto()).append(",");
-
-                    if (u instanceof UtenteIscritto iscritto) {
-                        sb.append(iscritto.getIdCorso() != null ? iscritto.getIdCorso() : "");
-                        sb.append(",").append(iscritto.getCurriculum() != null ? iscritto.getCurriculum() : "");
-                    } else if (u instanceof UtenteInCerca inCerca) {
-                        sb.append(inCerca.getPreferenze().stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.joining(";")));
-                    }
-
-                    writer.write(sb.toString());
-                    writer.newLine();
-                }
-            }
-        }
+    // === Eccezione dedicata alla persistenza su file ===
+    static class FilePersistenceException extends RuntimeException {
+        FilePersistenceException(String message, Throwable cause) { super(message, cause); }
     }
-
 }
+
+

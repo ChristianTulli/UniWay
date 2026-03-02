@@ -6,7 +6,6 @@ public class Utente {
     private String username;
     private String password;
     private boolean iscritto;
-    private int id;
 
     public Utente(String username, String password, boolean iscritto) {
         this.username = username;
@@ -15,11 +14,9 @@ public class Utente {
 
     }
 
-    public Utente(int id, String username, String password, boolean iscritto) {
-        this.id = id;
+    public Utente(String username, String password) {
         this.username = username;
         this.password = password;
-        this.iscritto = iscritto;
 
     }
 
@@ -38,12 +35,5 @@ public class Utente {
         return iscritto;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int andIncrement) {
-        this.id = andIncrement;
-    }
 }
 

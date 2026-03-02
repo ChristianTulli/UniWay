@@ -1,19 +1,20 @@
 package uniway.model;
 
 public class Recensione {
-    private Integer id;
     private String commento;
     private Integer valutazione;
     private String nomeUtente;
-    private Integer idInsegnamento;
-    private String data;
+    private Insegnamento insegnamento;
 
-    public Integer getId() {
-        return id;
+    public Recensione(){}
+
+    public Recensione(String testo, Integer valutazione, String username, Insegnamento insegnamento) {
+        this.commento = testo;
+        this.valutazione = valutazione;
+        this.nomeUtente = username;
+        this.insegnamento = insegnamento;
     }
-    public void setId(Integer id) {
-        this.id = id;
-    }
+
     public String getCommento() {
         return commento;
     }
@@ -32,16 +33,10 @@ public class Recensione {
     public void setNomeUtente(String nomeUtente) {
         this.nomeUtente = nomeUtente;
     }
-    public Integer getIdInsegnamento() {
-        return idInsegnamento;
+    public Insegnamento getInsegnamento() {
+        return insegnamento;
     }
-    public void setIdInsegnamento(Integer idInsegnamento) {
-        this.idInsegnamento = idInsegnamento;
-    }
-    public String getData() {
-        return data;
-    }
-    public void setData(String data) {
-        this.data = data;
+    public void setInsegnamento(Insegnamento insegnamento) {
+        this.insegnamento = insegnamento;
     }
 }

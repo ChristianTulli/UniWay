@@ -1,24 +1,21 @@
 package uniway.persistenza;
 
+import uniway.model.Corso;
 import uniway.model.Utente;
+import uniway.model.UtenteInCerca;
+import uniway.model.UtenteIscritto;
 
-import java.io.IOException;
 
-import java.util.List;
-
+//ABSTRACT PRODUCT
 public interface UtenteDAO {
-     void salvaUtente(Utente utente) throws IOException;
+     void salvaUtente(Utente utente);
 
-     List<Utente> ottieniUtenti() throws IOException, IllegalArgumentException;
+     Utente trovaDaUsername(String username);
 
-     void aggiungiCorsoUtente(String username, Integer idCorso) throws IOException;
+     void aggiungiCorsoUtente(UtenteIscritto utente, Corso corso);
 
-     Boolean aggiungiPreferitiUtente(String username, Integer idPreferiti) throws IOException;
+     void aggiungiPreferitiUtente(UtenteInCerca utente, Corso corso);
 
-     List <Integer> getPreferitiUtente(String username) throws IOException;
-
-     void aggiungiCurriculumUtente(String username, String curriculum) throws IOException;
-
-     void rimuoviPreferitoUtente(String username, int idCorso) throws IOException;
+     void rimuoviPreferitoUtente(UtenteInCerca utente, Corso corso);
 
 }

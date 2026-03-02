@@ -51,6 +51,7 @@ public class InsegnamentoBean {
     public Integer getValutazione() {
         return valutazione;
     }
+
     public void setValutazione(Integer valutazione) {
         this.valutazione = valutazione;
     }

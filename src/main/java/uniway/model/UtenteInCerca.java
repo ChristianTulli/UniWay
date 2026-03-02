@@ -4,22 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UtenteInCerca extends Utente{
-    private List<Integer> preferiti; //da cambiare in lista di corsi
+    private List<Corso> preferiti; //da cambiare in lista di corsi
 
     public UtenteInCerca(String username, String password, boolean iscritto) {
         super(username, password, iscritto);
         this.preferiti =new ArrayList<>();
     }
 
-    public UtenteInCerca(int id, String username, String password, boolean iscritto, List<Integer> preferiti) {
-        super(id, username, password, iscritto);
+    public UtenteInCerca(String username, String password, boolean iscritto, List<Corso> preferiti) {
+        super(username, password, iscritto);
         this.preferiti = (preferiti != null) ? preferiti : new ArrayList<>();
     }
 
-    public List<Integer> getPreferenze() {
+    public List<Corso> getPreferenze() {
         return preferiti;
     }
-    public void setPreferenze(List<Integer> preferiti) {
+    public void setPreferenze(List<Corso> preferiti) {
         this.preferiti = (preferiti != null) ? preferiti : new ArrayList<>();
+    }
+    public void aggiungiPreferito(Corso corso) {
+        this.preferiti.add(corso);
+    }
+
+    public void rimuoviPreferito(Corso corso) {
+        this.preferiti.remove(corso);
     }
 }
